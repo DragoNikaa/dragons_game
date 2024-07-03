@@ -16,6 +16,28 @@ class Text(pygame.sprite.Sprite):
         self.image = font.render(text, antialias, color)
         self.rect = self.image.get_rect(**{position: dest})
 
+    def add_full_border(self, color: Union[str, tuple[int, int, int]],
+                        thickness: int) -> 'pygame.sprite.Group[TextBorder]':
+        border_left = TextBorder(self, color, thickness, BorderPosition.LEFT)
+        border_right = TextBorder(self, color, thickness, BorderPosition.RIGHT)
+        border_top = TextBorder(self, color, thickness, BorderPosition.TOP)
+        border_bottom = TextBorder(self, color, thickness, BorderPosition.BOTTOM)
+        return pygame.sprite.Group(border_left, border_right, border_top, border_bottom)
+
+    def add_partial_border(self, color: Union[str, tuple[int, int, int]], thickness: int, left: bool = False,
+                           right: bool = False, top: bool = False,
+                           bottom: bool = False) -> 'pygame.sprite.Group[TextBorder]':
+        border = []
+        if left:
+            border.append(TextBorder(self, color, thickness, BorderPosition.LEFT))
+        if right:
+            border.append(TextBorder(self, color, thickness, BorderPosition.RIGHT))
+        if top:
+            border.append(TextBorder(self, color, thickness, BorderPosition.TOP))
+        if bottom:
+            border.append(TextBorder(self, color, thickness, BorderPosition.BOTTOM))
+        return pygame.sprite.Group(border)
+
 
 class BorderPosition(Enum):
     LEFT = 1
