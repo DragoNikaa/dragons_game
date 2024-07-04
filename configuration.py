@@ -37,3 +37,16 @@ class StartScreen:
 
     START_BUTTON_TEXT = "START"
     START_BUTTON_DEST = (General.SCREEN_WIDTH // 2, 470)
+
+
+@dataclass
+class LevelSelection:
+    BACKGROUNDS_DIR_PATH = 'graphics/level_selection_backgrounds'
+
+    LEVEL_BUTTON_WIDTH = LEVEL_BUTTON_HEIGHT = 100
+    LEVEL_BUTTON_IMAGE = 'graphics/button_backgrounds/level_button.png'
+    LEVEL_BUTTONS_NUMBER = 4
+    LEVEL_BUTTONS_DEST = {1: ((General.SCREEN_WIDTH // 2.77, General.SCREEN_HEIGHT // 3.81),
+                              (General.SCREEN_WIDTH // 6.08, General.SCREEN_HEIGHT // 1.89),
+                              (General.SCREEN_WIDTH // 1.63, General.SCREEN_HEIGHT // 1.69),
+                              (General.SCREEN_WIDTH // 1.19, General.SCREEN_HEIGHT // 2.72))}

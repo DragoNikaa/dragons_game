@@ -13,6 +13,7 @@ if __name__ == '__main__':
 
 import game_states
 from displayed_elements.start_screen import start_screen_elements
+from displayed_elements.level_selection import level_selection_elements
 from game_states import GameStates
 
 
@@ -28,7 +29,8 @@ def game_loop() -> None:
             start_screen_elements.update()
 
         elif game_states.current_state == GameStates.LEVEL_SELECTION:
-            screen.fill('black')
+            level_selection_elements.draw(screen)
+            level_selection_elements.update()
 
         pygame.display.update()
         clock.tick(60)
