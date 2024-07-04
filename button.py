@@ -4,11 +4,11 @@ import pygame.sprite
 
 import game_states
 from game_states import GameStates
+from text import Text
 
 
 class Button(pygame.sprite.Sprite):
-    def __init__(self, width: int, height: int, image_path: str, dest: Union[tuple[int, int], int],
-                 position: str = 'center'):
+    def __init__(self, width: int, height: int, image_path: str, dest: tuple[int, int], position: str = 'center'):
         super().__init__()
         self.height = height
         self.dest = dest
@@ -20,6 +20,11 @@ class Button(pygame.sprite.Sprite):
         self.current_brightness = 0
         self.brightness_step = 5
         self.max_brightness = 25
+
+    def add_text(self, font: pygame.font.Font, text: str, color: Union[str, tuple[int, int, int]],
+                 antialias: bool = True, y_offset: int = 0) -> Text:
+        text_dest = (self.dest[0], self.dest[1] + y_offset)
+        return Text(font, text, color, text_dest, antialias, self.position)
 
     def hover(self) -> None:
         mouse_position = pygame.mouse.get_pos()
