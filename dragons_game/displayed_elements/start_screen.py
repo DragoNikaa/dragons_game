@@ -3,10 +3,10 @@ from typing import Any
 
 import pygame
 
-import background
-from button import Button
-from configuration import General, StartScreen
-from text import Text
+from dragons_game import background
+from dragons_game.button import Button
+from dragons_game.configuration import General, StartScreen
+from dragons_game.text import Text
 
 text_button_text_font = pygame.font.Font(StartScreen.TEXT_BUTTON_TEXT_FONT_PATH, StartScreen.TEXT_BUTTON_TEXT_SIZE)
 

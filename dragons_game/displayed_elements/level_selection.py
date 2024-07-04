@@ -2,9 +2,9 @@ from dataclasses import dataclass
 
 import pygame.sprite
 
-import background
-from button import Button
-from configuration import LevelSelection
+from dragons_game import background
+from dragons_game.button import Button
+from dragons_game.configuration import LevelSelection
 
 
 @dataclass
@@ -14,7 +14,7 @@ class Background:
 
 @dataclass
 class LevelButtons:
-    level_buttons_elements = pygame.sprite.Group()
+    level_buttons_elements: 'pygame.sprite.Group[Button]' = pygame.sprite.Group()
     for button_number in range(LevelSelection.LEVEL_BUTTONS_NUMBER):
         button_dest = LevelSelection.LEVEL_BUTTONS_DEST[Background.background_elements.drawn_background_number][
             button_number]

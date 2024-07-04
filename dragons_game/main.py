@@ -2,12 +2,11 @@ import sys
 
 import pygame
 
-import configuration
-
-import game_states
-from displayed_elements.start_screen import start_screen_elements
-from displayed_elements.level_selection import level_selection_elements
-from game_states import GameStates
+from dragons_game import configuration
+from dragons_game import game_states
+from dragons_game.displayed_elements.level_selection import level_selection_elements
+from dragons_game.displayed_elements.start_screen import start_screen_elements
+from dragons_game.game_states import GameStates
 
 
 def game_loop() -> None:

@@ -3,7 +3,7 @@ import random
 
 import pygame.sprite
 
-import configuration
+from dragons_game import configuration
 
 
 class Background(pygame.sprite.Sprite):

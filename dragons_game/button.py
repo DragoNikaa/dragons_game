@@ -2,9 +2,9 @@ from typing import Union
 
 import pygame.sprite
 
-import game_states
-from game_states import GameStates
-from text import Text
+from dragons_game import game_states
+from dragons_game.game_states import GameStates
+from dragons_game.text import Text
 
 
 class Button(pygame.sprite.Sprite):
