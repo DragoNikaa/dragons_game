@@ -1,7 +1,9 @@
-from enum import Enum
+from math import sqrt
 from typing import Union
 
 import pygame
+
+from dragons_game import configuration
 
 
 class Text(pygame.sprite.Sprite):
@@ -16,52 +18,27 @@ class Text(pygame.sprite.Sprite):
         self.image = font.render(text, antialias, color)
         self.rect = self.image.get_rect(**{position: dest})
 
-    def add_full_border(self, color: Union[str, tuple[int, int, int]],
-                        thickness: int) -> 'pygame.sprite.Group[TextBorder]':
-        border_left = TextBorder(self, color, thickness, BorderPosition.LEFT)
-        border_right = TextBorder(self, color, thickness, BorderPosition.RIGHT)
-        border_top = TextBorder(self, color, thickness, BorderPosition.TOP)
-        border_bottom = TextBorder(self, color, thickness, BorderPosition.BOTTOM)
-        return pygame.sprite.Group(border_left, border_right, border_top, border_bottom)
+    def add_text_border(self, color: Union[str, tuple[int, int, int]], thickness: int) -> None:
+        added_width = configuration.General.SCREEN_WIDTH // 10
+        added_height = configuration.General.SCREEN_HEIGHT // 10
+        extended_image = pygame.surface.Surface(
+            (self.image.get_width() + added_width, self.image.get_height() + added_height), pygame.SRCALPHA)
+        extended_rect = extended_image.get_rect(center=self.rect.center)
 
-    def add_partial_border(self, color: Union[str, tuple[int, int, int]], thickness: int, left: bool = False,
-                           right: bool = False, top: bool = False,
-                           bottom: bool = False) -> 'pygame.sprite.Group[TextBorder]':
-        border = []
-        if left:
-            border.append(TextBorder(self, color, thickness, BorderPosition.LEFT))
-        if right:
-            border.append(TextBorder(self, color, thickness, BorderPosition.RIGHT))
-        if top:
-            border.append(TextBorder(self, color, thickness, BorderPosition.TOP))
-        if bottom:
-            border.append(TextBorder(self, color, thickness, BorderPosition.BOTTOM))
-        return pygame.sprite.Group(border)
+        extended_image.blit(self.image, (added_width // 2, added_height // 2))
 
+        text_border = extended_image.copy()
+        text_border.fill(color, special_flags=pygame.BLEND_RGB_MULT)
 
-class BorderPosition(Enum):
-    LEFT = 1
-    RIGHT = 2
-    TOP = 3
-    BOTTOM = 4
+        for offset in thickness, -thickness:
+            text_border.blit(text_border, (offset, 0))
+            text_border.blit(text_border, (0, offset))
 
+        for offset in int(sqrt(thickness)), int(-sqrt(thickness)):
+            text_border.blit(text_border, (offset, offset))
+            text_border.blit(text_border, (offset, -offset))
 
-class TextBorder(pygame.sprite.Sprite):
-    def __init__(self, text_object: Text, color: Union[str, tuple[int, int, int]], thickness: int,
-                 border_position: BorderPosition):
-        super().__init__()
-        self.thickness = thickness
-        self.border_position = border_position
-        self.text_position = text_object.position
-        self.image = text_object.font.render(text_object.text, text_object.antialias, color)
-        self.x, self.y = text_object.dest
-        self.rect = self.rect_with_offset()
+        text_border.blit(extended_image, (0, 0))
 
-    def rect_with_offset(self) -> pygame.Rect:
-        if self.border_position is BorderPosition.LEFT:
-            return self.image.get_rect(**{self.text_position: (self.x - self.thickness, self.y)})
-        if self.border_position is BorderPosition.RIGHT:
-            return self.image.get_rect(**{self.text_position: (self.x + self.thickness, self.y)})
-        if self.border_position is BorderPosition.TOP:
-            return self.image.get_rect(**{self.text_position: (self.x, self.y - self.thickness)})
-        return self.image.get_rect(**{self.text_position: (self.x, self.y + self.thickness)})
+        self.image = text_border
+        self.rect = extended_rect
