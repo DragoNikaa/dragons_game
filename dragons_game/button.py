@@ -1,5 +1,3 @@
-from typing import Union
-
 import pygame.sprite
 
 from dragons_game import game_states
@@ -21,8 +19,8 @@ class Button(pygame.sprite.Sprite):
         self.brightness_step = 5
         self.max_brightness = 25
 
-    def add_text(self, font: pygame.font.Font, text: str, color: Union[str, tuple[int, int, int]],
-                 antialias: bool = True, y_offset: int = 0) -> Text:
+    def add_text(self, font: pygame.font.Font, text: str, color: str | tuple[int, int, int], antialias: bool = True,
+                 y_offset: int = 0) -> Text:
         text_dest = (self.dest[0], self.dest[1] + y_offset)
         return Text(font, text, color, text_dest, antialias, self.position)
 

@@ -1,5 +1,4 @@
 from math import sqrt
-from typing import Union
 
 import pygame
 
@@ -7,8 +6,8 @@ from dragons_game import configuration
 
 
 class Text(pygame.sprite.Sprite):
-    def __init__(self, font: pygame.font.Font, text: str, color: Union[str, tuple[int, int, int]],
-                 dest: tuple[int, int], antialias: bool = True, position: str = 'center'):
+    def __init__(self, font: pygame.font.Font, text: str, color: str | tuple[int, int, int], dest: tuple[int, int],
+                 antialias: bool = True, position: str = 'center'):
         super().__init__()
         self.font = font
         self.text = text
@@ -18,7 +17,7 @@ class Text(pygame.sprite.Sprite):
         self.image = font.render(text, antialias, color)
         self.rect = self.image.get_rect(**{position: dest})
 
-    def add_text_border(self, color: Union[str, tuple[int, int, int]], thickness: int) -> None:
+    def add_text_border(self, color: str | tuple[int, int, int], thickness: int) -> None:
         added_width = configuration.General.SCREEN_WIDTH // 10
         added_height = configuration.General.SCREEN_HEIGHT // 10
         extended_image = pygame.surface.Surface(

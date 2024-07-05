@@ -21,9 +21,9 @@ pygame.display.set_caption(General.NAME)
 
 @dataclass
 class StartScreen:
-    BACKGROUNDS_DIR_PATH = "graphics/start_screen_backgrounds"
+    BACKGROUNDS_DIR_PATH = "dragons_game/graphics/start_screen_backgrounds"
 
-    NAME_FONT_PATH = "fonts/pr_viking.ttf"
+    NAME_FONT_PATH = "dragons_game/fonts/pr_viking.ttf"
     NAME_SIZE = int(General.SCREEN_HEIGHT / 3.5)
     NAME_COLOR = "white"
     NAME_DEST = (int(General.SCREEN_WIDTH / 2), int(General.SCREEN_HEIGHT / 3.5))
@@ -32,7 +32,7 @@ class StartScreen:
     NAME_BORDER_COLOR = "black"
     NAME_BORDER_THICKNESS = int(General.SCREEN_HEIGHT / 120)
 
-    TEXT_BUTTON_TEXT_FONT_PATH = "fonts/rurik.ttf"
+    TEXT_BUTTON_TEXT_FONT_PATH = "dragons_game/fonts/rurik.ttf"
     TEXT_BUTTON_TEXT_SIZE = int(General.SCREEN_HEIGHT / 9)
     TEXT_BUTTON_TEXT_COLOR = "white"
     TEXT_BUTTON_TEXT_ANTIALIAS = True
@@ -42,7 +42,7 @@ class StartScreen:
 
     TEXT_BUTTON_WIDTH = int(General.SCREEN_WIDTH / 4)
     TEXT_BUTTON_HEIGHT = int(General.SCREEN_HEIGHT / 4)
-    TEXT_BUTTON_IMAGE_PATH = "graphics/button_backgrounds/text_button.png"
+    TEXT_BUTTON_IMAGE_PATH = "dragons_game/graphics/button_backgrounds/text_button.png"
     TEXT_BUTTON_Y_OFFSET = int(TEXT_BUTTON_HEIGHT / 6)
 
     START_BUTTON_TEXT = "START"
@@ -51,10 +51,10 @@ class StartScreen:
 
 @dataclass
 class LevelSelection:
-    BACKGROUNDS_DIR_PATH = 'graphics/level_selection_backgrounds'
+    BACKGROUNDS_DIR_PATH = 'dragons_game/graphics/level_selection_backgrounds'
 
     LEVEL_BUTTON_WIDTH = LEVEL_BUTTON_HEIGHT = int(General.SCREEN_HEIGHT / 8)
-    LEVEL_BUTTON_IMAGE = 'graphics/button_backgrounds/level_button.png'
+    LEVEL_BUTTON_IMAGE = 'dragons_game/graphics/button_backgrounds/level_button.png'
     LEVEL_BUTTONS_NUMBER = 4
     LEVEL_BUTTONS_DEST = {1: ((int(General.SCREEN_WIDTH / 5.80), int(General.SCREEN_HEIGHT / 1.95)),
                               (int(General.SCREEN_WIDTH / 2.70), int(General.SCREEN_HEIGHT / 3.70)),
