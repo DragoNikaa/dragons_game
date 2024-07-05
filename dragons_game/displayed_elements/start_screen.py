@@ -21,9 +21,7 @@ class Name:
     name_font = pygame.font.Font(StartScreen.NAME_FONT_PATH, StartScreen.NAME_SIZE)
     name = Text(name_font, General.NAME.upper(), StartScreen.NAME_COLOR, StartScreen.NAME_DEST,
                 StartScreen.NAME_ANTIALIAS)
-    name_border = name.add_full_border(StartScreen.NAME_BORDER_COLOR, StartScreen.NAME_BORDER_THICKNESS)
-
-    name_elements = pygame.sprite.Group(name_border, name)
+    name.add_text_border(StartScreen.NAME_BORDER_COLOR, StartScreen.NAME_BORDER_THICKNESS)
 
 
 @dataclass
@@ -33,11 +31,11 @@ class StartButton:
     start_button_text = start_button.add_text(text_button_text_font, StartScreen.START_BUTTON_TEXT,
                                               StartScreen.TEXT_BUTTON_TEXT_COLOR,
                                               StartScreen.TEXT_BUTTON_TEXT_ANTIALIAS, StartScreen.TEXT_BUTTON_Y_OFFSET)
-    start_button_text_border = start_button_text.add_full_border(StartScreen.TEXT_BUTTON_TEXT_BORDER_COLOR,
-                                                                 StartScreen.TEXT_BUTTON_TEXT_BORDER_THICKNESS)
+    start_button_text.add_text_border(StartScreen.TEXT_BUTTON_TEXT_BORDER_COLOR,
+                                      StartScreen.TEXT_BUTTON_TEXT_BORDER_THICKNESS)
 
-    start_button_elements = pygame.sprite.Group(start_button, start_button_text_border, start_button_text)
+    start_button_elements = pygame.sprite.Group(start_button, start_button_text)
 
 
 start_screen_elements: 'pygame.sprite.Group[Any]' = pygame.sprite.Group(
-    Background.background_elements, Name.name_elements, StartButton.start_button_elements)
+    Background.background_elements, Name.name, StartButton.start_button_elements)
