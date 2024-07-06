@@ -2,6 +2,8 @@ from dataclasses import dataclass
 
 import pygame
 
+from dragons_game.game_states import GameStates
+
 pygame.init()
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 clock = pygame.time.Clock()
@@ -53,10 +55,17 @@ class StartScreen:
 class LevelSelection:
     BACKGROUNDS_DIR_PATH = 'dragons_game/graphics/level_selection_backgrounds'
 
+    LEVEL_BUTTONS_NUMBER = 4
     LEVEL_BUTTON_WIDTH = LEVEL_BUTTON_HEIGHT = int(General.SCREEN_HEIGHT / 8)
     LEVEL_BUTTON_IMAGE = 'dragons_game/graphics/button_backgrounds/level_button.png'
-    LEVEL_BUTTONS_NUMBER = 4
     LEVEL_BUTTONS_DEST = {1: ((int(General.SCREEN_WIDTH / 5.80), int(General.SCREEN_HEIGHT / 1.95)),
                               (int(General.SCREEN_WIDTH / 2.70), int(General.SCREEN_HEIGHT / 3.70)),
                               (int(General.SCREEN_WIDTH / 1.63), int(General.SCREEN_HEIGHT / 1.80)),
                               (int(General.SCREEN_WIDTH / 1.20), int(General.SCREEN_HEIGHT / 2.70)))}
+
+    TOP_TILES_NUMBER = 4
+    TOP_TILES_GAME_STATES = (GameStates.UNKNOWN, GameStates.UNKNOWN, GameStates.UNKNOWN, GameStates.UNKNOWN)
+    TOP_TILE_WIDTH = int(General.SCREEN_WIDTH / TOP_TILES_NUMBER)
+    TOP_TILE_HEIGHT = int(General.SCREEN_HEIGHT / 7)
+    TOP_TILE_IMAGE = 'dragons_game/graphics/menu_elements/tile.png'
+    TOP_TILES_DEST = [(x, 0) for x in range(0, General.SCREEN_WIDTH, int(General.SCREEN_WIDTH / TOP_TILES_NUMBER))]
