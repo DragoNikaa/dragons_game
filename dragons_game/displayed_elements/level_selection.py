@@ -14,4 +14,10 @@ for button_number in range(LevelSelection.LEVEL_BUTTONS_NUMBER):
         Button(LevelSelection.LEVEL_BUTTON_WIDTH, LevelSelection.LEVEL_BUTTON_HEIGHT, LevelSelection.LEVEL_BUTTON_IMAGE,
                button_dest, GameStates.UNKNOWN))
 
-level_selection_elements = pygame.sprite.Group(background, level_buttons)
+top_tiles = pygame.sprite.Group()
+for tile_dest, tile_game_state in zip(LevelSelection.TOP_TILES_DEST, LevelSelection.TOP_TILES_GAME_STATES):
+    top_tiles.add(
+        Button(LevelSelection.TOP_TILE_WIDTH, LevelSelection.TOP_TILE_HEIGHT, LevelSelection.TOP_TILE_IMAGE, tile_dest,
+               tile_game_state, 'topleft'))
+
+level_selection_elements = pygame.sprite.Group(background, level_buttons, top_tiles)
