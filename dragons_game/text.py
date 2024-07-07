@@ -11,6 +11,7 @@ class Text(pygame.sprite.Sprite):
         super().__init__()
         self.font = font
         self.text = text
+        self.color = color
         self.dest = dest
         self.antialias = antialias
         self.position = position
