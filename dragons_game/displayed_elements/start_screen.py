@@ -17,8 +17,7 @@ name.add_text_border(StartScreen.NAME_BORDER_COLOR, StartScreen.NAME_BORDER_THIC
 start_button = Button(StartScreen.TEXT_BUTTON_WIDTH, StartScreen.TEXT_BUTTON_HEIGHT, StartScreen.TEXT_BUTTON_IMAGE_PATH,
                       StartScreen.START_BUTTON_DEST, GameStates.LEVEL_SELECTION)
 start_button.add_text(text_button_text_font, StartScreen.START_BUTTON_TEXT, StartScreen.TEXT_BUTTON_TEXT_COLOR,
-                      StartScreen.TEXT_BUTTON_TEXT_ANTIALIAS, StartScreen.TEXT_BUTTON_Y_OFFSET)
+                      StartScreen.TEXT_BUTTON_TEXT_ANTIALIAS, y_offset=StartScreen.TEXT_BUTTON_Y_OFFSET)
 start_button.add_text_border(StartScreen.TEXT_BUTTON_TEXT_BORDER_COLOR, StartScreen.TEXT_BUTTON_TEXT_BORDER_THICKNESS)
 
-start_screen_elements: 'pygame.sprite.Group[Background | Text | Button]' = pygame.sprite.Group(background, name,
-                                                                                               start_button)
+start_screen_elements = pygame.sprite.Group(background, name, start_button)
