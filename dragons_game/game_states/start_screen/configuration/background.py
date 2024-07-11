@@ -1,9 +1,9 @@
 import pathlib
 import random
 
-from dragons_game.configuration import General
 from dragons_game.elements.abstract_configuration.image import ImageConfig
 from dragons_game.elements.abstract_configuration.position import Position
+from dragons_game.game.configuration import game_config
 
 
 def draw_background(directory: str) -> str:
@@ -12,8 +12,8 @@ def draw_background(directory: str) -> str:
 
 
 class BackgroundConfig(ImageConfig):
-    WIDTH = General.WINDOW_WIDTH
-    HEIGHT = General.WINDOW_HEIGHT
+    WIDTH = game_config.WINDOW_WIDTH
+    HEIGHT = game_config.WINDOW_HEIGHT
     IMAGE = draw_background(directory='dragons_game/graphics/backgrounds/start_screen')
     POSITION = Position.TOPLEFT
     DESTINATION = (0, 0)

@@ -4,7 +4,7 @@ from dragons_game.elements.abstract_configuration.button import ButtonConfig, Bu
 from dragons_game.elements.abstract_configuration.text import TextBorderConfig
 from dragons_game.elements.image import Image
 from dragons_game.elements.text import Text
-from dragons_game.game_states import game_state
+from dragons_game.event import BUTTON_CLICK
 
 
 class Button(pygame.sprite.Sprite):
@@ -73,7 +73,7 @@ class Button(pygame.sprite.Sprite):
 
     def _handle_click(self) -> None:
         if pygame.mouse.get_pressed()[0] and self.rect.collidepoint(pygame.mouse.get_pos()):
-            game_state.current_state = self._button_config.AFTER_CLICK_STATE
+            pygame.event.post(pygame.event.Event(BUTTON_CLICK))
 
     def update(self) -> None:
         self._handle_hover()

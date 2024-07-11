@@ -2,10 +2,10 @@ from abc import ABC
 
 import pygame.font
 
-from dragons_game.configuration import General
 from dragons_game.elements.abstract_configuration.button import ButtonConfig, ButtonImageConfig, ButtonTextConfig
 from dragons_game.elements.abstract_configuration.position import Position
 from dragons_game.elements.abstract_configuration.text import TextBorderConfig
+from dragons_game.game.configuration import game_config
 from dragons_game.game_states.game_state import GameState
 
 
@@ -17,12 +17,12 @@ _TOP_BUTTONS_NUMBER = 4
 
 
 class _TopButtonConfig(_TopAndBottomButtonConfig, ABC):
-    WIDTH = int(General.WINDOW_WIDTH / _TOP_BUTTONS_NUMBER)
-    HEIGHT = int(General.WINDOW_HEIGHT / 9)
+    WIDTH = int(game_config.WINDOW_WIDTH / _TOP_BUTTONS_NUMBER)
+    HEIGHT = int(game_config.WINDOW_HEIGHT / 9)
     POSITION = Position.TOPLEFT
 
 
-_TOP_BUTTONS_DESTINATIONS = [(x, 0) for x in range(0, General.WINDOW_WIDTH, _TopButtonConfig.WIDTH)]
+_TOP_BUTTONS_DESTINATIONS = [(x, 0) for x in range(0, game_config.WINDOW_WIDTH, _TopButtonConfig.WIDTH)]
 
 
 class TrophiesButtonConfig(_TopButtonConfig):
@@ -49,13 +49,13 @@ _BOTTOM_BUTTONS_NUMBER = 5
 
 
 class _BottomButtonConfig(_TopAndBottomButtonConfig, ABC):
-    WIDTH = int(General.WINDOW_WIDTH / _BOTTOM_BUTTONS_NUMBER)
-    HEIGHT = int(General.WINDOW_HEIGHT / 7)
+    WIDTH = int(game_config.WINDOW_WIDTH / _BOTTOM_BUTTONS_NUMBER)
+    HEIGHT = int(game_config.WINDOW_HEIGHT / 7)
     POSITION = Position.BOTTOMLEFT
 
 
-_BOTTOM_BUTTONS_DESTINATIONS = [(x, General.WINDOW_HEIGHT) for x in
-                                range(0, General.WINDOW_WIDTH, _BottomButtonConfig.WIDTH)]
+_BOTTOM_BUTTONS_DESTINATIONS = [(x, game_config.WINDOW_HEIGHT) for x in
+                                range(0, game_config.WINDOW_WIDTH, _BottomButtonConfig.WIDTH)]
 
 
 class HatcheryButtonConfig(_BottomButtonConfig):
