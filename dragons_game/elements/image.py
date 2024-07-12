@@ -16,6 +16,6 @@ class Image(pygame.sprite.Sprite):
 
     def _get_rect(self) -> pygame.Rect:
         if isinstance(self._image_config, ImageConfig):
-            return self.image.get_rect(**{self._image_config.POSITION.value: self._image_config.DESTINATION})
+            return self.image.get_rect(**{self._image_config.POSITION: self._image_config.DESTINATION})
 
         return self.image.get_rect()

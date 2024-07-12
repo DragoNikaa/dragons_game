@@ -1,10 +1,8 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from dragons_game.elements.abstract_configuration.position import Position
 
-
-@dataclass
+@dataclass(frozen=True)
 class ImageConfig(ABC):
     @property
     @abstractmethod
@@ -23,7 +21,7 @@ class ImageConfig(ABC):
 
     @property
     @abstractmethod
-    def POSITION(self) -> Position:
+    def POSITION(self) -> str:
         ...
 
     @property

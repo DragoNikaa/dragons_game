@@ -19,7 +19,7 @@ class Button(pygame.sprite.Sprite):
 
         self.image = pygame.image.load(button_config.IMAGE).convert_alpha()
         self.image = pygame.transform.scale(self.image, (button_config.WIDTH, button_config.HEIGHT))
-        self.rect = self.image.get_rect(**{button_config.POSITION.value: button_config.DESTINATION})
+        self.rect = self.image.get_rect(**{button_config.POSITION: button_config.DESTINATION})
 
         self._current_brightness = 0
         self._brightness_step = 5

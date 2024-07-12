@@ -6,7 +6,7 @@ from dragons_game.game_states.main_menu.manager import MainMenuManager
 from dragons_game.game_states.start_screen.manager import StartScreenManager
 
 
-class GameUpdate:
+class _GameUpdate:
     def __init__(self) -> None:
         self._running = True
         self._states = {GameState.START_SCREEN: StartScreenManager(), GameState.MAIN_MENU: MainMenuManager()}
@@ -38,4 +38,4 @@ class GameUpdate:
         return self._running
 
 
-game_update = GameUpdate()
+game_update = _GameUpdate()

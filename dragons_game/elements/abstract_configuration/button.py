@@ -4,10 +4,8 @@ from typing import Any
 
 import pygame
 
-from dragons_game.elements.abstract_configuration.position import Position
 
-
-@dataclass
+@dataclass(frozen=True)
 class ButtonConfig(ABC):
     @property
     @abstractmethod
@@ -26,7 +24,7 @@ class ButtonConfig(ABC):
 
     @property
     @abstractmethod
-    def POSITION(self) -> Position:
+    def POSITION(self) -> str:
         ...
 
     @property
@@ -45,7 +43,7 @@ class ButtonConfig(ABC):
         ...
 
 
-@dataclass
+@dataclass(frozen=True)
 class ButtonImageConfig(ABC):
     @property
     @abstractmethod
@@ -73,7 +71,7 @@ class ButtonImageConfig(ABC):
         ...
 
 
-@dataclass
+@dataclass(frozen=True)
 class ButtonTextConfig(ABC):
     @property
     @abstractmethod

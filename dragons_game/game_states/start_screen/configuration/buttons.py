@@ -3,7 +3,7 @@ from abc import ABC
 import pygame
 
 from dragons_game.elements.abstract_configuration.button import ButtonConfig, ButtonTextConfig
-from dragons_game.elements.abstract_configuration.position import Position
+from dragons_game.elements.abstract_configuration.position import position
 from dragons_game.elements.abstract_configuration.text import TextBorderConfig
 from dragons_game.user_event import user_event_dict_key, user_event_dict_value
 from dragons_game.game.configuration import game_config
@@ -14,7 +14,7 @@ class _ButtonConfig(ButtonConfig, ABC):
     WIDTH = int(game_config.WINDOW_WIDTH / 4)
     HEIGHT = int(game_config.WINDOW_HEIGHT / 4)
     IMAGE = 'dragons_game/graphics/buttons/start_screen.png'
-    POSITION = Position.CENTER
+    POSITION = position.CENTER
     HOVER_ACTION = None
 
 

@@ -1,7 +1,7 @@
 import pygame
 
 
-class GameConfig:
+class _GameConfig:
     def __init__(self) -> None:
         self._NAME = 'Dragons'
         # self._ICON = pygame.image.load('').convert_alpha()
@@ -35,4 +35,4 @@ class GameConfig:
         return self._screen.get_height()
 
 
-game_config = GameConfig()
+game_config = _GameConfig()

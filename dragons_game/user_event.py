@@ -23,5 +23,5 @@ class _UserEventDictValue:
 
 
 user_event = _UserEvent()
-user_event_dict_key = _UserEventDictKey
-user_event_dict_value = _UserEventDictValue
+user_event_dict_key = _UserEventDictKey()
+user_event_dict_value = _UserEventDictValue()

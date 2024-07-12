@@ -3,7 +3,7 @@ from abc import ABC
 import pygame.font
 
 from dragons_game.elements.abstract_configuration.button import ButtonConfig, ButtonImageConfig, ButtonTextConfig
-from dragons_game.elements.abstract_configuration.position import Position
+from dragons_game.elements.abstract_configuration.position import position
 from dragons_game.elements.abstract_configuration.text import TextBorderConfig
 from dragons_game.user_event import user_event_dict_key, user_event_dict_value
 from dragons_game.game.configuration import game_config
@@ -21,7 +21,7 @@ _TOP_BUTTONS_NUMBER = 4
 class _TopButtonConfig(_TopAndBottomButtonConfig, ABC):
     WIDTH = int(game_config.WINDOW_WIDTH / _TOP_BUTTONS_NUMBER)
     HEIGHT = int(game_config.WINDOW_HEIGHT / 9)
-    POSITION = Position.TOPLEFT
+    POSITION = position.TOPLEFT
 
 
 _TOP_BUTTONS_DESTINATIONS = [(x, 0) for x in range(0, game_config.WINDOW_WIDTH, _TopButtonConfig.WIDTH)]
@@ -57,7 +57,7 @@ _BOTTOM_BUTTONS_NUMBER = 5
 class _BottomButtonConfig(_TopAndBottomButtonConfig, ABC):
     WIDTH = int(game_config.WINDOW_WIDTH / _BOTTOM_BUTTONS_NUMBER)
     HEIGHT = int(game_config.WINDOW_HEIGHT / 7)
-    POSITION = Position.BOTTOMLEFT
+    POSITION = position.BOTTOMLEFT
 
 
 _BOTTOM_BUTTONS_DESTINATIONS = [(x, game_config.WINDOW_HEIGHT) for x in

@@ -21,7 +21,7 @@ class Text(pygame.sprite.Sprite):
 
     def _get_rect(self) -> pygame.Rect:
         if isinstance(self._text_config, TextConfig):
-            return self.image.get_rect(**{self._text_config.POSITION.value: self._text_config.DESTINATION})
+            return self.image.get_rect(**{self._text_config.POSITION: self._text_config.DESTINATION})
 
         return self.image.get_rect()
 

@@ -3,10 +3,8 @@ from dataclasses import dataclass
 
 import pygame
 
-from dragons_game.elements.abstract_configuration.position import Position
 
-
-@dataclass
+@dataclass(frozen=True)
 class TextConfig(ABC):
     @property
     @abstractmethod
@@ -25,7 +23,7 @@ class TextConfig(ABC):
 
     @property
     @abstractmethod
-    def POSITION(self) -> Position:
+    def POSITION(self) -> str:
         ...
 
     @property
@@ -34,7 +32,7 @@ class TextConfig(ABC):
         ...
 
 
-@dataclass
+@dataclass(frozen=True)
 class TextBorderConfig(ABC):
     @property
     @abstractmethod

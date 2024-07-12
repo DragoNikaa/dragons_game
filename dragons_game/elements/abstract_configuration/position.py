@@ -1,7 +1,8 @@
-from enum import Enum
+from dataclasses import dataclass
 
 
-class Position(Enum):
+@dataclass(frozen=True)
+class _Position:
     TOPLEFT = 'topleft'
     BOTTOMLEFT = 'bottomleft'
     TOPRIGHT = 'topright'
@@ -11,3 +12,6 @@ class Position(Enum):
     MIDBOTTOM = 'midbottom'
     MIDRIGHT = 'midright'
     CENTER = 'center'
+
+
+position = _Position()
