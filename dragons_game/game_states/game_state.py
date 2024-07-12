@@ -1,7 +1,8 @@
-from enum import Enum
+from enum import Enum, auto
 
 
 class GameState(Enum):
-    START_SCREEN = 1
-    MAIN_MENU = 2
+    START_SCREEN = auto()
+    MAIN_MENU = auto()
+    DRAGONS_MENU = auto()
     UNKNOWN = 42

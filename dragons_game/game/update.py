@@ -1,6 +1,7 @@
 import pygame
 
 from dragons_game.game.configuration import game_config
+from dragons_game.game_states.dragons_menu.manager import DragonsMenuManager
 from dragons_game.game_states.game_state import GameState
 from dragons_game.game_states.main_menu.manager import MainMenuManager
 from dragons_game.game_states.start_screen.manager import StartScreenManager
@@ -9,7 +10,8 @@ from dragons_game.game_states.start_screen.manager import StartScreenManager
 class _GameUpdate:
     def __init__(self) -> None:
         self._running = True
-        self._states = {GameState.START_SCREEN: StartScreenManager(), GameState.MAIN_MENU: MainMenuManager()}
+        self._states = {GameState.START_SCREEN: StartScreenManager(), GameState.MAIN_MENU: MainMenuManager(),
+                        GameState.DRAGONS_MENU: DragonsMenuManager()}
         self._current_state_manager = self._states[GameState.START_SCREEN]
 
         self._FRAME_RATE = game_config.FRAME_RATE
