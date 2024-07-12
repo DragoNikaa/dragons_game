@@ -22,6 +22,6 @@ class _UserEventDictValue:
     SHOW_TOOLTIP = 'show_tooltip'
 
 
-user_event = _UserEvent()
-user_event_dict_key = _UserEventDictKey()
-user_event_dict_value = _UserEventDictValue()
+USER_EVENT = _UserEvent()
+USER_EVENT_DICT_KEY = _UserEventDictKey()
+USER_EVENT_DICT_VALUE = _UserEventDictValue()

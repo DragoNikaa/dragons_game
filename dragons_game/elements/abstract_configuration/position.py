@@ -14,4 +14,4 @@ class _Position:
     CENTER = 'center'
 
 
-position = _Position()
+POSITION = _Position()
