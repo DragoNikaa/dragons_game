@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from typing import Any
 
-from pygame.font import Font
+import pygame
 
 from dragons_game.elements.abstract_configuration.position import Position
-from dragons_game.game_states.game_state import GameState
 
 
 @dataclass
@@ -36,7 +36,12 @@ class ButtonConfig(ABC):
 
     @property
     @abstractmethod
-    def AFTER_CLICK_STATE(self) -> GameState:
+    def CLICK_ACTION(self) -> dict[str, Any] | None:
+        ...
+
+    @property
+    @abstractmethod
+    def HOVER_ACTION(self) -> dict[str, Any] | None:
         ...
 
 
@@ -72,7 +77,7 @@ class ButtonImageConfig(ABC):
 class ButtonTextConfig(ABC):
     @property
     @abstractmethod
-    def FONT(self) -> Font:
+    def FONT(self) -> pygame.font.Font:
         ...
 
     @property

@@ -1,16 +1,16 @@
 import pygame
 
-from dragons_game.event import BUTTON_CLICK
 from dragons_game.game.configuration import game_config
 from dragons_game.game_states.game_state import GameState
-from dragons_game.game_states.main_menu.elements import main_menu_elements
-from dragons_game.game_states.start_screen.elements import start_screen_elements
+from dragons_game.game_states.main_menu.manager import MainMenuManager
+from dragons_game.game_states.start_screen.manager import StartScreenManager
 
 
 class GameUpdate:
     def __init__(self) -> None:
         self._running = True
-        self._current_state = GameState.START_SCREEN
+        self._states = {GameState.START_SCREEN: StartScreenManager(), GameState.MAIN_MENU: MainMenuManager()}
+        self._current_state_manager = self._states[GameState.START_SCREEN]
 
         self._FRAME_RATE = game_config.FRAME_RATE
         self._screen = game_config._screen
@@ -23,15 +23,12 @@ class GameUpdate:
                 pygame.quit()
                 return
 
-            elif self._current_state is GameState.START_SCREEN:
-                start_screen_elements.update()
-                start_screen_elements.draw(self._screen)
-                if event.type == BUTTON_CLICK:
-                    self._current_state = GameState.MAIN_MENU
+            new_state = self._current_state_manager.handle_event(event)
+            if new_state:
+                self._current_state_manager = self._states[new_state]
 
-            elif self._current_state is GameState.MAIN_MENU:
-                main_menu_elements.update()
-                main_menu_elements.draw(self._screen)
+        self._current_state_manager.update()
+        self._current_state_manager.draw(self._screen)
 
         pygame.display.update()
         self._clock.tick(self._FRAME_RATE)

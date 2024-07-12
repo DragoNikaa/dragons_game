@@ -5,6 +5,7 @@ import pygame
 from dragons_game.elements.abstract_configuration.button import ButtonConfig, ButtonTextConfig
 from dragons_game.elements.abstract_configuration.position import Position
 from dragons_game.elements.abstract_configuration.text import TextBorderConfig
+from dragons_game.user_event import user_event_dict_key, user_event_dict_value
 from dragons_game.game.configuration import game_config
 from dragons_game.game_states.game_state import GameState
 
@@ -14,11 +15,13 @@ class _ButtonConfig(ButtonConfig, ABC):
     HEIGHT = int(game_config.WINDOW_HEIGHT / 4)
     IMAGE = 'dragons_game/graphics/buttons/start_screen.png'
     POSITION = Position.CENTER
+    HOVER_ACTION = None
 
 
 class StartButtonConfig(_ButtonConfig):
     DESTINATION = (int(game_config.WINDOW_WIDTH / 2), int(game_config.WINDOW_HEIGHT / 1.5))
-    AFTER_CLICK_STATE = GameState.MAIN_MENU
+    CLICK_ACTION = {user_event_dict_key.ACTION: user_event_dict_value.CHANGE_STATE,
+                    user_event_dict_key.NEXT_STATE: GameState.MAIN_MENU}
 
 
 class _ButtonTextConfig(ButtonTextConfig, ABC):

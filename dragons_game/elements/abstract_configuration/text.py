@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from pygame.font import Font
+import pygame
 
 from dragons_game.elements.abstract_configuration.position import Position
 
@@ -10,7 +10,7 @@ from dragons_game.elements.abstract_configuration.position import Position
 class TextConfig(ABC):
     @property
     @abstractmethod
-    def FONT(self) -> Font:
+    def FONT(self) -> pygame.font.Font:
         ...
 
     @property
