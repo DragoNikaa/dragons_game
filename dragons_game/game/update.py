@@ -10,9 +10,10 @@ from dragons_game.game_states.start_screen.manager import StartScreenManager
 class _GameUpdate:
     def __init__(self) -> None:
         self._running = True
-        self._states = {GameState.START_SCREEN: StartScreenManager(), GameState.MAIN_MENU: MainMenuManager(),
-                        GameState.DRAGONS_MENU: DragonsMenuManager()}
-        self._current_state_manager = self._states[GameState.START_SCREEN]
+        self._state_to_manager = {GameState.START_SCREEN: StartScreenManager(), GameState.MAIN_MENU: MainMenuManager(),
+                                  GameState.DRAGONS_MENU: DragonsMenuManager()}
+        self._current_state_manager = self._state_to_manager[GameState.START_SCREEN]
+        self._current_event_type = 0
 
         self._FRAME_RATE = game_config.FRAME_RATE
         self._screen = game_config._screen
@@ -20,6 +21,7 @@ class _GameUpdate:
 
     def update(self) -> None:
         for event in pygame.event.get():
+            self._current_event_type = event.type
             if event.type == pygame.QUIT:
                 self._running = False
                 pygame.quit()
@@ -27,7 +29,7 @@ class _GameUpdate:
 
             new_state = self._current_state_manager.handle_event(event)
             if new_state:
-                self._current_state_manager = self._states[new_state]
+                self._current_state_manager = self._state_to_manager[new_state]
 
         self._current_state_manager.update()
         self._current_state_manager.draw(self._screen)
@@ -38,6 +40,10 @@ class _GameUpdate:
     @property
     def running(self) -> bool:
         return self._running
+
+    @property
+    def current_event_type(self) -> int:
+        return self._current_event_type
 
 
 game_update = _GameUpdate()
