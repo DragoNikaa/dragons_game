@@ -73,7 +73,7 @@ class HatcheryButtonConfig(_BottomButtonConfig):
 class DragonsButtonConfig(_BottomButtonConfig):
     DESTINATION = _BOTTOM_BUTTONS_DESTINATIONS[1]
     CLICK_ACTION = {USER_EVENT_DICT_KEY.ACTION: USER_EVENT_DICT_VALUE.CHANGE_STATE,
-                    USER_EVENT_DICT_KEY.NEXT_STATE: GameState.UNKNOWN}
+                    USER_EVENT_DICT_KEY.NEXT_STATE: GameState.DRAGONS_MENU}
 
 
 class IslandsButtonConfig(_BottomButtonConfig):
