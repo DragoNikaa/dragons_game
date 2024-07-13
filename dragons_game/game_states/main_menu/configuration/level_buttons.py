@@ -2,7 +2,7 @@ from abc import ABC
 
 from dragons_game.elements.abstract_configuration.button import ButtonConfig
 from dragons_game.elements.abstract_configuration.position import Position
-from dragons_game.game_states.game_state import GameState
+from dragons_game.game_states.general.game_state import GameState
 from dragons_game.game_states.main_menu.configuration.background import BackgroundConfig
 from dragons_game.game_states.main_menu.configuration.top_and_bottom_buttons import _TopButtonConfig
 from dragons_game.user_event import UserEventDictKey, UserEventDictValue

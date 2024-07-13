@@ -6,7 +6,7 @@ from dragons_game.elements.abstract_configuration.button import ButtonConfig, Bu
 from dragons_game.elements.abstract_configuration.position import Position
 from dragons_game.elements.abstract_configuration.text import TextBorderConfig
 from dragons_game.game.configuration import game_config
-from dragons_game.game_states.game_state import GameState
+from dragons_game.game_states.general.game_state import GameState
 from dragons_game.user_event import UserEventDictKey, UserEventDictValue
 
 
