@@ -2,8 +2,8 @@ from typing import Any
 
 import pygame
 
-from dragons_game.game_states.abstract_manager import GameStateManager
-from dragons_game.game_states.game_state import GameState
+from dragons_game.game_states.general.abstract_manager import GameStateManager
+from dragons_game.game_states.general.game_state import GameState
 from dragons_game.game_states.main_menu.elements import main_menu_elements
 from dragons_game.user_event import UserEvent, UserEventDictKey, UserEventDictValue
 

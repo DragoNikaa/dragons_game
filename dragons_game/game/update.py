@@ -2,7 +2,7 @@ import pygame
 
 from dragons_game.game.configuration import game_config
 from dragons_game.game_states.dragons_menu.manager import DragonsMenuManager
-from dragons_game.game_states.game_state import GameState
+from dragons_game.game_states.general.game_state import GameState
 from dragons_game.game_states.main_menu.manager import MainMenuManager
 from dragons_game.game_states.start_screen.manager import StartScreenManager
 
