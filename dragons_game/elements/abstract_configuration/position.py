@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class _Position:
+class Position:
     TOPLEFT = 'topleft'
     BOTTOMLEFT = 'bottomleft'
     TOPRIGHT = 'topright'
@@ -12,6 +12,3 @@ class _Position:
     MIDBOTTOM = 'midbottom'
     MIDRIGHT = 'midright'
     CENTER = 'center'
-
-
-POSITION = _Position()

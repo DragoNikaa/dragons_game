@@ -3,11 +3,11 @@ from abc import ABC
 import pygame.font
 
 from dragons_game.elements.abstract_configuration.button import ButtonConfig, ButtonImageConfig, ButtonTextConfig
-from dragons_game.elements.abstract_configuration.position import POSITION
+from dragons_game.elements.abstract_configuration.position import Position
 from dragons_game.elements.abstract_configuration.text import TextBorderConfig
-from dragons_game.user_event import USER_EVENT_DICT_KEY, USER_EVENT_DICT_VALUE
 from dragons_game.game.configuration import game_config
 from dragons_game.game_states.game_state import GameState
+from dragons_game.user_event import UserEventDictKey, UserEventDictValue
 
 
 class _TopAndBottomButtonConfig(ButtonConfig, ABC):
@@ -21,7 +21,7 @@ _TOP_BUTTONS_NUMBER = 4
 class _TopButtonConfig(_TopAndBottomButtonConfig, ABC):
     WIDTH = int(game_config.WINDOW_WIDTH / _TOP_BUTTONS_NUMBER)
     HEIGHT = int(game_config.WINDOW_HEIGHT / 9)
-    POSITION = POSITION.TOPLEFT
+    POSITION = Position.TOPLEFT
 
 
 _TOP_BUTTONS_DESTINATIONS = [(x, 0) for x in range(0, game_config.WINDOW_WIDTH, _TopButtonConfig.WIDTH)]
@@ -29,26 +29,26 @@ _TOP_BUTTONS_DESTINATIONS = [(x, 0) for x in range(0, game_config.WINDOW_WIDTH, 
 
 class TrophiesButtonConfig(_TopButtonConfig):
     DESTINATION = _TOP_BUTTONS_DESTINATIONS[0]
-    CLICK_ACTION = {USER_EVENT_DICT_KEY.ACTION: USER_EVENT_DICT_VALUE.CHANGE_STATE,
-                    USER_EVENT_DICT_KEY.NEXT_STATE: GameState.UNKNOWN}
+    CLICK_ACTION = {UserEventDictKey.ACTION: UserEventDictValue.CHANGE_STATE,
+                    UserEventDictKey.NEXT_STATE: GameState.UNKNOWN}
 
 
 class EggsButtonConfig(_TopButtonConfig):
     DESTINATION = _TOP_BUTTONS_DESTINATIONS[1]
-    CLICK_ACTION = {USER_EVENT_DICT_KEY.ACTION: USER_EVENT_DICT_VALUE.CHANGE_STATE,
-                    USER_EVENT_DICT_KEY.NEXT_STATE: GameState.UNKNOWN}
+    CLICK_ACTION = {UserEventDictKey.ACTION: UserEventDictValue.CHANGE_STATE,
+                    UserEventDictKey.NEXT_STATE: GameState.UNKNOWN}
 
 
 class FishButtonConfig(_TopButtonConfig):
     DESTINATION = _TOP_BUTTONS_DESTINATIONS[2]
-    CLICK_ACTION = {USER_EVENT_DICT_KEY.ACTION: USER_EVENT_DICT_VALUE.CHANGE_STATE,
-                    USER_EVENT_DICT_KEY.NEXT_STATE: GameState.UNKNOWN}
+    CLICK_ACTION = {UserEventDictKey.ACTION: UserEventDictValue.CHANGE_STATE,
+                    UserEventDictKey.NEXT_STATE: GameState.UNKNOWN}
 
 
 class CoinsButtonConfig(_TopButtonConfig):
     DESTINATION = _TOP_BUTTONS_DESTINATIONS[3]
-    CLICK_ACTION = {USER_EVENT_DICT_KEY.ACTION: USER_EVENT_DICT_VALUE.CHANGE_STATE,
-                    USER_EVENT_DICT_KEY.NEXT_STATE: GameState.UNKNOWN}
+    CLICK_ACTION = {UserEventDictKey.ACTION: UserEventDictValue.CHANGE_STATE,
+                    UserEventDictKey.NEXT_STATE: GameState.UNKNOWN}
 
 
 _BOTTOM_BUTTONS_NUMBER = 5
@@ -57,7 +57,7 @@ _BOTTOM_BUTTONS_NUMBER = 5
 class _BottomButtonConfig(_TopAndBottomButtonConfig, ABC):
     WIDTH = int(game_config.WINDOW_WIDTH / _BOTTOM_BUTTONS_NUMBER)
     HEIGHT = int(game_config.WINDOW_HEIGHT / 7)
-    POSITION = POSITION.BOTTOMLEFT
+    POSITION = Position.BOTTOMLEFT
 
 
 _BOTTOM_BUTTONS_DESTINATIONS = [(x, game_config.WINDOW_HEIGHT) for x in
@@ -66,32 +66,32 @@ _BOTTOM_BUTTONS_DESTINATIONS = [(x, game_config.WINDOW_HEIGHT) for x in
 
 class HatcheryButtonConfig(_BottomButtonConfig):
     DESTINATION = _BOTTOM_BUTTONS_DESTINATIONS[0]
-    CLICK_ACTION = {USER_EVENT_DICT_KEY.ACTION: USER_EVENT_DICT_VALUE.CHANGE_STATE,
-                    USER_EVENT_DICT_KEY.NEXT_STATE: GameState.UNKNOWN}
+    CLICK_ACTION = {UserEventDictKey.ACTION: UserEventDictValue.CHANGE_STATE,
+                    UserEventDictKey.NEXT_STATE: GameState.UNKNOWN}
 
 
 class DragonsButtonConfig(_BottomButtonConfig):
     DESTINATION = _BOTTOM_BUTTONS_DESTINATIONS[1]
-    CLICK_ACTION = {USER_EVENT_DICT_KEY.ACTION: USER_EVENT_DICT_VALUE.CHANGE_STATE,
-                    USER_EVENT_DICT_KEY.NEXT_STATE: GameState.DRAGONS_MENU}
+    CLICK_ACTION = {UserEventDictKey.ACTION: UserEventDictValue.CHANGE_STATE,
+                    UserEventDictKey.NEXT_STATE: GameState.DRAGONS_MENU}
 
 
 class IslandsButtonConfig(_BottomButtonConfig):
     DESTINATION = _BOTTOM_BUTTONS_DESTINATIONS[2]
-    CLICK_ACTION = {USER_EVENT_DICT_KEY.ACTION: USER_EVENT_DICT_VALUE.CHANGE_STATE,
-                    USER_EVENT_DICT_KEY.NEXT_STATE: GameState.UNKNOWN}
+    CLICK_ACTION = {UserEventDictKey.ACTION: UserEventDictValue.CHANGE_STATE,
+                    UserEventDictKey.NEXT_STATE: GameState.UNKNOWN}
 
 
 class MarketButtonConfig(_BottomButtonConfig):
     DESTINATION = _BOTTOM_BUTTONS_DESTINATIONS[3]
-    CLICK_ACTION = {USER_EVENT_DICT_KEY.ACTION: USER_EVENT_DICT_VALUE.CHANGE_STATE,
-                    USER_EVENT_DICT_KEY.NEXT_STATE: GameState.UNKNOWN}
+    CLICK_ACTION = {UserEventDictKey.ACTION: UserEventDictValue.CHANGE_STATE,
+                    UserEventDictKey.NEXT_STATE: GameState.UNKNOWN}
 
 
 class SettingsButtonConfig(_BottomButtonConfig):
     DESTINATION = _BOTTOM_BUTTONS_DESTINATIONS[4]
-    CLICK_ACTION = {USER_EVENT_DICT_KEY.ACTION: USER_EVENT_DICT_VALUE.CHANGE_STATE,
-                    USER_EVENT_DICT_KEY.NEXT_STATE: GameState.UNKNOWN}
+    CLICK_ACTION = {UserEventDictKey.ACTION: UserEventDictValue.CHANGE_STATE,
+                    UserEventDictKey.NEXT_STATE: GameState.UNKNOWN}
 
 
 class _TopAndBottomImageConfig(ButtonImageConfig, ABC):
