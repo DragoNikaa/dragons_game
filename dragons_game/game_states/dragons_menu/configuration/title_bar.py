@@ -3,7 +3,7 @@ from dragons_game.game_states.main_menu.configuration.top_and_bottom_buttons imp
 
 
 class TitleBarImageConfig(GeneralTitleBarImageConfig):
-    IMAGE = 'dragons_game/graphics/backgrounds/main_menu/1.png'
+    IMAGE = 'dragons_game/graphics/icons/dragons.png'
 
 
 class TitleBarTextConfig(GeneralTitleBarTextConfig):
