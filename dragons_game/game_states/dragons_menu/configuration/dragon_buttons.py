@@ -1,4 +1,6 @@
+import pathlib
 from abc import ABC
+import random
 
 from dragons_game.elements.abstract_configuration.button import ButtonConfig
 from dragons_game.elements.abstract_configuration.position import Position
@@ -11,7 +13,12 @@ _SPACE_BETWEEN_ELEMENTS = TitleBarConfig.HEIGHT
 class _DragonButtonConfig(ButtonConfig, ABC):
     WIDTH = int((RightBackgroundConfig.WIDTH - _SPACE_BETWEEN_ELEMENTS) / 5 - _SPACE_BETWEEN_ELEMENTS)
     HEIGHT = int((RightBackgroundConfig.HEIGHT - 2 * _SPACE_BETWEEN_ELEMENTS) / 2 - _SPACE_BETWEEN_ELEMENTS)
-    IMAGE = 'dragons_game/graphics/backgrounds/main_menu/1.png'
+
+    @property
+    def IMAGE(self) -> str:
+        return str(random.choice([file for file in pathlib.Path('dragons_game/graphics/buttons/dragons').iterdir() if
+                                  file.name != '__init__.py']))
+
     POSITION = Position.TOPLEFT
     HOVER_ACTION = None
     CLICK_ACTION = None

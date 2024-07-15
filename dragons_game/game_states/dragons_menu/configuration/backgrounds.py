@@ -7,7 +7,7 @@ from dragons_game.game_states.general.configuration.title_bar import TitleBarCon
 class LeftBackgroundConfig(ImageConfig):
     WIDTH = int(game_config.WINDOW_WIDTH / 7)
     HEIGHT = game_config.WINDOW_HEIGHT - TitleBarConfig.HEIGHT
-    IMAGE = 'dragons_game/graphics/backgrounds/main_menu/1.png'
+    IMAGE = 'dragons_game/graphics/backgrounds/dragons_menu/left.png'
     POSITION = Position.TOPLEFT
     DESTINATION = (0, TitleBarConfig.HEIGHT)
 
@@ -15,6 +15,6 @@ class LeftBackgroundConfig(ImageConfig):
 class RightBackgroundConfig(ImageConfig):
     WIDTH = game_config.WINDOW_WIDTH - LeftBackgroundConfig.WIDTH
     HEIGHT = LeftBackgroundConfig.HEIGHT
-    IMAGE = 'dragons_game/graphics/backgrounds/main_menu/1.png'
+    IMAGE = 'dragons_game/graphics/backgrounds/dragons_menu/right.png'
     POSITION = Position.TOPLEFT
     DESTINATION = (LeftBackgroundConfig.WIDTH, TitleBarConfig.HEIGHT)

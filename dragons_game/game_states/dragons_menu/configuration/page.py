@@ -11,7 +11,6 @@ from dragons_game.game_states.general.configuration.title_bar import TitleBarCon
 
 class _PageButtonConfig(ButtonConfig, ABC):
     WIDTH = HEIGHT = TitleBarConfig.HEIGHT
-    IMAGE = 'dragons_game/graphics/backgrounds/main_menu/1.png'
     HOVER_ACTION = None
     CLICK_ACTION = None
 
@@ -31,10 +30,12 @@ class PageNumberBorderConfig(TextBorderConfig):
 
 
 class LeftPageButtonConfig(_PageButtonConfig):
+    IMAGE = 'dragons_game/graphics/buttons/left_page.png'
     POSITION = Position.MIDRIGHT
     DESTINATION = (PageNumberConfig.DESTINATION[0] - TitleBarConfig.HEIGHT, PageNumberConfig.DESTINATION[1])
 
 
 class RightPageButtonConfig(_PageButtonConfig):
+    IMAGE = 'dragons_game/graphics/buttons/right_page.png'
     POSITION = Position.MIDLEFT
     DESTINATION = (PageNumberConfig.DESTINATION[0] + TitleBarConfig.HEIGHT, PageNumberConfig.DESTINATION[1])

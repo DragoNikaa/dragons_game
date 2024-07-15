@@ -142,11 +142,11 @@ class IslandsButtonImageConfig(_BottomButtonImageConfig):
 
 
 class MarketButtonImageConfig(_BottomButtonImageConfig):
-    IMAGE = 'dragons_game/graphics/icons/coins.png'
+    IMAGE = 'dragons_game/graphics/icons/market.png'
 
 
 class SettingsButtonImageConfig(_BottomButtonImageConfig):
-    IMAGE = 'dragons_game/graphics/icons/coins.png'
+    IMAGE = 'dragons_game/graphics/icons/settings.png'
 
 
 class _TopAndBottomButtonTextConfig(ButtonTextConfig, ABC):

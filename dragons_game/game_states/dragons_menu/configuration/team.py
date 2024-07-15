@@ -28,7 +28,7 @@ class TeamTextBorderConfig(TextBorderConfig):
 class _TeamDragonButtonConfig(ButtonConfig, ABC):
     HEIGHT = int((LeftBackgroundConfig.HEIGHT - TeamTextConfig.FONT.get_height() - 5 * _SPACE_BETWEEN_ELEMENTS) / 3)
     WIDTH = int(HEIGHT * _DragonButtonConfig.WIDTH / _DragonButtonConfig.HEIGHT)
-    IMAGE = 'dragons_game/graphics/backgrounds/main_menu/1.png'
+    IMAGE = 'dragons_game/graphics/buttons/dragons/mythical.png'
     POSITION = Position.MIDTOP
     HOVER_ACTION = None
     CLICK_ACTION = None
