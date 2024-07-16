@@ -9,14 +9,10 @@ from dragons_game.user_event import UserEvent
 
 
 class Button(pygame.sprite.Sprite):
-    def __init__(self, button_config: ButtonConfig, image_config: ButtonImageConfig | None = None,
-                 text_config: ButtonTextConfig | None = None, text_border_config: TextBorderConfig | None = None):
+    def __init__(self, button_config: ButtonConfig):
         super().__init__()
 
         self._button_config = button_config
-        self._image_config = image_config
-        self._text_config = text_config
-        self._text_border_config = text_border_config
 
         self.image = pygame.image.load(button_config.IMAGE).convert_alpha()
         self.image = pygame.transform.scale(self.image, (button_config.WIDTH, button_config.HEIGHT))
@@ -26,38 +22,28 @@ class Button(pygame.sprite.Sprite):
         self._brightness_step = 5
         self._max_brightness = 25
 
-        if image_config:
-            self._image = Image(image_config)
-            self._add_image()
-
-        if text_config:
-            self._image_without_text = self.image.copy()
-            self._text = Text(text_config, text_border_config=text_border_config)
-            self._add_text()
-
         self._image_without_brightness = self.image.copy()
 
-    def _add_image(self) -> None:
-        if not self._image_config:
+    def add_image(self, image_config: ButtonImageConfig) -> Image:
+        image_config.DESTINATION = (
+            self.rect.centerx + image_config.OFFSET_FROM_CENTER[0],
+            self.rect.centery + image_config.OFFSET_FROM_CENTER[1])
+        return Image(image_config)
+
+    def add_text(self, text_config: ButtonTextConfig, text_border_config: TextBorderConfig | None = None) -> Text:
+        text_config.DESTINATION = (
+            self.rect.centerx + text_config.OFFSET_FROM_CENTER[0],
+            self.rect.centery + text_config.OFFSET_FROM_CENTER[1])
+        return Text(text_config, text_border_config)
+
+    def _handle_click(self) -> None:
+        if self._button_config.CLICK_ACTION is None:
             return
 
-        self._image.rect.center = (self._button_config.WIDTH // 2 + self._image_config.X_OFFSET,
-                                   self._button_config.HEIGHT // 2 + self._image_config.Y_OFFSET)
-        self.image.blit(self._image.image, self._image.rect)
+        game = dragons_game.game.update.game_update
 
-    def _add_text(self) -> None:
-        if not self._text_config:
-            return
-
-        self._text.rect.center = (self._button_config.WIDTH // 2 + self._text_config.X_OFFSET,
-                                  self._button_config.HEIGHT // 2 + self._text_config.Y_OFFSET)
-        self.image.blit(self._text.image, self._text.rect)
-
-    def change_text(self, new_text: str) -> None:
-        self.image = self._image_without_text.copy()
-        self._text.change_text(new_text)
-        self._add_text()
-        self._image_without_brightness = self.image.copy()
+        if game.current_event_type == pygame.MOUSEBUTTONUP and self.rect.collidepoint(pygame.mouse.get_pos()):
+            pygame.event.post(pygame.event.Event(UserEvent.BUTTON_CLICK, self._button_config.CLICK_ACTION))
 
     def _handle_hover(self) -> None:
         if self.rect.collidepoint(pygame.mouse.get_pos()):
@@ -72,13 +58,6 @@ class Button(pygame.sprite.Sprite):
                             special_flags=pygame.BLEND_RGB_ADD)
             self.image = image_copy
 
-    def _handle_click(self) -> None:
-        if self._button_config.CLICK_ACTION is None:
-            return
-        game = dragons_game.game.update.game_update
-        if game.current_event_type == pygame.MOUSEBUTTONUP and self.rect.collidepoint(pygame.mouse.get_pos()):
-            pygame.event.post(pygame.event.Event(UserEvent.BUTTON_CLICK, self._button_config.CLICK_ACTION))
-
     def update(self) -> None:
-        self._handle_hover()
         self._handle_click()
+        self._handle_hover()

@@ -18,22 +18,24 @@ from dragons_game.game_states.general.configuration.title_bar import TitleBarCon
 
 _title_bar = Image(TitleBarConfig())
 _title_bar_image = Image(TitleBarImageConfig())
-_title_bar_text = Text(TitleBarTextConfig(), text_border_config=TitleBarTextBorderConfig())
+_title_bar_text = Text(TitleBarTextConfig(), TitleBarTextBorderConfig())
 _title_bar_button = Button(TitleBarButtonConfig())
 
 _left_background = Image(LeftBackgroundConfig())
 _right_background = Image(RightBackgroundConfig())
 
-_team_text = Text(TeamTextConfig(), text_border_config=TeamTextBorderConfig())
+_team_text = Text(TeamTextConfig(), TeamTextBorderConfig())
 _team_dragon_buttons = (
     Button(TeamDragon1ButtonConfig()), Button(TeamDragon2ButtonConfig()), Button(TeamDragon3ButtonConfig()))
 
-_row_1_dragon_buttons = (Button(Row1Dragon1ButtonConfig()), Button(Row1Dragon2ButtonConfig()), Button(
-    Row1Dragon3ButtonConfig()), Button(Row1Dragon4ButtonConfig()), Button(Row1Dragon5ButtonConfig()))
-_row_2_dragon_buttons = (Button(Row2Dragon1ButtonConfig()), Button(Row2Dragon2ButtonConfig()), Button(
-    Row2Dragon3ButtonConfig()), Button(Row2Dragon4ButtonConfig()), Button(Row2Dragon5ButtonConfig()))
+_row_1_dragon_buttons = (
+    Button(Row1Dragon1ButtonConfig()), Button(Row1Dragon2ButtonConfig()), Button(Row1Dragon3ButtonConfig()),
+    Button(Row1Dragon4ButtonConfig()), Button(Row1Dragon5ButtonConfig()))
+_row_2_dragon_buttons = (
+    Button(Row2Dragon1ButtonConfig()), Button(Row2Dragon2ButtonConfig()), Button(Row2Dragon3ButtonConfig()),
+    Button(Row2Dragon4ButtonConfig()), Button(Row2Dragon5ButtonConfig()))
 
-_page_number = Text(PageNumberConfig(), text_border_config=PageNumberBorderConfig())
+_page_number = Text(PageNumberConfig(), PageNumberBorderConfig())
 _page_buttons = (Button(LeftPageButtonConfig()), Button(RightPageButtonConfig()))
 
 dragons_menu_elements = pygame.sprite.Group(_title_bar, _title_bar_image, _title_bar_text, _title_bar_button,

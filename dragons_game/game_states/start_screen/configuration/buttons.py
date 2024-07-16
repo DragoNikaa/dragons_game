@@ -27,8 +27,7 @@ class StartButtonConfig(_ButtonConfig):
 class _ButtonTextConfig(ButtonTextConfig, ABC):
     FONT = pygame.font.Font('dragons_game/fonts/rurik.ttf', size=int(_ButtonConfig.HEIGHT / 2.5))
     COLOR = 'white'
-    X_OFFSET = 0
-    Y_OFFSET = int(_ButtonConfig.HEIGHT / 6)
+    OFFSET_FROM_CENTER = (0, int(_ButtonConfig.HEIGHT / 6))
 
 
 class StartButtonTextConfig(_ButtonTextConfig):

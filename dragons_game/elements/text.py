@@ -20,13 +20,10 @@ class Text(pygame.sprite.Sprite):
             self._add_text_border()
 
     def _get_rect(self) -> pygame.Rect:
-        if isinstance(self._text_config, TextConfig):
-            return self.image.get_rect(**{self._text_config.POSITION: self._text_config.DESTINATION})
-
-        return self.image.get_rect()
+        return self.image.get_rect(**{self._text_config.POSITION: self._text_config.DESTINATION})
 
     def _add_text_border(self) -> None:
-        if not self._text_border_config:
+        if self._text_border_config is None:
             return
 
         added_size = 4 * self._text_border_config.THICKNESS
