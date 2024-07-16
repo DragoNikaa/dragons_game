@@ -16,11 +16,8 @@ class _TopAndBottomButtonConfig(ButtonConfig, ABC):
     HOVER_ACTION = None
 
 
-_TOP_BUTTONS_NUMBER = 4
-
-
 class _TopButtonConfig(_TopAndBottomButtonConfig, ABC):
-    WIDTH = int(game_config.WINDOW_WIDTH / _TOP_BUTTONS_NUMBER)
+    WIDTH = int(game_config.WINDOW_WIDTH / 4)
     HEIGHT = int(game_config.WINDOW_HEIGHT / 9)
     POSITION = Position.TOPLEFT
 
@@ -52,11 +49,8 @@ class CoinsButtonConfig(_TopButtonConfig):
                     UserEventDictKey.NEXT_STATE: GameState.UNKNOWN}
 
 
-_BOTTOM_BUTTONS_NUMBER = 5
-
-
 class _BottomButtonConfig(_TopAndBottomButtonConfig, ABC):
-    WIDTH = int(game_config.WINDOW_WIDTH / _BOTTOM_BUTTONS_NUMBER)
+    WIDTH = int(game_config.WINDOW_WIDTH / 5)
     HEIGHT = int(game_config.WINDOW_HEIGHT / 7)
     POSITION = Position.BOTTOMLEFT
 
@@ -100,12 +94,10 @@ class _TopAndBottomImageConfig(ButtonImageConfig, ABC):
     def WIDTH(self) -> int:
         return calculate_proportional_dimension(self.IMAGE, self.HEIGHT)
 
-    Y_OFFSET = 0
-
 
 class _TopButtonImageConfig(_TopAndBottomImageConfig, ABC):
     HEIGHT = int(_TopButtonConfig.HEIGHT / 1.85)
-    X_OFFSET = -int(_TopButtonConfig.WIDTH / 3)
+    OFFSET_FROM_CENTER = (-int(_TopButtonConfig.WIDTH / 3), 0)
 
 
 class TrophiesButtonImageConfig(_TopButtonImageConfig):
@@ -126,7 +118,7 @@ class CoinsButtonImageConfig(_TopButtonImageConfig):
 
 class _BottomButtonImageConfig(_TopAndBottomImageConfig, ABC):
     HEIGHT = int(_BottomButtonConfig.HEIGHT / 1.85)
-    X_OFFSET = -int(_BottomButtonConfig.WIDTH / 3.15)
+    OFFSET_FROM_CENTER = (-int(_BottomButtonConfig.WIDTH / 3.15), 0)
 
 
 class HatcheryButtonImageConfig(_BottomButtonImageConfig):
@@ -151,12 +143,11 @@ class SettingsButtonImageConfig(_BottomButtonImageConfig):
 
 class _TopAndBottomButtonTextConfig(ButtonTextConfig, ABC):
     COLOR = 'white'
-    Y_OFFSET = 0
 
 
 class _TopButtonTextConfig(_TopAndBottomButtonTextConfig, ABC):
     FONT = pygame.font.Font('dragons_game/fonts/pr_viking.ttf', size=int(_TopButtonConfig.HEIGHT / 2))
-    X_OFFSET = int(_TopButtonConfig.WIDTH / 10)
+    OFFSET_FROM_CENTER = (int(_TopButtonConfig.WIDTH / 10), 0)
 
 
 class TrophiesButtonTextConfig(_TopButtonTextConfig):
@@ -177,7 +168,7 @@ class CoinsButtonTextConfig(_TopButtonTextConfig):
 
 class _BottomButtonTextConfig(_TopAndBottomButtonTextConfig, ABC):
     FONT = pygame.font.Font('dragons_game/fonts/pr_viking.ttf', size=int(_BottomButtonConfig.HEIGHT / 2.8))
-    X_OFFSET = int(_BottomButtonConfig.WIDTH / 7.7)
+    OFFSET_FROM_CENTER = (int(_BottomButtonConfig.WIDTH / 7.7), 0)
 
 
 class HatcheryButtonTextConfig(_BottomButtonTextConfig):

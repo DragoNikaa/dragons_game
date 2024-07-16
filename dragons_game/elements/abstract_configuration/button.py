@@ -4,6 +4,8 @@ from typing import Any
 
 import pygame
 
+from dragons_game.elements.abstract_configuration.position import Position
+
 
 @dataclass(frozen=True)
 class ButtonConfig(ABC):
@@ -43,8 +45,11 @@ class ButtonConfig(ABC):
         ...
 
 
-@dataclass(frozen=True)
+@dataclass
 class ButtonImageConfig(ABC):
+    POSITION: str = Position.CENTER
+    DESTINATION: tuple[int, int] = (0, 0)
+
     @property
     @abstractmethod
     def WIDTH(self) -> int:
@@ -62,17 +67,15 @@ class ButtonImageConfig(ABC):
 
     @property
     @abstractmethod
-    def X_OFFSET(self) -> int:
-        ...
-
-    @property
-    @abstractmethod
-    def Y_OFFSET(self) -> int:
+    def OFFSET_FROM_CENTER(self) -> tuple[int, int]:
         ...
 
 
-@dataclass(frozen=True)
+@dataclass
 class ButtonTextConfig(ABC):
+    POSITION: str = Position.CENTER
+    DESTINATION: tuple[int, int] = (0, 0)
+
     @property
     @abstractmethod
     def FONT(self) -> pygame.font.Font:
@@ -90,10 +93,5 @@ class ButtonTextConfig(ABC):
 
     @property
     @abstractmethod
-    def X_OFFSET(self) -> int:
-        ...
-
-    @property
-    @abstractmethod
-    def Y_OFFSET(self) -> int:
+    def OFFSET_FROM_CENTER(self) -> tuple[int, int]:
         ...

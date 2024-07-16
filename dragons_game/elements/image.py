@@ -12,10 +12,4 @@ class Image(pygame.sprite.Sprite):
 
         self.image = pygame.image.load(image_config.IMAGE).convert_alpha()
         self.image = pygame.transform.scale(self.image, (image_config.WIDTH, image_config.HEIGHT))
-        self.rect = self._get_rect()
-
-    def _get_rect(self) -> pygame.Rect:
-        if isinstance(self._image_config, ImageConfig):
-            return self.image.get_rect(**{self._image_config.POSITION: self._image_config.DESTINATION})
-
-        return self.image.get_rect()
+        self.rect = self.image.get_rect(**{self._image_config.POSITION: self._image_config.DESTINATION})
