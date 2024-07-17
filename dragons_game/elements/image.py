@@ -1,7 +1,6 @@
 import pygame
 
-from dragons_game.elements.abstract_configuration.button import ButtonImageConfig
-from dragons_game.elements.abstract_configuration.image import ImageConfig
+from dragons_game.elements.abstract_configuration.image import ImageConfig, ButtonImageConfig
 
 
 class Image(pygame.sprite.Sprite):

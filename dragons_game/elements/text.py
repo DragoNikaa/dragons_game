@@ -2,8 +2,7 @@ from math import sqrt
 
 import pygame
 
-from dragons_game.elements.abstract_configuration.button import ButtonTextConfig
-from dragons_game.elements.abstract_configuration.text import TextConfig, TextBorderConfig
+from dragons_game.elements.abstract_configuration.text import TextConfig, TextBorderConfig, ButtonTextConfig
 
 
 class Text(pygame.sprite.Sprite):

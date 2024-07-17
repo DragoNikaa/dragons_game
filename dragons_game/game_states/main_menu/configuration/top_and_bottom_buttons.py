@@ -2,9 +2,10 @@ from abc import ABC
 
 import pygame.font
 
-from dragons_game.elements.abstract_configuration.button import ButtonConfig, ButtonImageConfig, ButtonTextConfig
+from dragons_game.elements.abstract_configuration.button import ButtonConfig
+from dragons_game.elements.abstract_configuration.image import ButtonImageConfig
 from dragons_game.elements.abstract_configuration.position import Position
-from dragons_game.elements.abstract_configuration.text import TextBorderConfig
+from dragons_game.elements.abstract_configuration.text import TextBorderConfig, ButtonTextConfig
 from dragons_game.game.configuration import game_config
 from dragons_game.game_states.general.configuration.icon_proportions import calculate_proportional_dimension
 from dragons_game.game_states.general.game_state import GameState

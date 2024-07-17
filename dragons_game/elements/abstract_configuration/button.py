@@ -2,8 +2,6 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any
 
-import pygame
-
 from dragons_game.elements.abstract_configuration.position import Position
 
 
@@ -46,7 +44,7 @@ class ButtonConfig(ABC):
 
 
 @dataclass
-class ButtonImageConfig(ABC):
+class ButtonInsideButtonConfig(ABC):
     POSITION: str = Position.CENTER
     DESTINATION: tuple[int, int] = (0, 0)
 
@@ -70,28 +68,12 @@ class ButtonImageConfig(ABC):
     def OFFSET_FROM_CENTER(self) -> tuple[int, int]:
         ...
 
-
-@dataclass
-class ButtonTextConfig(ABC):
-    POSITION: str = Position.CENTER
-    DESTINATION: tuple[int, int] = (0, 0)
-
     @property
     @abstractmethod
-    def FONT(self) -> pygame.font.Font:
+    def CLICK_ACTION(self) -> dict[str, Any] | None:
         ...
 
     @property
     @abstractmethod
-    def TEXT(self) -> str:
-        ...
-
-    @property
-    @abstractmethod
-    def COLOR(self) -> str | tuple[int, int, int]:
-        ...
-
-    @property
-    @abstractmethod
-    def OFFSET_FROM_CENTER(self) -> tuple[int, int]:
+    def HOVER_ACTION(self) -> dict[str, Any] | None:
         ...
