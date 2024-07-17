@@ -19,6 +19,17 @@ class Text(pygame.sprite.Sprite):
         if text_border_config:
             self._add_text_border()
 
+        self.image_without_brightness = self.image
+
+    def change_text(self, new_text: str) -> None:
+        self.image = self._text_config.FONT.render(new_text, True, self._text_config.COLOR)
+        self.rect = self._get_rect()
+
+        if self._text_border_config:
+            self._add_text_border()
+
+        self.image_without_brightness = self.image
+
     def _get_rect(self) -> pygame.Rect:
         return self.image.get_rect(**{self._text_config.POSITION: self._text_config.DESTINATION})
 
@@ -44,10 +55,3 @@ class Text(pygame.sprite.Sprite):
         extended_image.blit(self.image, (added_size // 2, added_size // 2))
         self.image = extended_image
         self.rect = self._get_rect()
-
-    def change_text(self, new_text: str) -> None:
-        self.image = self._text_config.FONT.render(new_text, True, self._text_config.COLOR)
-        self.rect = self._get_rect()
-
-        if self._text_border_config:
-            self._add_text_border()

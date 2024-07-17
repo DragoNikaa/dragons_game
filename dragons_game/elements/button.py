@@ -18,23 +18,33 @@ class Button(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (button_config.WIDTH, button_config.HEIGHT))
         self.rect = self.image.get_rect(**{button_config.POSITION: button_config.DESTINATION})
 
-        self._current_brightness = 0
-        self._brightness_step = 5
-        self._max_brightness = 25
+        self._BRIGHTNESS_STEP = 5
+        self._MAX_BRIGHTNESS = 25
 
-        self._image_without_brightness = self.image.copy()
+        self._current_brightness = 0
+        self.image_without_brightness = self.image
+
+        self._elements: list[Image | Text] = []
 
     def add_image(self, image_config: ButtonImageConfig) -> Image:
-        image_config.DESTINATION = (
-            self.rect.centerx + image_config.OFFSET_FROM_CENTER[0],
-            self.rect.centery + image_config.OFFSET_FROM_CENTER[1])
-        return Image(image_config)
+        image_config.DESTINATION = self._get_element_destination(image_config)
+        image = Image(image_config)
+        self._elements.append(image)
+        return image
 
     def add_text(self, text_config: ButtonTextConfig, text_border_config: TextBorderConfig | None = None) -> Text:
-        text_config.DESTINATION = (
-            self.rect.centerx + text_config.OFFSET_FROM_CENTER[0],
-            self.rect.centery + text_config.OFFSET_FROM_CENTER[1])
-        return Text(text_config, text_border_config)
+        text_config.DESTINATION = self._get_element_destination(text_config)
+        text = Text(text_config, text_border_config)
+        self._elements.append(text)
+        return text
+
+    def update(self) -> None:
+        self._handle_click()
+        self._handle_hover()
+
+    def _get_element_destination(self, element_config: ButtonImageConfig | ButtonTextConfig) -> tuple[int, int]:
+        return (self.rect.centerx + element_config.OFFSET_FROM_CENTER[0],
+                self.rect.centery + element_config.OFFSET_FROM_CENTER[1])
 
     def _handle_click(self) -> None:
         if self._button_config.CLICK_ACTION is None:
@@ -46,18 +56,28 @@ class Button(pygame.sprite.Sprite):
             pygame.event.post(pygame.event.Event(UserEvent.BUTTON_CLICK, self._button_config.CLICK_ACTION))
 
     def _handle_hover(self) -> None:
+        self._highlight()
+
+    def _highlight(self) -> None:
+        if self._update_current_brightness():
+            self._update_image(self)
+            for element in self._elements:
+                self._update_image(element)
+
+    def _update_current_brightness(self) -> bool:
         if self.rect.collidepoint(pygame.mouse.get_pos()):
-            if self._current_brightness < self._max_brightness:
-                self._current_brightness += self._brightness_step
+            if self._current_brightness < self._MAX_BRIGHTNESS:
+                self._current_brightness += self._BRIGHTNESS_STEP
+                return True
+
         elif self._current_brightness > 0:
-            self._current_brightness -= self._brightness_step
+            self._current_brightness -= self._BRIGHTNESS_STEP
+            return True
 
-        if self._current_brightness > 0:
-            image_copy = self._image_without_brightness.copy()
-            image_copy.fill((self._current_brightness, self._current_brightness, self._current_brightness),
-                            special_flags=pygame.BLEND_RGB_ADD)
-            self.image = image_copy
+        return False
 
-    def update(self) -> None:
-        self._handle_click()
-        self._handle_hover()
+    def _update_image(self, element: 'Button | Image | Text') -> None:
+        image_copy = element.image_without_brightness.copy()
+        image_copy.fill((self._current_brightness, self._current_brightness, self._current_brightness),
+                        special_flags=pygame.BLEND_RGB_ADD)
+        element.image = image_copy
