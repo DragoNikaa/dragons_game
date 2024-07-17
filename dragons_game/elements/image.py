@@ -13,3 +13,5 @@ class Image(pygame.sprite.Sprite):
         self.image = pygame.image.load(image_config.IMAGE).convert_alpha()
         self.image = pygame.transform.scale(self.image, (image_config.WIDTH, image_config.HEIGHT))
         self.rect = self.image.get_rect(**{self._image_config.POSITION: self._image_config.DESTINATION})
+
+        self.image_without_brightness = self.image
