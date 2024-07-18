@@ -2,9 +2,14 @@ import pathlib
 from abc import ABC
 import random
 
-from dragons_game.elements.abstract_configuration.button import ButtonConfig
+import pygame
+
+from dragons_game.elements.abstract_configuration.button import ButtonConfig, ButtonInsideButtonConfig
+from dragons_game.elements.abstract_configuration.image import ButtonImageConfig
 from dragons_game.elements.abstract_configuration.position import Position
+from dragons_game.elements.abstract_configuration.text import ButtonTextConfig, TextBorderConfig
 from dragons_game.game_states.dragons_menu.configuration.backgrounds import RightBackgroundConfig
+from dragons_game.game_states.general.configuration.icon_proportions import calculate_proportional_width
 from dragons_game.game_states.general.configuration.title_bar import TitleBarConfig
 
 _SPACE_BETWEEN_ELEMENTS = TitleBarConfig.HEIGHT
@@ -71,3 +76,58 @@ class Row2Dragon4ButtonConfig(_DragonButtonConfig):
 
 class Row2Dragon5ButtonConfig(_DragonButtonConfig):
     DESTINATION = (_BUTTONS_X_DESTINATIONS[4], _ROW_2_BUTTONS_Y_DESTINATION)
+
+
+class _DragonButtonTextConfig(ButtonTextConfig, ABC):
+    FONT = pygame.font.Font('dragons_game/fonts/rurik.ttf', size=int(_SPACE_BETWEEN_ELEMENTS / 2.1))
+    COLOR = 'white'
+
+
+class DragonNameConfig(_DragonButtonTextConfig):
+    @property
+    def TEXT(self) -> str:
+        return 'Dragon Name'
+
+    OFFSET_FROM_CENTER = (0, -int(_DragonButtonConfig.HEIGHT / 3.55))
+
+
+class DragonLevelConfig(_DragonButtonTextConfig):
+    @property
+    def TEXT(self) -> str:
+        return f'Level {random.randint(1, 99)}'
+
+    OFFSET_FROM_CENTER = (0, int(_DragonButtonConfig.HEIGHT / 5.1))
+
+
+class DragonButtonTextBorderConfig(TextBorderConfig):
+    COLOR = 'black'
+    THICKNESS = 1
+
+
+class DragonButtonImageConfig(ButtonImageConfig):
+    HEIGHT = int(_DragonButtonConfig.HEIGHT / 3.1)
+    IMAGE = 'dragons_game/graphics/dragons/1.png'
+    WIDTH = calculate_proportional_width(IMAGE, HEIGHT)
+    OFFSET_FROM_CENTER = (0, -int(_DragonButtonConfig.HEIGHT / 50))
+
+
+class _ProgressBarButtonConfig(ButtonInsideButtonConfig, ABC):
+    WIDTH = int(_DragonButtonConfig.WIDTH / 2)
+    HEIGHT = int(_DragonButtonConfig.HEIGHT / 30)
+    IMAGE = 'dragons_game/graphics/buttons/progress_bar.png'
+    HOVER_ACTION = None
+    CLICK_ACTION = None
+
+
+class ExperienceBarButtonConfig(_ProgressBarButtonConfig):
+    OFFSET_FROM_CENTER = (0, int(_DragonButtonConfig.HEIGHT / 2.9))
+
+
+class EnergyBarButtonConfig(_ProgressBarButtonConfig):
+    OFFSET_FROM_CENTER = (0, int(_DragonButtonConfig.HEIGHT / 2.9) - int(_SPACE_BETWEEN_ELEMENTS / 3))
+
+
+class HealthBarButtonConfig(_ProgressBarButtonConfig):
+    OFFSET_FROM_CENTER = (0, int(_DragonButtonConfig.HEIGHT / 2.9) - int(_SPACE_BETWEEN_ELEMENTS / 1.5))
+
+# class ExperienceBarButtonImageConfig(ButtonImageConfig):

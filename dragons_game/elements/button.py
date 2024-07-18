@@ -26,7 +26,7 @@ class Button(pygame.sprite.Sprite):
         self.image_without_brightness = self.image
 
         self._images_and_texts: list[Image | Text] = []
-        self._buttons = []
+        self._buttons: list[Button] = []
 
     def add_image(self, image_config: ButtonImageConfig) -> Image:
         image_config.DESTINATION = self._get_element_destination(image_config)

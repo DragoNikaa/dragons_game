@@ -7,7 +7,7 @@ from dragons_game.elements.abstract_configuration.image import ImageConfig
 from dragons_game.elements.abstract_configuration.position import Position
 from dragons_game.elements.abstract_configuration.text import TextBorderConfig, TextConfig
 from dragons_game.game.configuration import game_config
-from dragons_game.game_states.general.configuration.icon_proportions import calculate_proportional_dimension
+from dragons_game.game_states.general.configuration.icon_proportions import calculate_proportional_height
 from dragons_game.game_states.general.game_state import GameState
 from dragons_game.user_event import UserEventDictKey, UserEventDictValue
 
@@ -25,7 +25,7 @@ class GeneralTitleBarImageConfig(ImageConfig, ABC):
 
     @property
     def HEIGHT(self) -> int:
-        return calculate_proportional_dimension(self.IMAGE, self.WIDTH)
+        return calculate_proportional_height(self.IMAGE, self.WIDTH)
 
     POSITION = Position.MIDLEFT
     DESTINATION = (int(TitleBarConfig.HEIGHT / 2), int(TitleBarConfig.HEIGHT / 2))
