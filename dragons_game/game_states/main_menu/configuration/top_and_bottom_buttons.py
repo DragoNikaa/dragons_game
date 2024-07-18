@@ -7,7 +7,7 @@ from dragons_game.elements.abstract_configuration.image import ButtonImageConfig
 from dragons_game.elements.abstract_configuration.position import Position
 from dragons_game.elements.abstract_configuration.text import TextBorderConfig, ButtonTextConfig
 from dragons_game.game.configuration import game_config
-from dragons_game.game_states.general.configuration.icon_proportions import calculate_proportional_dimension
+from dragons_game.game_states.general.configuration.icon_proportions import calculate_proportional_width
 from dragons_game.game_states.general.game_state import GameState
 from dragons_game.user_event import UserEventDictKey, UserEventDictValue
 
@@ -93,7 +93,7 @@ class SettingsButtonConfig(_BottomButtonConfig):
 class _TopAndBottomImageConfig(ButtonImageConfig, ABC):
     @property
     def WIDTH(self) -> int:
-        return calculate_proportional_dimension(self.IMAGE, self.HEIGHT)
+        return calculate_proportional_width(self.IMAGE, self.HEIGHT)
 
 
 class _TopButtonImageConfig(_TopAndBottomImageConfig, ABC):
