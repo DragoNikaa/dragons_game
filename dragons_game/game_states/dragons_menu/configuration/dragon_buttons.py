@@ -106,7 +106,7 @@ class DragonButtonTextBorderConfig(TextBorderConfig):
 
 class DragonButtonImageConfig(ButtonImageConfig):
     HEIGHT = int(_DragonButtonConfig.HEIGHT / 3.1)
-    IMAGE = 'dragons_game/graphics/dragons/1.png'
+    IMAGE = 'dragons_game/graphics/dragons/toothless.png'
     WIDTH = calculate_proportional_width(IMAGE, HEIGHT)
     OFFSET_FROM_CENTER = (0, -int(_DragonButtonConfig.HEIGHT / 50))
 
