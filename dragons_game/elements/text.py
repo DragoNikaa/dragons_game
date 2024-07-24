@@ -1,56 +1,53 @@
-from math import sqrt
-
 import pygame
 
-from dragons_game.elements.abstract_configuration.text import TextConfig, TextBorderConfig, ButtonTextConfig
+from dragons_game.utils import custom_types
+from dragons_game.elements.elements_section import ElementsSection
 
 
 class Text(pygame.sprite.Sprite):
-    def __init__(self, text_config: TextConfig | ButtonTextConfig, text_border_config: TextBorderConfig | None = None):
+    def __init__(self, outer_element: ElementsSection, font_path: str, size: int, text: str, color: custom_types.Color,
+                 position: custom_types.Position, offset: tuple[float, float], border_thickness: int = 0,
+                 border_color: custom_types.Color = 0):
         super().__init__()
 
-        self._text_config = text_config
-        self._text_border_config = text_border_config
+        self._color = color
+        self._position = str(position)
+        self._border_thickness = border_thickness
+        self._border_color = border_color
 
-        self.image = text_config.FONT.render(text_config.TEXT, True, text_config.COLOR)
-        self.rect = self._get_rect()
+        self._font = pygame.font.Font(font_path, size)
+        self._destination = outer_element.get_inner_element_destination(position, offset)
 
-        if text_border_config:
-            self._add_text_border()
-
-        self.image_without_brightness = self.image
+        self._set_image_and_rect(text)
 
     def change_text(self, new_text: str) -> None:
-        self.image = self._text_config.FONT.render(new_text, True, self._text_config.COLOR)
-        self.rect = self._get_rect()
+        self._set_image_and_rect(new_text)
 
-        if self._text_border_config:
+    def _set_image_and_rect(self, text: str) -> None:
+        self.image = self._font.render(text, True, self._color)
+        self.rect = self.image.get_rect(**{self._position: self._destination})
+
+        if self._border_thickness:
             self._add_text_border()
 
-        self.image_without_brightness = self.image
-
-    def _get_rect(self) -> pygame.Rect:
-        return self.image.get_rect(**{self._text_config.POSITION: self._text_config.DESTINATION})
+        self.image_without_effects = self.image
 
     def _add_text_border(self) -> None:
-        if self._text_border_config is None:
-            return
-
-        added_size = 4 * self._text_border_config.THICKNESS
+        added_size = 4 * self._border_thickness
 
         extended_image = pygame.surface.Surface(
             (self.image.get_width() + added_size, self.image.get_height() + added_size), flags=pygame.SRCALPHA)
-        extended_image.blit(self.image, (added_size // 2, added_size // 2))
-        extended_image.fill(self._text_border_config.COLOR, special_flags=pygame.BLEND_RGB_MULT)
+        extended_image.blit(self.image, (added_size / 2, added_size / 2))
+        extended_image.fill(self._border_color, special_flags=pygame.BLEND_RGB_MULT)
 
-        for offset in (self._text_border_config.THICKNESS, -self._text_border_config.THICKNESS):
+        for offset in (self._border_thickness, -self._border_thickness):
             extended_image.blit(extended_image, (offset, 0))
             extended_image.blit(extended_image, (0, offset))
 
-        for offset in (int(sqrt(self._text_border_config.THICKNESS)), -int(sqrt(self._text_border_config.THICKNESS))):
+        for offset in (self._border_thickness ** 0.5, -self._border_thickness ** 0.5):
             extended_image.blit(extended_image, (offset, offset))
             extended_image.blit(extended_image, (offset, -offset))
 
-        extended_image.blit(self.image, (added_size // 2, added_size // 2))
+        extended_image.blit(self.image, (added_size / 2, added_size / 2))
         self.image = extended_image
-        self.rect = self._get_rect()
+        self.rect = self.image.get_rect(**{self._position: self._destination})

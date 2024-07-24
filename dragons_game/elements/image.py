@@ -1,16 +1,9 @@
-import pygame
+from dragons_game.utils import custom_types
+from dragons_game.elements.elements_section import ElementsSection
 
-from dragons_game.elements.abstract_configuration.image import ImageConfig, ButtonImageConfig
 
-
-class Image(pygame.sprite.Sprite):
-    def __init__(self, image_config: ImageConfig | ButtonImageConfig):
-        super().__init__()
-
-        self._image_config = image_config
-
-        self.image = pygame.image.load(image_config.IMAGE).convert_alpha()
-        self.image = pygame.transform.scale(self.image, (image_config.WIDTH, image_config.HEIGHT))
-        self.rect = self.image.get_rect(**{self._image_config.POSITION: self._image_config.DESTINATION})
-
-        self.image_without_brightness = self.image
+class Image(ElementsSection):
+    def __init__(self, outer_element: ElementsSection, image_path: str, size: tuple[float, float],
+                 position: custom_types.Position, offset: tuple[float, float]):
+        destination = outer_element.get_inner_element_destination(position, offset)
+        super().__init__(size, position, destination, image_path)

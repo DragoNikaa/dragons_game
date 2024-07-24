@@ -2,22 +2,23 @@ from typing import Any
 
 import pygame
 
-from dragons_game.game_states.dragons_menu.elements import dragons_menu_elements
-from dragons_game.game_states.general.abstract_manager import GameStateManager
-from dragons_game.game_states.general.game_state import GameState
-from dragons_game.user_event import UserEvent, UserEventDictKey, UserEventDictValue
+from dragons_game.game_states.dragons_menu.sections.dragons import dragons_section
+from dragons_game.game_states.dragons_menu.sections.page import page_section
+from dragons_game.game_states.dragons_menu.sections.team import team_section
+from dragons_game.game_states.dragons_menu.sections.title_bar import title_bar_section
+from dragons_game.game_states.common.manager import GameStateManager
+from dragons_game.game_states.game_state import GameState
 
 
 class DragonsMenuManager(GameStateManager):
-    def __init__(self) -> None:
-        super().__init__(dragons_menu_elements)
+    _elements = pygame.sprite.Group(title_bar_section.elements, team_section.elements, dragons_section.elements,
+                                    page_section.elements)
 
-    def handle_event(self, event: pygame.event.Event) -> Any:
-        if event.type == UserEvent.BUTTON_CLICK:
-            if getattr(event, UserEventDictKey.ACTION) == UserEventDictValue.CHANGE_STATE:
-                return getattr(event, UserEventDictKey.NEXT_STATE)
-            elif getattr(event, UserEventDictKey.ACTION) == UserEventDictValue.SHOW_TOOLTIP:
-                getattr(event, UserEventDictKey.TOOLTIP)()
+    @staticmethod
+    def handle_event(event: pygame.event.Event) -> Any:
+        new_state = GameStateManager.handle_event(event)
+        if new_state:
+            return new_state
 
         if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
             return GameState.MAIN_MENU
