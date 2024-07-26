@@ -1,4 +1,4 @@
 import pygame
 
-BUTTON_CLICK = pygame.event.custom_type()
-BUTTON_HOVER = pygame.event.custom_type()
+BUTTON_PRESSED = pygame.event.custom_type()
+BUTTON_HOVERED_OVER = pygame.event.custom_type()

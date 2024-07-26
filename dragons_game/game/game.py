@@ -12,13 +12,10 @@ class Game(GameConfig):
     _STATE_TO_MANAGER = {GameState.START_SCREEN: StartScreenManager(), GameState.MAIN_MENU: MainMenuManager(),
                          GameState.DRAGONS_MENU: DragonsMenuManager()}
     _current_manager = _STATE_TO_MANAGER[GameState.START_SCREEN]
-    _current_event_type = 0
 
     @classmethod
     def update(cls) -> None:
         for event in pygame.event.get():
-            cls._current_event_type = event.type
-
             if event.type == pygame.QUIT:
                 cls._running = False
                 pygame.quit()
@@ -38,7 +35,3 @@ class Game(GameConfig):
     @classmethod
     def is_running(cls) -> bool:
         return cls._running
-
-    @classmethod
-    def get_current_event_type(cls) -> int:
-        return cls._current_event_type
