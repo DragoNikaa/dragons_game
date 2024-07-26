@@ -6,14 +6,14 @@ import dragons_game.game.game
 from dragons_game.elements.image import Image
 from dragons_game.elements.text import Text
 from dragons_game.utils import custom_types, custom_events
-from dragons_game.elements.elements_section import ElementsSection
+from dragons_game.elements.section import Section
 
 
-class Button(ElementsSection):
+class Button(Section):
     _BRIGHTNESS_STEP = 5
     _MAX_BRIGHTNESS = 25
 
-    def __init__(self, outer_element: ElementsSection, image_path: str, size: tuple[float, float],
+    def __init__(self, outer_element: Section, image_path: str, size: tuple[float, float],
                  position: custom_types.Position, offset: tuple[float, float],
                  click_action: custom_types.CustomEventDict | None = None,
                  hover_action: custom_types.CustomEventDict | None = None):
@@ -24,6 +24,7 @@ class Button(ElementsSection):
 
         self._click_action = self._adjust_action(click_action)
         self._hover_action = self._adjust_action(hover_action)
+        self._hover_active = False
 
         self._current_brightness = 0
 
@@ -40,6 +41,15 @@ class Button(ElementsSection):
 
     def _handle_hover(self) -> None:
         self._highlight()
+
+        if self._hover_action:
+            if self._check_mouse_collision():
+                self._hover_active = True
+                pygame.event.post(pygame.event.Event(custom_events.BUTTON_HOVER, self._hover_action))
+
+            elif self._hover_active:
+                self._hover_active = False
+                pygame.event.post(pygame.event.Event(custom_events.BUTTON_HOVER, {'action': 'end_hover'}))
 
     def _highlight(self) -> None:
         if self._update_current_brightness():

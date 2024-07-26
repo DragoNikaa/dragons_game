@@ -8,11 +8,11 @@ from dragons_game.game_states.start_screen.sections.start_screen import start_sc
 
 
 class StartScreenManager(GameStateManager):
-    _elements = pygame.sprite.Group(start_screen_section.elements)
+    def __init__(self) -> None:
+        super().__init__(start_screen_section)
 
-    @staticmethod
-    def handle_event(event: pygame.event.Event) -> Any:
-        new_state = GameStateManager.handle_event(event)
+    def handle_event(self, event: pygame.event.Event) -> Any:
+        new_state = super().handle_event(event)
         if new_state:
             return new_state
 

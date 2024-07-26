@@ -9,8 +9,8 @@ from dragons_game.game_states.start_screen.manager import StartScreenManager
 
 class Game(GameConfig):
     _running = True
-    _STATE_TO_MANAGER = {GameState.START_SCREEN: StartScreenManager, GameState.MAIN_MENU: MainMenuManager,
-                         GameState.DRAGONS_MENU: DragonsMenuManager}
+    _STATE_TO_MANAGER = {GameState.START_SCREEN: StartScreenManager(), GameState.MAIN_MENU: MainMenuManager(),
+                         GameState.DRAGONS_MENU: DragonsMenuManager()}
     _current_manager = _STATE_TO_MANAGER[GameState.START_SCREEN]
     _current_event_type = 0
 
@@ -27,6 +27,7 @@ class Game(GameConfig):
             new_state = cls._current_manager.handle_event(event)
             if new_state:
                 cls._current_manager = cls._STATE_TO_MANAGER[new_state]
+                return
 
         cls._current_manager.update()
         cls._current_manager.draw(cls.screen)

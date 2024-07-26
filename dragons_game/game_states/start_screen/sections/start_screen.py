@@ -4,7 +4,7 @@ import random
 from dragons_game.utils import custom_types
 from dragons_game.elements.button import Button
 
-from dragons_game.elements.elements_section import ElementsSection
+from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
 from dragons_game.game.configuration import GameConfig
 from dragons_game.game_states.game_state import GameState
@@ -16,8 +16,8 @@ def _draw_background() -> str:
     return str(random.choice(backgrounds))
 
 
-start_screen_section = ElementsSection((GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEIGHT), 'topleft', (0, 0),
-                                       _draw_background())
+start_screen_section = Section((GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEIGHT), 'topleft', (0, 0),
+                               _draw_background())
 
 start_screen_section.add_text('title', Text(start_screen_section, 'dragons_game/fonts/pr_viking.ttf',
                                             int(start_screen_section.height / 3.5), GameConfig.NAME.upper(), 'white',

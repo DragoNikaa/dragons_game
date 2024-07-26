@@ -1,11 +1,11 @@
 import pygame
 
 from dragons_game.utils import custom_types
-from dragons_game.elements.elements_section import ElementsSection
+from dragons_game.elements.section import Section
 
 
 class Text(pygame.sprite.Sprite):
-    def __init__(self, outer_element: ElementsSection, font_path: str, size: int, text: str, color: custom_types.Color,
+    def __init__(self, outer_element: Section, font_path: str, size: int, text: str, color: custom_types.Color,
                  position: custom_types.Position, offset: tuple[float, float], border_thickness: int = 0,
                  border_color: custom_types.Color = 0):
         super().__init__()

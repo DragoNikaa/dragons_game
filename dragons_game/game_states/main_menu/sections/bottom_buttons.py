@@ -1,14 +1,15 @@
+from dragons_game.elements.tooltip import Tooltip
 from dragons_game.utils import custom_types
 from dragons_game.elements.button import Button
-from dragons_game.elements.elements_section import ElementsSection
+from dragons_game.elements.section import Section
 from dragons_game.elements.image import Image
 from dragons_game.elements.text import Text
 from dragons_game.game.configuration import GameConfig
 from dragons_game.utils.image_proportions import calculate_proportional_width
 from dragons_game.game_states.game_state import GameState
 
-bottom_buttons_section = ElementsSection((GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEIGHT / 7), 'bottomleft',
-                                         (0, GameConfig.WINDOW_HEIGHT))
+bottom_buttons_section = Section((GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEIGHT / 7), 'bottomleft',
+                                 (0, GameConfig.WINDOW_HEIGHT))
 
 
 class _BottomButton(Button):
@@ -33,10 +34,13 @@ class _BottomButton(Button):
                            (self._WIDTH / 7.7, 0), 3, 'black'))
 
 
+tooltip = Tooltip((200, 100), 'topleft')
+
 bottom_buttons_section.add_button('hatchery', _BottomButton(0, 'dragons_game/graphics/icons/hatchery.png', 'Hatchery'))
 bottom_buttons_section.add_button('dragons', _BottomButton(1, 'dragons_game/graphics/icons/dragons.png', 'Dragons',
                                                            {'action': 'change_state',
-                                                            'next_state': GameState.DRAGONS_MENU}))
+                                                            'next_state': GameState.DRAGONS_MENU},
+                                                           {'action': 'show_tooltip', 'tooltip': tooltip}))
 bottom_buttons_section.add_button('islands', _BottomButton(2, 'dragons_game/graphics/icons/islands.png', 'Islands'))
 bottom_buttons_section.add_button('market', _BottomButton(3, 'dragons_game/graphics/icons/market.png', 'Market'))
 bottom_buttons_section.add_button('settings', _BottomButton(4, 'dragons_game/graphics/icons/settings.png', 'Settings'))
