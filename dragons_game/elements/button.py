@@ -23,6 +23,8 @@ class Button(Section):
 
         self._click_action = self._adjust_action(click_action)
         self._hover_action = self._adjust_action(hover_action)
+
+        self._mouse_pressed_outside = self._mouse_pressed_inside = self._mouse_released = False
         self._hover_active = False
 
         self._current_brightness = 0
@@ -33,8 +35,28 @@ class Button(Section):
 
     def _handle_click(self) -> None:
         if self._click_action:
-            if pygame.mouse.get_pressed()[0] and self._check_mouse_collision():
-                pygame.event.post(pygame.event.Event(custom_events.BUTTON_PRESSED, self._click_action))
+            mouse_pressed = pygame.mouse.get_pressed()[0]
+            mouse_collision = self._check_mouse_collision()
+
+            if mouse_pressed:
+                if not mouse_collision:
+                    self._mouse_pressed_outside = True
+            else:
+                self._mouse_pressed_outside = False
+
+            if not self._mouse_pressed_outside:
+                if mouse_collision:
+                    if mouse_pressed:
+                        self._mouse_pressed_inside = True
+                    elif self._mouse_pressed_inside:
+                        self._mouse_released = True
+
+                    if self._mouse_released:
+                        self._mouse_pressed_inside = self._mouse_released = False
+                        pygame.event.post(pygame.event.Event(custom_events.BUTTON_CLICK, self._click_action))
+
+                else:
+                    self._mouse_pressed_inside = False
 
     def _handle_hover(self) -> None:
         self._highlight()
@@ -42,11 +64,11 @@ class Button(Section):
         if self._hover_action:
             if self._check_mouse_collision():
                 self._hover_active = True
-                pygame.event.post(pygame.event.Event(custom_events.BUTTON_HOVERED_OVER, self._hover_action))
+                pygame.event.post(pygame.event.Event(custom_events.BUTTON_HOVER, self._hover_action))
 
             elif self._hover_active:
                 self._hover_active = False
-                pygame.event.post(pygame.event.Event(custom_events.BUTTON_HOVERED_OVER, {'action': 'end_hover'}))
+                pygame.event.post(pygame.event.Event(custom_events.BUTTON_HOVER, {'action': 'end_hover'}))
 
     def _highlight(self) -> None:
         if self._update_current_brightness():
