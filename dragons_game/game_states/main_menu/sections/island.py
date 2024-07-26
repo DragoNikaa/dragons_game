@@ -1,11 +1,11 @@
 from dragons_game.utils import custom_types
 from dragons_game.elements.button import Button
-from dragons_game.elements.elements_section import ElementsSection
+from dragons_game.elements.section import Section
 from dragons_game.game.configuration import GameConfig
 from dragons_game.game_states.main_menu.sections.bottom_buttons import bottom_buttons_section
 from dragons_game.game_states.main_menu.sections.top_buttons import top_buttons_section
 
-island_section = ElementsSection(
+island_section = Section(
     (GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEIGHT - top_buttons_section.height - bottom_buttons_section.height),
     'topleft', (0, top_buttons_section.rect.bottom), 'dragons_game/graphics/backgrounds/main_menu/1.png')
 

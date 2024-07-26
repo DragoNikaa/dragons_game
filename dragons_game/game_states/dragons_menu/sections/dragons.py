@@ -3,7 +3,7 @@ from dragons_game.game_states.common import universal_sizes
 from dragons_game.dragons.database.dragons import toothless
 from dragons_game.dragons.dragon import Dragon
 from dragons_game.elements.button import Button
-from dragons_game.elements.elements_section import ElementsSection
+from dragons_game.elements.section import Section
 from dragons_game.elements.image import Image
 from dragons_game.elements.text import Text
 from dragons_game.game.configuration import GameConfig
@@ -11,7 +11,7 @@ from dragons_game.game_states.dragons_menu.sections.team import team_section
 from dragons_game.game_states.dragons_menu.sections.title_bar import title_bar_section
 from dragons_game.utils.image_proportions import calculate_proportional_width
 
-dragons_section = ElementsSection(
+dragons_section = Section(
     (GameConfig.WINDOW_WIDTH - team_section.width, GameConfig.WINDOW_HEIGHT - title_bar_section.height), 'topleft',
     (team_section.rect.right, title_bar_section.rect.bottom),
     'dragons_game/graphics/backgrounds/dragons_menu/dragons.png')

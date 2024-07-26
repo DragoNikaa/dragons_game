@@ -10,12 +10,11 @@ from dragons_game.game_states.main_menu.sections.top_buttons import top_buttons_
 
 
 class MainMenuManager(GameStateManager):
-    _elements = pygame.sprite.Group(top_buttons_section.elements, bottom_buttons_section.elements,
-                                    island_section.elements)
+    def __init__(self) -> None:
+        super().__init__(top_buttons_section, bottom_buttons_section, island_section)
 
-    @staticmethod
-    def handle_event(event: pygame.event.Event) -> Any:
-        new_state = GameStateManager.handle_event(event)
+    def handle_event(self, event: pygame.event.Event) -> Any:
+        new_state = super().handle_event(event)
         if new_state:
             return new_state
 

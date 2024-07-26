@@ -1,12 +1,12 @@
 from dragons_game.utils import custom_types
 from dragons_game.elements.button import Button
-from dragons_game.elements.elements_section import ElementsSection
+from dragons_game.elements.section import Section
 from dragons_game.elements.image import Image
 from dragons_game.elements.text import Text
 from dragons_game.utils.image_proportions import calculate_proportional_width
 
 
-class TitleBar(ElementsSection):
+class TitleBar(Section):
     def __init__(self, size: tuple[float, float], position: custom_types.Position, destination: tuple[float, float],
                  icon_image_path: str, label: str, close_button_click_action: custom_types.CustomEventDict):
         super().__init__(size, position, destination)

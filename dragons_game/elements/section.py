@@ -10,22 +10,23 @@ if TYPE_CHECKING:
     from dragons_game.elements.text import Text
 
 
-class ElementsSection(pygame.sprite.Sprite):
-    def __init__(self, size: tuple[float, float], position: custom_types.Position, destination: tuple[float, float],
-                 image_path: str = ''):
+class Section(pygame.sprite.Sprite):
+    def __init__(self, size: tuple[float, float], position: custom_types.Position,
+                 destination: tuple[float, float] = (0, 0), image_path: str = '', fill_color: custom_types.Color = 0):
         super().__init__()
 
-        self._size = size
+        self._size = int(size[0]), int(size[1])
+        self._position = str(position)
 
         if image_path:
             self.image = pygame.image.load(image_path).convert_alpha()
             self.image = pygame.transform.scale(self.image, size)
         else:
             self.image = pygame.Surface(size)
-            self.image.fill((0, 0, 0))
+            self.image.fill(fill_color)
         self.image_without_effects = self.image
 
-        self.rect = self.image.get_rect(**{str(position): destination})
+        self.rect = self.image.get_rect(**{self._position: destination})
 
         self._buttons: dict[str, 'Button'] = {}
         self._images: dict[str, 'Image'] = {}
@@ -55,17 +56,17 @@ class ElementsSection(pygame.sprite.Sprite):
         return self._texts[name]
 
     @property
-    def elements(self) -> 'list[ElementsSection | Text]':
-        elements: 'list[ElementsSection | Text]' = [self]
+    def elements(self) -> 'list[Section | Text]':
+        elements: 'list[Section | Text]' = [self]
         for image_or_button in {**self._images, **self._buttons}.values():
             elements += image_or_button.elements
         elements += [*{**self._texts}.values()]
         return elements
 
     @property
-    def width(self) -> float:
+    def width(self) -> int:
         return self._size[0]
 
     @property
-    def height(self) -> float:
+    def height(self) -> int:
         return self._size[1]

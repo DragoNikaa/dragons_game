@@ -11,12 +11,11 @@ from dragons_game.game_states.game_state import GameState
 
 
 class DragonsMenuManager(GameStateManager):
-    _elements = pygame.sprite.Group(title_bar_section.elements, team_section.elements, dragons_section.elements,
-                                    page_section.elements)
+    def __init__(self) -> None:
+        super().__init__(title_bar_section, team_section, dragons_section, page_section)
 
-    @staticmethod
-    def handle_event(event: pygame.event.Event) -> Any:
-        new_state = GameStateManager.handle_event(event)
+    def handle_event(self, event: pygame.event.Event) -> Any:
+        new_state = super().handle_event(event)
         if new_state:
             return new_state
 
