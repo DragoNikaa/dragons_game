@@ -17,16 +17,11 @@ class Section(pygame.sprite.Sprite):
 
         self._size = int(size[0]), int(size[1])
         self._position = str(position)
+        self._destination = destination
+        self._image_path = image_path
+        self._fill_color = fill_color
 
-        if image_path:
-            self.image = pygame.image.load(image_path).convert_alpha()
-            self.image = pygame.transform.scale(self.image, size)
-        else:
-            self.image = pygame.Surface(size)
-            self.image.fill(fill_color)
-        self.image_without_effects = self.image
-
-        self.rect = self.image.get_rect(**{self._position: destination})
+        self._set_image_and_rect()
 
         self._buttons: dict[str, 'Button'] = {}
         self._images: dict[str, 'Image'] = {}
@@ -41,11 +36,6 @@ class Section(pygame.sprite.Sprite):
     def add_text(self, name: str, text: 'Text') -> None:
         self._texts[name] = text
 
-    def get_inner_element_destination(self, position: custom_types.Position, offset: tuple[float, float]) -> tuple[
-        float, float]:
-        outer_element_position_destination = getattr(self.rect, position)
-        return outer_element_position_destination[0] + offset[0], outer_element_position_destination[1] + offset[1]
-
     def get_button(self, name: str) -> 'Button':
         return self._buttons[name]
 
@@ -54,6 +44,22 @@ class Section(pygame.sprite.Sprite):
 
     def get_text(self, name: str) -> 'Text':
         return self._texts[name]
+
+    def get_inner_element_destination(self, position: custom_types.Position, offset: tuple[float, float]) -> tuple[
+        float, float]:
+        outer_element_position_destination = getattr(self.rect, position)
+        return outer_element_position_destination[0] + offset[0], outer_element_position_destination[1] + offset[1]
+
+    def _set_image_and_rect(self) -> None:
+        if self._image_path:
+            self.image = pygame.image.load(self._image_path).convert_alpha()
+            self.image = pygame.transform.scale(self.image, self._size)
+        else:
+            self.image = pygame.Surface(self._size).convert_alpha()
+            self.image.fill(self._fill_color)
+        self.image_without_effects = self.image
+
+        self.rect = self.image.get_rect(**{self._position: self._destination})
 
     @property
     def elements(self) -> 'list[Section | Text]':
@@ -70,3 +76,7 @@ class Section(pygame.sprite.Sprite):
     @property
     def height(self) -> int:
         return self._size[1]
+
+    @property
+    def position(self) -> str:
+        return self._position

@@ -6,11 +6,27 @@ from dragons_game.utils import custom_types
 
 
 class Tooltip(Section):
-    def __init__(self, size: tuple[float, float], position: custom_types.Position):
-        super().__init__(size, position, fill_color='chocolate')
+    def __init__(self, position: custom_types.Position, size: tuple[float, float] = (0, 0), image_path: str = '',
+                 fill_color: custom_types.Color = 0):
+        super().__init__(size, position, image_path=image_path, fill_color=fill_color)
+
+    def change_size(self, new_size: tuple[float, float]) -> None:
+        self._size = int(new_size[0]), int(new_size[1])
+        self._set_image_and_rect()
 
     def update(self) -> None:
-        setattr(self.rect, self._position, self._get_destination())
+        destination = self._get_destination()
+        setattr(self.rect, self._position, destination)
+
+        for element in self.elements:
+            x_offset = getattr(element, 'x_offset', 0)
+            y_offset = getattr(element, 'y_offset', 0)
+
+            tooltip_rect_position_destination = getattr(self.rect, element.position)
+            element_rect_position_destination = (
+                tooltip_rect_position_destination[0] + x_offset, tooltip_rect_position_destination[1] + y_offset)
+
+            setattr(element.rect, element.position, element_rect_position_destination)
 
     def _get_destination(self) -> tuple[float, float]:
         x, y = pygame.mouse.get_pos()

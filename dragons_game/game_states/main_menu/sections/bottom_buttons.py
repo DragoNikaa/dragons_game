@@ -34,13 +34,10 @@ class _BottomButton(Button):
                            (self._WIDTH / 7.7, 0), 3, 'black'))
 
 
-tooltip = Tooltip((200, 100), 'topleft')
-
 bottom_buttons_section.add_button('hatchery', _BottomButton(0, 'dragons_game/graphics/icons/hatchery.png', 'Hatchery'))
 bottom_buttons_section.add_button('dragons', _BottomButton(1, 'dragons_game/graphics/icons/dragons.png', 'Dragons',
                                                            {'action': 'change_state',
-                                                            'next_state': GameState.DRAGONS_MENU},
-                                                           {'action': 'show_tooltip', 'tooltip': tooltip}))
+                                                            'next_state': GameState.DRAGONS_MENU}))
 bottom_buttons_section.add_button('islands', _BottomButton(2, 'dragons_game/graphics/icons/islands.png', 'Islands'))
 bottom_buttons_section.add_button('market', _BottomButton(3, 'dragons_game/graphics/icons/market.png', 'Market'))
 bottom_buttons_section.add_button('settings', _BottomButton(4, 'dragons_game/graphics/icons/settings.png', 'Settings'))

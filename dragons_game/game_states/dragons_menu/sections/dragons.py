@@ -1,3 +1,4 @@
+from dragons_game.elements.tooltip import Tooltip
 from dragons_game.utils import custom_types
 from dragons_game.game_states.common import universal_sizes
 from dragons_game.dragons.database.dragons import toothless
@@ -43,15 +44,17 @@ class _DragonButton(Button):
         self.add_image('dragon', Image(self, dragon.image_path, (dragon_image_width, dragon_image_height), 'center',
                                        (0, -self._HEIGHT / 50)))
 
+        tooltip_transparency = 200
         health_bar = self._add_progress_bar('health', -self._HEIGHT / 7.4,
-                                            'dragons_game/graphics/buttons/health_bar.png',
-                                            dragon.current_health / dragon.max_health)
+                                            'dragons_game/graphics/buttons/health_bar.png', dragon.current_health,
+                                            dragon.max_health, (255, 0, 0, tooltip_transparency))
         energy_bar = self._add_progress_bar('energy', health_bar.y_offset - universal_sizes.SMALL,
-                                            'dragons_game/graphics/buttons/energy_bar.png',
-                                            dragon.current_energy / dragon.max_energy)
+                                            'dragons_game/graphics/buttons/energy_bar.png', dragon.current_energy,
+                                            dragon.max_energy, (255, 255, 0, tooltip_transparency))
         experience_bar = self._add_progress_bar('experience', energy_bar.y_offset - universal_sizes.SMALL,
                                                 'dragons_game/graphics/buttons/experience_bar.png',
-                                                dragon.current_experience / dragon.experience_to_next_level)
+                                                dragon.current_experience, dragon.experience_to_next_level,
+                                                (0, 255, 0, tooltip_transparency))
 
         self._add_text('level', f'Level {dragon.level}', 'midbottom', experience_bar.y_offset - universal_sizes.SMALL)
 
@@ -60,15 +63,26 @@ class _DragonButton(Button):
                                  (0, y_offset), 1, 'black'))
 
     def _add_progress_bar(self, name: str, y_offset: float, current_image_path: str,
-                          current_percentage: float) -> Button:
+                          current_value: float, max_value: float, tooltip_fill_color: custom_types.Color) -> Button:
+        tooltip = self._create_tooltip(name, current_value, max_value, tooltip_fill_color)
         progress_bar = Button(self, 'dragons_game/graphics/buttons/progress_bar.png',
-                              (self._WIDTH / 2, self._HEIGHT / 30), 'midbottom', (0, y_offset))
+                              (self._WIDTH / 2, self._HEIGHT / 30), 'midbottom', (0, y_offset),
+                              hover_action={'action': 'show_tooltip', 'tooltip': tooltip})
         progress_bar.add_image('current', Image(progress_bar, current_image_path,
-                                                (current_percentage * progress_bar.width, progress_bar.height),
+                                                (current_value / max_value * progress_bar.width, progress_bar.height),
                                                 'midleft', (0, 0)))
 
         self.add_button(name, progress_bar)
         return progress_bar
+
+    def _create_tooltip(self, name: str, current_value: float, max_value: float,
+                        tooltip_fill_color: custom_types.Color) -> Tooltip:
+        tooltip = Tooltip('bottomleft', fill_color=tooltip_fill_color)
+        text = Text(tooltip, 'dragons_game/fonts/friz_quadrata.ttf', int(self._HEIGHT / 18),
+                    f'{name.title()}: {current_value}/{max_value}', 'white', 'center', (0, 0), 1, 'black')
+        tooltip.change_size((text.width + universal_sizes.SMALL, text.height + universal_sizes.SMALL))
+        tooltip.add_text('text', text)
+        return tooltip
 
 
 user_dragons = [toothless for _ in range(10)]
