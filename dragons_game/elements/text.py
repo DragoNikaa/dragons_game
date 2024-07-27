@@ -10,21 +10,24 @@ class Text(pygame.sprite.Sprite):
                  border_color: custom_types.Color = 0):
         super().__init__()
 
+        self._text = text
         self._color = color
         self._position = str(position)
+        self._offset = offset
         self._border_thickness = border_thickness
         self._border_color = border_color
 
         self._font = pygame.font.Font(font_path, size)
         self._destination = outer_element.get_inner_element_destination(position, offset)
 
-        self._set_image_and_rect(text)
+        self._set_image_and_rect()
 
     def change_text(self, new_text: str) -> None:
-        self._set_image_and_rect(new_text)
+        self._text = new_text
+        self._set_image_and_rect()
 
-    def _set_image_and_rect(self, text: str) -> None:
-        self.image = self._font.render(text, True, self._color)
+    def _set_image_and_rect(self) -> None:
+        self.image = self._font.render(self._text, True, self._color)
         self.rect = self.image.get_rect(**{self._position: self._destination})
 
         if self._border_thickness:
@@ -51,3 +54,23 @@ class Text(pygame.sprite.Sprite):
         extended_image.blit(self.image, (added_size / 2, added_size / 2))
         self.image = extended_image
         self.rect = self.image.get_rect(**{self._position: self._destination})
+
+    @property
+    def width(self) -> int:
+        return self.rect.width
+
+    @property
+    def height(self) -> int:
+        return self.rect.height
+
+    @property
+    def position(self) -> str:
+        return self._position
+
+    @property
+    def x_offset(self) -> float:
+        return self._offset[0]
+
+    @property
+    def y_offset(self) -> float:
+        return self._offset[1]
