@@ -16,7 +16,8 @@ class Text(pygame.sprite.Sprite):
         self._offset = offset
         self._border_thickness = border_thickness
         self._border_color = pygame.Color(border_color)
-        self._transparency = self._color.a = self._border_color.a = alpha
+
+        self._color.a = self._border_color.a = alpha
 
         self._font = pygame.font.Font(font_path, size)
         self._destination = outer_element.get_inner_element_destination(position, offset)
@@ -29,6 +30,7 @@ class Text(pygame.sprite.Sprite):
 
     def _set_image_and_rect(self) -> None:
         self.image = self._font.render(self._text, True, self._color)
+        self.image = pygame.mask.from_surface(self.image).to_surface(setcolor=self._color, unsetcolor=None)
         self.rect = self.image.get_rect(**{self._position: self._destination})
 
         if self._border_thickness:
@@ -38,7 +40,7 @@ class Text(pygame.sprite.Sprite):
 
     def _add_text_border(self) -> None:
         added_size = 4 * self._border_thickness
-        image_mask = pygame.mask.from_surface(self.image)
+        image_mask = pygame.mask.from_surface(self.image, 0)
 
         extended_surface = pygame.surface.Surface((self.width + added_size, self.height + added_size),
                                                   flags=pygame.SRCALPHA)
