@@ -16,8 +16,7 @@ class Text(pygame.sprite.Sprite):
         self._offset = offset
         self._border_thickness = border_thickness
         self._border_color = pygame.Color(border_color)
-
-        self._color.a = self._border_color.a = alpha
+        self._alpha = alpha
 
         self._font = pygame.font.Font(font_path, size)
         self._destination = outer_element.get_inner_element_destination(position, offset)
@@ -30,7 +29,7 @@ class Text(pygame.sprite.Sprite):
 
     def _set_image_and_rect(self) -> None:
         self.image = self._font.render(self._text, True, self._color)
-        self.image = pygame.mask.from_surface(self.image).to_surface(setcolor=self._color, unsetcolor=None)
+        self.image.set_alpha(self._alpha)
         self.rect = self.image.get_rect(**{self._position: self._destination})
 
         if self._border_thickness:
@@ -40,26 +39,24 @@ class Text(pygame.sprite.Sprite):
 
     def _add_text_border(self) -> None:
         added_size = 4 * self._border_thickness
-        image_mask = pygame.mask.from_surface(self.image, 0)
 
-        extended_surface = pygame.surface.Surface((self.width + added_size, self.height + added_size),
-                                                  flags=pygame.SRCALPHA)
-        extended_image_in_border_color = image_mask.to_surface(surface=extended_surface, setcolor=self._border_color,
-                                                               unsetcolor=None, dest=(added_size / 2, added_size / 2))
-        border = extended_image_in_border_color.copy()
+        extended_image = pygame.surface.Surface((self.width + added_size, self.height + added_size),
+                                                flags=pygame.SRCALPHA)
+        pygame.mask.from_surface(self.image).to_surface(surface=extended_image, setcolor=self._border_color,
+                                                        unsetcolor=None, dest=(added_size / 2, added_size / 2))
 
         for offset in (self._border_thickness, -self._border_thickness):
-            border.blit(border, (offset, 0), special_flags=pygame.BLEND_RGBA_MAX)
-            border.blit(border, (0, offset), special_flags=pygame.BLEND_RGBA_MAX)
+            extended_image.blit(extended_image, (offset, 0))
+            extended_image.blit(extended_image, (0, offset))
 
         for offset in (self._border_thickness ** 0.5, -self._border_thickness ** 0.5):
-            border.blit(border, (offset, offset), special_flags=pygame.BLEND_RGBA_MAX)
-            border.blit(border, (offset, -offset), special_flags=pygame.BLEND_RGBA_MAX)
+            extended_image.blit(extended_image, (offset, offset))
+            extended_image.blit(extended_image, (offset, -offset))
 
-        border.blit(extended_image_in_border_color, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
+        extended_image.blit(self.image, (added_size / 2, added_size / 2))
+        extended_image.set_alpha(self._alpha)
 
-        self.image = image_mask.to_surface(surface=border, setcolor=self._color, unsetcolor=None,
-                                           dest=(added_size / 2, added_size / 2))
+        self.image = extended_image
         self.rect = self.image.get_rect(**{self._position: self._destination})
 
     @property
