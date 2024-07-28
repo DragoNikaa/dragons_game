@@ -2,7 +2,7 @@ from typing import Literal, Any
 
 import pygame
 
-Color = pygame.Color | int | str | tuple[int, int, int] | tuple[int, int, int, int]
+Color = int | str | tuple[int, int, int]
 
 Position = Literal[
     'topleft', 'bottomleft', 'topright', 'bottomright', 'midtop', 'midleft', 'midbottom', 'midright', 'center']
