@@ -3,15 +3,17 @@ from typing import Any
 
 import pygame
 
+from dragons_game.elements.custom_sprite import CustomSprite
 from dragons_game.utils import custom_events
 from dragons_game.elements.section import Section
-from dragons_game.elements.text import Text
 
 
 class GameStateManager(ABC):
     def __init__(self, *sections: Section):
+        super().__init__()
+
         self._elements = pygame.sprite.Group(*[section.elements for section in sections])
-        self._tooltip_elements: list[Section | Text] | None = None
+        self._tooltip_elements: list[CustomSprite] | None = None
 
     @abstractmethod
     def handle_event(self, event: pygame.event.Event) -> Any:

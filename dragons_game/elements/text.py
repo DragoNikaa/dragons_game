@@ -1,40 +1,37 @@
 import pygame
 
+from dragons_game.elements.custom_sprite import CustomSprite
 from dragons_game.utils import custom_types
-from dragons_game.elements.section import Section
 
 
-class Text(pygame.sprite.Sprite):
-    def __init__(self, outer_element: Section, font_path: str, size: int, text: str, color: custom_types.Color,
-                 position: custom_types.Position, offset: tuple[float, float], border_thickness: int = 0,
+class Text(CustomSprite):
+    def __init__(self, font_path: str, size: float, text: str, color: custom_types.Color,
+                 position: custom_types.Position, destination: tuple[float, float], border_thickness: int = 0,
                  border_color: custom_types.Color = 0, alpha: int = 255):
-        super().__init__()
+        super().__init__(position, destination)
 
-        self._text = text
+        self._font = pygame.font.Font(font_path, round(size))
         self._color = pygame.Color(color)
-        self._position = str(position)
-        self._offset = offset
         self._border_thickness = border_thickness
         self._border_color = pygame.Color(border_color)
         self._alpha = alpha
+        self.text = text
 
-        self._font = pygame.font.Font(font_path, size)
-        self._destination = outer_element.get_inner_element_destination(position, offset)
+    @property
+    def text(self) -> str:
+        return self._text
 
-        self._set_image_and_rect()
+    @text.setter
+    def text(self, value: str) -> None:
+        self._text = value
 
-    def change_text(self, new_text: str) -> None:
-        self._text = new_text
-        self._set_image_and_rect()
-
-    def _set_image_and_rect(self) -> None:
         self.image = self._font.render(self._text, True, self._color)
-        self.image.set_alpha(self._alpha)
-        self.rect = self.image.get_rect(**{self._position: self._destination})
+        self.rect = self.image.get_rect(**{self._position: getattr(self.rect, self._position)})
 
         if self._border_thickness:
             self._add_text_border()
 
+        self.image.set_alpha(self._alpha)
         self.image_without_effects = self.image
 
     def _add_text_border(self) -> None:
@@ -54,27 +51,6 @@ class Text(pygame.sprite.Sprite):
             extended_image.blit(extended_image, (offset, -offset))
 
         extended_image.blit(self.image, (added_size / 2, added_size / 2))
-        extended_image.set_alpha(self._alpha)
 
-        self.image = extended_image
-        self.rect = self.image.get_rect(**{self._position: self._destination})
-
-    @property
-    def width(self) -> int:
-        return self.rect.width
-
-    @property
-    def height(self) -> int:
-        return self.rect.height
-
-    @property
-    def position(self) -> str:
-        return self._position
-
-    @property
-    def x_offset(self) -> float:
-        return self._offset[0]
-
-    @property
-    def y_offset(self) -> float:
-        return self._offset[1]
+        self.image = extended_image.convert_alpha()
+        self.rect = self.image.get_rect(**{self._position: getattr(self.rect, self._position)})
