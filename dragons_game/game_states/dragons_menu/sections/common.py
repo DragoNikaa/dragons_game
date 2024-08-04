@@ -1,3 +1,5 @@
+from abc import ABC, abstractmethod
+
 from dragons_game.dragons.dragon import Dragon
 from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
@@ -8,7 +10,8 @@ from dragons_game.utils import custom_types
 from dragons_game.utils.image_proportions import calculate_proportional_width
 
 
-class DragonButton(Button):
+class DragonButton(Button, ABC):
+    @abstractmethod
     def __init__(self, dragon: Dragon, size: tuple[float, float], position: custom_types.Position,
                  destination: tuple[float, float]):
         super().__init__(f'dragons_game/graphics/buttons/dragons/{dragon.dragon_class.value}.png', size, position,

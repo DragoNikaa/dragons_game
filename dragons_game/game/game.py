@@ -5,6 +5,7 @@ from dragons_game.game_states.dragons_menu.manager import DragonsMenuManager
 from dragons_game.game_states.game_state import GameState
 from dragons_game.game_states.main_menu.manager import MainMenuManager
 from dragons_game.game_states.start_screen.manager import StartScreenManager
+from dragons_game.utils.classproperty import classproperty
 
 
 class Game(GameConfig):
@@ -32,6 +33,6 @@ class Game(GameConfig):
         pygame.display.update()
         cls.clock.tick(cls.FRAME_RATE)
 
-    @classmethod
-    def is_running(cls) -> bool:
+    @classproperty
+    def running(cls) -> bool:
         return cls._running
