@@ -1,4 +1,4 @@
-from dragons_game.dragons.database.dragons import toothless
+from dragons_game.dragons.database import dragons
 from dragons_game.dragons.dragon import Dragon
 from dragons_game.utils.class_without_instances import ClassWithoutInstances
 from dragons_game.utils.classproperty import classproperty
@@ -30,5 +30,13 @@ class User(ClassWithoutInstances):
         return cls._team_dragons
 
 
-User.add_dragon(toothless)
-User.add_team_dragon(toothless)
+User.add_dragon(dragons.toothless)
+User.add_dragon(dragons.skyflame)
+User.add_dragon(dragons.prismscale)
+User.add_dragon(dragons.frostreaver)
+User.add_dragon(dragons.valentira)
+User.add_dragon(dragons.nyxar)
+
+User.add_team_dragon(dragons.toothless)
+User.add_team_dragon(dragons.skyflame)
+User.add_team_dragon(dragons.frostreaver)
