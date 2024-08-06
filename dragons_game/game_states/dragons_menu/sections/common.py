@@ -26,13 +26,13 @@ class DragonButton(Button, ABC):
 
         health_bar = self._add_progress_bar('health', -self.height / 7.4,
                                             'dragons_game/graphics/buttons/health_bar.png', dragon.current_health,
-                                            dragon.max_health, 'red')
+                                            dragon.max_health, '#dc0000')
         energy_bar = self._add_progress_bar('energy', health_bar.y_destination - self.height / 22.5,
                                             'dragons_game/graphics/buttons/energy_bar.png', dragon.current_energy,
-                                            dragon.max_energy, 'yellow')
+                                            dragon.max_energy, '#eaea00')
         experience_bar = self._add_progress_bar('experience', energy_bar.y_destination - self.height / 22.5,
                                                 'dragons_game/graphics/buttons/experience_bar.png',
-                                                dragon.current_experience, dragon.experience_to_next_level, 'green')
+                                                dragon.current_experience, dragon.experience_to_next_level, '#00da00')
 
         self._add_text('level', f'Level {dragon.level}', 'midbottom', experience_bar.y_destination - self.height / 22.5)
 
