@@ -6,7 +6,7 @@ from dragons_game.game.configuration import GameConfig
 from dragons_game.game_states.common import universal_sizes
 from dragons_game.game_states.dragons_menu.sections.common.dragon_button import DragonButton
 from dragons_game.game_states.dragons_menu.sections.title_bar import title_bar_section
-from dragons_game.user import User
+from dragons_game.user import user
 
 team_section = Section((GameConfig.WINDOW_WIDTH / 7, GameConfig.WINDOW_HEIGHT - title_bar_section.height), 'topleft',
                        (0, title_bar_section.rect.bottom))
@@ -42,4 +42,4 @@ class _DragonButton(DragonButton):
         return cls(dragon_index, dragon)
 
 
-User.add_team_dragons_observer(_DragonButton)
+user.add_team_dragons_observer(_DragonButton)
