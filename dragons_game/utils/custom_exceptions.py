@@ -25,3 +25,19 @@ class TooManyDragonsError(DragonError):
     def __init__(self, max_dragons: int):
         super().__init__(f'Cannot add more than {max_dragons} dragons to team')
         self.max_dragons = max_dragons
+
+
+class SectionError(Exception):
+    def __init__(self, element_name: str, message: str):
+        super().__init__(message)
+        self.element_name = element_name
+
+
+class ElementNotInSectionError(SectionError):
+    def __init__(self, element_name: str):
+        super().__init__(element_name, f"Element '{element_name}' not found in section")
+
+
+class ElementAlreadyInSectionError(SectionError):
+    def __init__(self, element_name: str):
+        super().__init__(element_name, f"Element '{element_name}' is already in section")
