@@ -7,7 +7,7 @@ from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
 from dragons_game.elements.tooltip import Tooltip
 from dragons_game.game_states.common import universal_sizes
-from dragons_game.utils import custom_types
+from dragons_game.utils import custom_exceptions, custom_types
 from dragons_game.utils.image_proportions import calculate_proportional_width
 from dragons_game.utils.observers import ObserverClass
 
@@ -74,7 +74,7 @@ class DragonButton(Button, ObserverClass, ABC):
             try:
                 dragon_button = section.get_element(dragon.name)
                 dragon_button.destination = cls._new_destination(dragon_index)
-            except KeyError:
+            except custom_exceptions.ElementNotInSectionError:
                 dragon_button = cls._create_instance(dragon_index, dragon)
                 section.add_element(dragon.name, dragon_button)
 
