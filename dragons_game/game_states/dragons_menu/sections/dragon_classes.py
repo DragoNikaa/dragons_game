@@ -25,13 +25,13 @@ class _DragonClassButton(Button):
             x = previous_button.x_destination + previous_button.width + universal_sizes.MEDIUM
             self._stars_number = previous_button._stars_number + 1
 
-        tooltip = self._create_tooltip(name, tooltip_color)
+        tooltip = self._tooltip(name, tooltip_color)
 
         super().__init__(image_path, (width, height), 'topleft', (x, 0),
                          hover_action={'action': 'show_tooltip', 'tooltip': tooltip})
 
-    def _create_tooltip(self, name: str, color: custom_types.Color) -> Tooltip:
-        stars = [self._create_star(star_number) for star_number in range(1, 7)]
+    def _tooltip(self, name: str, color: custom_types.Color) -> Tooltip:
+        stars = [self._star(star_number) for star_number in range(1, 7)]
 
         text = Text('dragons_game/fonts/friz_quadrata.ttf', universal_sizes.MEDIUM / 1.5, f'{name.title()}', 'white',
                     'midleft', (stars[5].rect.right + universal_sizes.SMALL / 2, 0), 1, 'black')
@@ -46,7 +46,7 @@ class _DragonClassButton(Button):
 
         return tooltip
 
-    def _create_star(self, star_number: int) -> Image:
+    def _star(self, star_number: int) -> Image:
         if star_number <= self._stars_number:
             color = 'gold'
         else:

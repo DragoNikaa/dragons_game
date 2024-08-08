@@ -25,6 +25,25 @@ class CustomSprite(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(**{self._position: self._destination})
 
     @property
+    def destination(self) -> tuple[int, int]:
+        return self._destination
+
+    @destination.setter
+    def destination(self, new_destination: tuple[float, float]) -> None:
+        from dragons_game.elements.section import Section
+
+        new_destination = round(new_destination[0]), round(new_destination[1])
+        destination_difference = new_destination[0] - self.x_destination, new_destination[1] - self.y_destination
+
+        if isinstance(self, Section):
+            for element in self.elements:
+                element.rect.move_ip(destination_difference)
+        else:
+            self.rect.move_ip(destination_difference)
+
+        self._destination = new_destination
+
+    @property
     def size(self) -> tuple[int, int]:
         return self.rect.size
 

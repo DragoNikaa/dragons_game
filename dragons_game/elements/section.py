@@ -2,6 +2,7 @@ import pygame
 
 from dragons_game.elements.custom_sprite import CustomSprite
 from dragons_game.utils import custom_types
+from dragons_game.utils.observers import Observer
 
 
 class Section(CustomSprite):
@@ -10,6 +11,8 @@ class Section(CustomSprite):
         super().__init__(position, destination, image, size)
 
         self._elements: dict[str, CustomSprite] = {}
+
+        self._observers: list[Observer] = []
 
     def add_element(self, name: str, element: CustomSprite) -> None:
         section_destination = getattr(self.rect, element.position)
@@ -21,9 +24,17 @@ class Section(CustomSprite):
             element.rect.move_ip(section_destination)
 
         self._elements[name] = element
+        self.notify_observers()
 
     def get_element(self, name: str) -> CustomSprite:
         return self._elements[name]
+
+    def add_observer(self, observer: Observer) -> None:
+        self._observers.append(observer)
+
+    def notify_observers(self) -> None:
+        for observer in self._observers:
+            observer.update_on_notify(self)
 
     @property
     def elements(self) -> list[CustomSprite]:

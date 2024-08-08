@@ -3,9 +3,9 @@ from dragons_game.elements.image import Image
 from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
 from dragons_game.game.configuration import GameConfig
-from dragons_game.game_states.dragons_menu.sections.common import DragonButton
-from dragons_game.game_states.dragons_menu.sections.title_bar import title_bar_section
 from dragons_game.game_states.common import universal_sizes
+from dragons_game.game_states.dragons_menu.sections.common.dragon_button import DragonButton
+from dragons_game.game_states.dragons_menu.sections.title_bar import title_bar_section
 from dragons_game.user import User
 
 team_section = Section((GameConfig.WINDOW_WIDTH / 7, GameConfig.WINDOW_HEIGHT - title_bar_section.height), 'topleft',
@@ -27,8 +27,19 @@ class _DragonButton(DragonButton):
                                         round(_HEIGHT) + universal_sizes.SMALL)]
 
     def __init__(self, dragon_index: int, dragon: Dragon):
-        super().__init__(dragon, (self._WIDTH, self._HEIGHT), 'midtop', (0, self._Y_DESTINATIONS[dragon_index]))
+        super().__init__(dragon, (self._WIDTH, self._HEIGHT), 'midtop', self._new_destination(dragon_index))
+
+    @classmethod
+    def update_on_notify(cls, dragons: list[Dragon], section: Section = team_section) -> None:
+        super().update_on_notify(dragons, section)
+
+    @classmethod
+    def _new_destination(cls, dragon_index: int) -> tuple[int, int]:
+        return 0, cls._Y_DESTINATIONS[dragon_index]
+
+    @classmethod
+    def _create_instance(cls, dragon_index: int, dragon: Dragon) -> 'DragonButton':
+        return cls(dragon_index, dragon)
 
 
-for dragon_index, dragon in enumerate(User.team_dragons):
-    team_section.add_element(f'dragon_{dragon_index}', _DragonButton(dragon_index, dragon))
+User.add_team_dragons_observer(_DragonButton)

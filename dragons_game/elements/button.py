@@ -5,7 +5,7 @@ import pygame.sprite
 from dragons_game.elements.image import Image
 from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
-from dragons_game.utils import custom_types, custom_events
+from dragons_game.utils import custom_events, custom_types
 
 
 class Button(Section):

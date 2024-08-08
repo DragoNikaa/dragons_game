@@ -22,10 +22,10 @@ class Text(CustomSprite):
         return self._text
 
     @text.setter
-    def text(self, value: str) -> None:
-        self._text = value
+    def text(self, new_text: str) -> None:
+        self._text = new_text
 
-        self.image = self._font.render(self._text, True, self._color)
+        self.image = self._font.render(new_text, True, self._color)
         self.rect = self.image.get_rect(**{self._position: getattr(self.rect, self._position)})
 
         if self._border_thickness:

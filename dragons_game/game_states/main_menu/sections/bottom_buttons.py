@@ -1,11 +1,11 @@
-from dragons_game.utils import custom_types
 from dragons_game.elements.button import Button
-from dragons_game.elements.section import Section
 from dragons_game.elements.image import Image
+from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
 from dragons_game.game.configuration import GameConfig
-from dragons_game.utils.image_proportions import calculate_proportional_width
 from dragons_game.game_states.game_state import GameState
+from dragons_game.utils import custom_types
+from dragons_game.utils.image_proportions import calculate_proportional_width
 
 bottom_buttons_section = Section((GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEIGHT / 7), 'bottomleft',
                                  (0, GameConfig.WINDOW_HEIGHT))

@@ -1,8 +1,8 @@
-from dragons_game.utils import custom_types
 from dragons_game.elements.button import Button
-from dragons_game.elements.section import Section
 from dragons_game.elements.image import Image
+from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
+from dragons_game.utils import custom_types
 from dragons_game.utils.image_proportions import calculate_proportional_width
 
 

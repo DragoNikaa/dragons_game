@@ -3,18 +3,20 @@ from abc import ABC, abstractmethod
 from dragons_game.dragons.dragon import Dragon
 from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
+from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
 from dragons_game.elements.tooltip import Tooltip
 from dragons_game.game_states.common import universal_sizes
 from dragons_game.utils import custom_types
 from dragons_game.utils.image_proportions import calculate_proportional_width
+from dragons_game.utils.observers import ObserverClass
 
 
-class DragonButton(Button, ABC):
+class DragonButton(Button, ObserverClass, ABC):
     @abstractmethod
     def __init__(self, dragon: Dragon, size: tuple[float, float], position: custom_types.Position,
                  destination: tuple[float, float]):
-        super().__init__(f'dragons_game/graphics/buttons/dragons/{dragon.dragon_class.value}.png', size, position,
+        super().__init__(f'dragons_game/graphics/buttons/dragons/{dragon.dragon_class}.png', size, position,
                          destination)
 
         self._add_text('name', dragon.name, 'midtop', self.height / 5.45)
@@ -42,7 +44,7 @@ class DragonButton(Button, ABC):
 
     def _add_progress_bar(self, name: str, y_destination: float, current_image_path: str, current_value: float,
                           max_value: float, tooltip_color: custom_types.Color) -> Button:
-        tooltip = self._create_tooltip(name, current_value, max_value, tooltip_color)
+        tooltip = self._tooltip(name, current_value, max_value, tooltip_color)
 
         progress_bar = Button('dragons_game/graphics/buttons/progress_bar.png', (self.width / 2, self.height / 30),
                               'midbottom', (0, y_destination),
@@ -56,7 +58,7 @@ class DragonButton(Button, ABC):
         return progress_bar
 
     @staticmethod
-    def _create_tooltip(name: str, current_value: float, max_value: float, color: custom_types.Color) -> Tooltip:
+    def _tooltip(name: str, current_value: float, max_value: float, color: custom_types.Color) -> Tooltip:
         text = Text('dragons_game/fonts/friz_quadrata.ttf', universal_sizes.MEDIUM / 1.5,
                     f'{name.title()}: {current_value}/{max_value}', 'white', 'center', (0, 0), 1, 'black')
 
@@ -65,3 +67,23 @@ class DragonButton(Button, ABC):
 
         tooltip.add_element('text', text)
         return tooltip
+
+    @classmethod
+    def update_on_notify(cls, dragons: list[Dragon], section: Section) -> None:
+        for dragon_index, dragon in enumerate(dragons):
+            try:
+                dragon_button = section.get_element(dragon.name)
+                dragon_button.destination = cls._new_destination(dragon_index)
+            except KeyError:
+                dragon_button = cls._create_instance(dragon_index, dragon)
+                section.add_element(dragon.name, dragon_button)
+
+    @classmethod
+    @abstractmethod
+    def _new_destination(cls, dragon_index: int) -> tuple[int, int]:
+        ...
+
+    @classmethod
+    @abstractmethod
+    def _create_instance(cls, dragon_index: int, dragon: Dragon) -> 'DragonButton':
+        ...

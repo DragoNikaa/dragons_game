@@ -1,14 +1,13 @@
 import pathlib
 import random
 
-from dragons_game.elements.image import Image
-from dragons_game.utils import custom_types
 from dragons_game.elements.button import Button
-
+from dragons_game.elements.image import Image
 from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
 from dragons_game.game.configuration import GameConfig
 from dragons_game.game_states.game_state import GameState
+from dragons_game.utils import custom_types
 
 
 def _draw_background() -> str:
