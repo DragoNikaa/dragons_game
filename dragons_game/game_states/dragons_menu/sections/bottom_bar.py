@@ -5,17 +5,53 @@ from dragons_game.elements.text import Text
 from dragons_game.elements.tooltip import Tooltip
 from dragons_game.game_states.common import universal_sizes
 from dragons_game.game_states.dragons_menu.sections.dragons import dragons_section
-from dragons_game.game_states.dragons_menu.sections.page import page_section
-from dragons_game.game_states.dragons_menu.sections.sort import sort_section
 from dragons_game.utils import custom_types
 from dragons_game.utils.image_proportions import calculate_proportional_width
 
-rarities_section = Section(sort_section.size, 'center',
-                           ((page_section.rect.right + dragons_section.rect.right) / 2, page_section.rect.centery))
+bottom_bar_section = Section((dragons_section.width - 4 * universal_sizes.LARGE, universal_sizes.LARGE), 'midbottom',
+                             (dragons_section.rect.centerx, dragons_section.rect.bottom - universal_sizes.MEDIUM))
+_section_height = bottom_bar_section.height
 
-_text = Text('dragons_game/fonts/pr_viking.ttf', sort_section.height / 1.5, 'Rarities:', 'white', 'midleft', (0, 0), 3,
-             'black')
-rarities_section.add_element('text', _text)
+
+class _Text(Text):
+    def __init__(self, height: float, text: str, position: custom_types.Position):
+        super().__init__('dragons_game/fonts/pr_viking.ttf', height, text, 'white', position, (0, 0), 3, 'black')
+
+
+_page_section = Section((4 * universal_sizes.LARGE, _section_height), 'center', (0, 0))
+bottom_bar_section.add_element('page_section', _page_section)
+
+_page_section.add_element('page_number', _Text(_section_height, '1', 'center'))
+
+
+class _PageButton(Button):
+    def __init__(self, image_path: str, position: custom_types.Position):
+        super().__init__(image_path, (_section_height, _section_height), position, (0, 0))
+
+
+_page_section.add_element('left_page', _PageButton('dragons_game/graphics/buttons/left_page.png', 'topleft'))
+_page_section.add_element('right_page', _PageButton('dragons_game/graphics/buttons/right_page.png', 'topright'))
+
+_sort_section = Section(
+    ((bottom_bar_section.width - _page_section.width) / 2 - 2 * universal_sizes.LARGE, _section_height), 'topleft',
+    (0, 0))
+bottom_bar_section.add_element('sort_section', _sort_section)
+
+_sort_text = _Text(_section_height / 1.5, 'Sorted by:', 'midleft')
+_sort_section.add_element('text', _sort_text)
+
+_sort_section.add_element('key', Button('dragons_game/graphics/buttons/sort_key.png',
+                                        (_sort_section.width / 2.5, _section_height), 'midleft',
+                                        (_sort_text.width + universal_sizes.SMALL, 0)))
+
+_sort_section.add_element('reverse', Button('dragons_game/graphics/buttons/sort_reverse.png',
+                                            (1.5 * _section_height, _section_height), 'midright', (0, 0)))
+
+_rarities_section = Section(_sort_section.size, 'topright', (0, 0))
+bottom_bar_section.add_element('rarities_section', _rarities_section)
+
+_rarities_text = _Text(_section_height / 1.5, 'Rarities:', 'midleft')
+_rarities_section.add_element('text', _rarities_text)
 
 
 class _RarityButton(Button):
@@ -23,11 +59,11 @@ class _RarityButton(Button):
         self._name = name
         image_path = f'dragons_game/graphics/buttons/rarities/{name}.png'
 
-        height = rarities_section.height / 1.1
+        height = _section_height / 1.1
         width = calculate_proportional_width(image_path, height)
 
         if previous_button is None:
-            x = _text.x_destination + _text.width + universal_sizes.SMALL
+            x = _rarities_text.x_destination + _rarities_text.width + universal_sizes.SMALL
             self._stars_number = 1
         else:
             x = previous_button.x_destination + previous_button.width
@@ -79,9 +115,9 @@ _mythical = _RarityButton('mythical', '#d338de', _legendary)
 
 _all_buttons = (_common, _uncommon, _rare, _epic, _legendary, _mythical)
 _button_widths_sum = sum([button.width for button in _all_buttons])
-_space_between_buttons = (rarities_section.width - _text.width - universal_sizes.SMALL - _button_widths_sum) / (
-        len(_all_buttons) - 1)
+_space_between_buttons = ((_rarities_section.width - _rarities_text.width - universal_sizes.SMALL - _button_widths_sum)
+                          / (len(_all_buttons) - 1))
 
 for button_index, button in enumerate(_all_buttons):
     button.destination = (round(button.x_destination + button_index * _space_between_buttons), button.y_destination)
-    rarities_section.add_element(button.name, button)
+    _rarities_section.add_element(button.name, button)
