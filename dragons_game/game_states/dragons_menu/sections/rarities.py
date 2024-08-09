@@ -6,27 +6,36 @@ from dragons_game.elements.tooltip import Tooltip
 from dragons_game.game_states.common import universal_sizes
 from dragons_game.game_states.dragons_menu.sections.dragons import dragons_section
 from dragons_game.game_states.dragons_menu.sections.page import page_section
+from dragons_game.game_states.dragons_menu.sections.sort import sort_section
 from dragons_game.utils import custom_types
 from dragons_game.utils.image_proportions import calculate_proportional_width
+
+rarities_section = Section(sort_section.size, 'center',
+                           ((page_section.rect.right + dragons_section.rect.right) / 2, page_section.rect.centery))
+
+_text = Text('dragons_game/fonts/pr_viking.ttf', sort_section.height / 1.5, 'Rarities:', 'white', 'midleft', (0, 0), 3,
+             'black')
+rarities_section.add_element('text', _text)
 
 
 class _RarityButton(Button):
     def __init__(self, name: str, tooltip_color: custom_types.Color, previous_button: '_RarityButton | None' = None):
+        self._name = name
         image_path = f'dragons_game/graphics/buttons/rarities/{name}.png'
 
-        height = page_section.height
+        height = rarities_section.height / 1.1
         width = calculate_proportional_width(image_path, height)
 
         if previous_button is None:
-            x = 0
+            x = _text.x_destination + _text.width + universal_sizes.SMALL
             self._stars_number = 1
         else:
-            x = previous_button.x_destination + previous_button.width + universal_sizes.MEDIUM
+            x = previous_button.x_destination + previous_button.width
             self._stars_number = previous_button._stars_number + 1
 
         tooltip = self._tooltip(name, tooltip_color)
 
-        super().__init__(image_path, (width, height), 'topleft', (x, 0),
+        super().__init__(image_path, (width, height), 'midleft', (x, 0),
                          hover_action={'action': 'show_tooltip', 'tooltip': tooltip})
 
     def _tooltip(self, name: str, color: custom_types.Color) -> Tooltip:
@@ -56,6 +65,10 @@ class _RarityButton(Button):
 
         return Image(f'dragons_game/graphics/icons/{color}_star.png', (width, width), 'midleft', (x, 0))
 
+    @property
+    def name(self) -> str:
+        return self._name
+
 
 _common = _RarityButton('common', '#985a1f')
 _uncommon = _RarityButton('uncommon', '#08de31', _common)
@@ -64,14 +77,11 @@ _epic = _RarityButton('epic', '#fdd53d', _rare)
 _legendary = _RarityButton('legendary', '#f31e17', _epic)
 _mythical = _RarityButton('mythical', '#d338de', _legendary)
 
-section_width = sum([button.width + universal_sizes.MEDIUM for button in
-                     (_common, _uncommon, _rare, _epic, _legendary, _mythical)]) - universal_sizes.MEDIUM
-rarities_section = Section((section_width, _common.height), 'center',
-                           ((page_section.rect.right + dragons_section.rect.right) / 2, page_section.rect.centery))
+_all_buttons = (_common, _uncommon, _rare, _epic, _legendary, _mythical)
+_button_widths_sum = sum([button.width for button in _all_buttons])
+_space_between_buttons = (rarities_section.width - _text.width - universal_sizes.SMALL - _button_widths_sum) / (
+        len(_all_buttons) - 1)
 
-rarities_section.add_element('common', _common)
-rarities_section.add_element('uncommon', _uncommon)
-rarities_section.add_element('rare', _rare)
-rarities_section.add_element('epic', _epic)
-rarities_section.add_element('legendary', _legendary)
-rarities_section.add_element('mythical', _mythical)
+for button_index, button in enumerate(_all_buttons):
+    button.destination = (round(button.x_destination + button_index * _space_between_buttons), button.y_destination)
+    rarities_section.add_element(button.name, button)

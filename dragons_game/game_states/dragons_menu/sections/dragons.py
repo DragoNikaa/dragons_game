@@ -19,11 +19,11 @@ dragons_section.add_element('background',
 
 class _DragonButton(DragonButton):
     _WIDTH = (dragons_section.width - universal_sizes.LARGE) / 5 - universal_sizes.LARGE
-    _HEIGHT = (dragons_section.height - 2 * universal_sizes.LARGE) / 2 - universal_sizes.LARGE
+    _HEIGHT = (dragons_section.height - 2 * universal_sizes.MEDIUM - universal_sizes.LARGE) / 2 - universal_sizes.MEDIUM
     _X_DESTINATIONS = [x for x in
                        range(universal_sizes.LARGE, dragons_section.width, round(_WIDTH) + universal_sizes.LARGE)]
-    _ROW_1_Y_DESTINATION: float = universal_sizes.LARGE
-    _ROW_2_Y_DESTINATION = 2 * universal_sizes.LARGE + _HEIGHT
+    _ROW_1_Y_DESTINATION: float = universal_sizes.MEDIUM
+    _ROW_2_Y_DESTINATION = 2 * universal_sizes.MEDIUM + _HEIGHT
 
     def __init__(self, dragon_index: int, dragon: Dragon):
         super().__init__(dragon, (self._WIDTH, self._HEIGHT), 'topleft', self._new_destination(dragon_index))
