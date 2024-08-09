@@ -1,7 +1,7 @@
 from enum import IntEnum
 
 
-class DragonClass(IntEnum):
+class Rarity(IntEnum):
     COMMON = 1
     UNCOMMON = 2
     RARE = 3

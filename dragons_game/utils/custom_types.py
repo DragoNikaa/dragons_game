@@ -9,4 +9,4 @@ CustomEventDictKey = Literal['action', 'next_state', 'tooltip']
 CustomEventDictValue = Literal['change_state', 'show_tooltip']
 CustomEventDict = dict[CustomEventDictKey, CustomEventDictValue | Any]
 
-DragonsSortKey = Literal['name', 'dragon_class', 'level', 'current_energy', 'current_health']
+DragonsSortKey = Literal['name', 'rarity', 'level', 'energy', 'health']
