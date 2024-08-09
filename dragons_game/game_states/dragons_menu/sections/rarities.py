@@ -10,10 +10,9 @@ from dragons_game.utils import custom_types
 from dragons_game.utils.image_proportions import calculate_proportional_width
 
 
-class _DragonClassButton(Button):
-    def __init__(self, name: str, tooltip_color: custom_types.Color,
-                 previous_button: '_DragonClassButton | None' = None):
-        image_path = f'dragons_game/graphics/buttons/dragon_classes/{name}.png'
+class _RarityButton(Button):
+    def __init__(self, name: str, tooltip_color: custom_types.Color, previous_button: '_RarityButton | None' = None):
+        image_path = f'dragons_game/graphics/buttons/rarities/{name}.png'
 
         height = page_section.height
         width = calculate_proportional_width(image_path, height)
@@ -58,21 +57,21 @@ class _DragonClassButton(Button):
         return Image(f'dragons_game/graphics/icons/{color}_star.png', (width, width), 'midleft', (x, 0))
 
 
-_common = _DragonClassButton('common', '#985a1f')
-_uncommon = _DragonClassButton('uncommon', '#08de31', _common)
-_rare = _DragonClassButton('rare', '#016ece', _uncommon)
-_epic = _DragonClassButton('epic', '#fdd53d', _rare)
-_legendary = _DragonClassButton('legendary', '#f31e17', _epic)
-_mythical = _DragonClassButton('mythical', '#d338de', _legendary)
+_common = _RarityButton('common', '#985a1f')
+_uncommon = _RarityButton('uncommon', '#08de31', _common)
+_rare = _RarityButton('rare', '#016ece', _uncommon)
+_epic = _RarityButton('epic', '#fdd53d', _rare)
+_legendary = _RarityButton('legendary', '#f31e17', _epic)
+_mythical = _RarityButton('mythical', '#d338de', _legendary)
 
 section_width = sum([button.width + universal_sizes.MEDIUM for button in
                      (_common, _uncommon, _rare, _epic, _legendary, _mythical)]) - universal_sizes.MEDIUM
-dragon_classes_section = Section((section_width, _common.height), 'center', (
-    ((page_section.rect.right + dragons_section.rect.right) / 2, page_section.rect.centery)))
+rarities_section = Section((section_width, _common.height), 'center',
+                           ((page_section.rect.right + dragons_section.rect.right) / 2, page_section.rect.centery))
 
-dragon_classes_section.add_element('common', _common)
-dragon_classes_section.add_element('uncommon', _uncommon)
-dragon_classes_section.add_element('rare', _rare)
-dragon_classes_section.add_element('epic', _epic)
-dragon_classes_section.add_element('legendary', _legendary)
-dragon_classes_section.add_element('mythical', _mythical)
+rarities_section.add_element('common', _common)
+rarities_section.add_element('uncommon', _uncommon)
+rarities_section.add_element('rare', _rare)
+rarities_section.add_element('epic', _epic)
+rarities_section.add_element('legendary', _legendary)
+rarities_section.add_element('mythical', _mythical)

@@ -16,8 +16,7 @@ class DragonButton(Button, ObserverClass, ABC):
     @abstractmethod
     def __init__(self, dragon: Dragon, size: tuple[float, float], position: custom_types.Position,
                  destination: tuple[float, float]):
-        super().__init__(f'dragons_game/graphics/buttons/dragons/{dragon.dragon_class}.png', size, position,
-                         destination)
+        super().__init__(f'dragons_game/graphics/buttons/dragons/{dragon.rarity}.png', size, position, destination)
 
         self._add_text('name', dragon.name, 'midtop', self.height / 5.45)
 
