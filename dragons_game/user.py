@@ -52,19 +52,19 @@ class User:
         self._dragons.insert(index, dragon)
         self._notify_dragons_observers()
 
-    def add_team_dragon(self, dragon_to_add: Dragon, dragon_to_remove_index: int = 2) -> None:
-        if dragon_to_add not in self._dragons:
-            raise custom_exceptions.DragonNotOwnedError(dragon_to_add.name)
+    def add_team_dragon(self, dragon: Dragon, dragon_index: int = 2) -> None:
+        if dragon not in self._dragons:
+            raise custom_exceptions.DragonNotOwnedError(dragon.name)
 
-        if dragon_to_add in self._team_dragons:
-            raise custom_exceptions.DragonAlreadyInTeamError(dragon_to_add.name)
+        if dragon in self._team_dragons:
+            raise custom_exceptions.DragonAlreadyInTeamError(dragon.name)
 
         if len(self._team_dragons) < 3:
-            self._team_dragons.append(dragon_to_add)
+            self._team_dragons.append(dragon)
         else:
-            self._team_dragons[dragon_to_remove_index] = dragon_to_add
+            self._team_dragons[dragon_index] = dragon
 
-        self._notify_team_dragons_observers()
+        self._notify_team_dragons_observers(dragon_index, dragon)
 
     def _sort_dragons(self) -> None:
         self._dragons.sort(key=lambda dragon: getattr(dragon, self._dragons_sort_key),
@@ -114,11 +114,12 @@ class User:
 
     def add_team_dragons_observer(self, observer: type[ObserverClass]) -> None:
         self._team_dragons_observers.append(observer)
-        observer.update_on_notify(self._team_dragons)
+        for dragon_index, dragon in enumerate(self._team_dragons):
+            observer.update_on_notify(dragon_index, dragon)
 
-    def _notify_team_dragons_observers(self) -> None:
+    def _notify_team_dragons_observers(self, dragon_index: int, dragon: Dragon) -> None:
         for observer in self._team_dragons_observers:
-            observer.update_on_notify(self._team_dragons)
+            observer.update_on_notify(dragon_index, dragon)
 
     @property
     def dragons(self) -> list[Dragon]:

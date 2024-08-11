@@ -20,26 +20,18 @@ title = Text('dragons_game/fonts/pr_viking.ttf', team_section.height / 20.5, 'My
 team_section.add_element('title', title)
 
 
-class _DragonButton(DragonButton):
+class _TeamDragonButton(DragonButton):
     _WIDTH = team_section.width - 2 * universal_sizes.MEDIUM
     _HEIGHT = (team_section.height - title.height - 2 * universal_sizes.SMALL) / 3 - universal_sizes.SMALL
     _Y_DESTINATIONS = [y for y in range(title.height + 2 * universal_sizes.SMALL, team_section.height,
                                         round(_HEIGHT) + universal_sizes.SMALL)]
 
     def __init__(self, dragon_index: int, dragon: Dragon):
-        super().__init__(dragon, (self._WIDTH, self._HEIGHT), 'midtop', self._new_destination(dragon_index))
+        super().__init__(dragon, (self._WIDTH, self._HEIGHT), 'midtop', (0, self._Y_DESTINATIONS[dragon_index]))
 
     @classmethod
-    def update_on_notify(cls, dragons: list[Dragon], section: Section = team_section) -> None:
-        super().update_on_notify(dragons, section)
-
-    @classmethod
-    def _new_destination(cls, dragon_index: int) -> tuple[int, int]:
-        return 0, cls._Y_DESTINATIONS[dragon_index]
-
-    @classmethod
-    def _create_instance(cls, dragon_index: int, dragon: Dragon) -> 'DragonButton':
-        return cls(dragon_index, dragon)
+    def update_on_notify(cls, dragon_index: int, dragon: Dragon) -> None:
+        team_section.upsert_element(f'team_dragon_{dragon_index}', cls(dragon_index, dragon))
 
 
-user.add_team_dragons_observer(_DragonButton)
+user.add_team_dragons_observer(_TeamDragonButton)

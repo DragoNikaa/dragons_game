@@ -7,6 +7,7 @@ from dragons_game.game_states.dragons_menu.sections.common.dragon_button import 
 from dragons_game.game_states.dragons_menu.sections.team import team_section
 from dragons_game.game_states.dragons_menu.sections.title_bar import title_bar_section
 from dragons_game.user import user
+from dragons_game.utils import custom_exceptions
 
 dragons_section = Section(
     (GameConfig.WINDOW_WIDTH - team_section.width, GameConfig.WINDOW_HEIGHT - title_bar_section.height), 'topleft',
@@ -29,8 +30,13 @@ class _DragonButton(DragonButton):
         super().__init__(dragon, (self._WIDTH, self._HEIGHT), 'topleft', self._new_destination(dragon_index))
 
     @classmethod
-    def update_on_notify(cls, dragons: list[Dragon], section: Section = dragons_section) -> None:
-        super().update_on_notify(dragons, section)
+    def update_on_notify(cls, dragons: list[Dragon]) -> None:
+        for dragon_index, dragon in enumerate(dragons):
+            try:
+                dragon_button = dragons_section.get_element(dragon.name)
+                dragon_button.destination = cls._new_destination(dragon_index)
+            except custom_exceptions.ElementNotInSectionError:
+                dragons_section.add_element(dragon.name, cls(dragon_index, dragon))
 
     @classmethod
     def _new_destination(cls, dragon_index: int) -> tuple[int, int]:
@@ -43,10 +49,6 @@ class _DragonButton(DragonButton):
             y = cls._ROW_2_Y_DESTINATION
 
         return x, int(y)
-
-    @classmethod
-    def _create_instance(cls, dragon_index: int, dragon: Dragon) -> 'DragonButton':
-        return cls(dragon_index, dragon)
 
 
 user.add_dragons_observer(_DragonButton)
