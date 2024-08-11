@@ -3,6 +3,7 @@ from typing import Any
 
 import pygame
 
+from dragons_game.elements.custom_sprite import CustomSprite
 from dragons_game.elements.section import Section
 from dragons_game.elements.tooltip import Tooltip
 from dragons_game.utils import custom_events
@@ -46,8 +47,12 @@ class GameStateManager(Observer, ABC):
         for elements in self._section_to_elements.values():
             elements.draw(screen)
 
-    def update_on_notify(self, section: Section) -> None:
-        self._section_to_elements[section] = pygame.sprite.Group(*section.elements)
+    def update_on_notify(self, section: Section, added_element: CustomSprite | None = None,
+                         removed_element: CustomSprite | None = None) -> None:
+        if added_element:
+            self._section_to_elements[section].add(added_element)
+        if removed_element:
+            self._section_to_elements[section].remove(removed_element)
 
     def _remove_tooltip(self) -> None:
         if self._tooltip:
