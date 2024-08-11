@@ -26,7 +26,10 @@ class GameStateManager(Observer, ABC):
                 self._remove_tooltip()
                 return event.next_state
 
-        if event.type == custom_events.BUTTON_HOVER:
+            elif event.action == 'call':
+                event.callable()
+
+        elif event.type == custom_events.BUTTON_HOVER:
             if event.action == 'show_tooltip':
                 if self._tooltip is None:
                     self._tooltip = event.tooltip

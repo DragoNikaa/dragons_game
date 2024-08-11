@@ -1,3 +1,7 @@
+from typing import Callable, Literal
+
+import pygame
+
 from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
 from dragons_game.elements.section import Section
@@ -5,8 +9,10 @@ from dragons_game.elements.text import Text
 from dragons_game.elements.tooltip import Tooltip
 from dragons_game.game_states.common import universal_sizes
 from dragons_game.game_states.dragons_menu.sections.dragons import dragons_section
+from dragons_game.user import user
 from dragons_game.utils import custom_types
 from dragons_game.utils.image_proportions import calculate_proportional_width
+from dragons_game.utils.observers import Observer
 
 bottom_bar_section = Section((dragons_section.width - 4 * universal_sizes.LARGE, universal_sizes.LARGE), 'midbottom',
                              (dragons_section.rect.centerx, dragons_section.rect.bottom - universal_sizes.MEDIUM))
@@ -15,7 +21,7 @@ _section_height = bottom_bar_section.height
 
 class _Text(Text):
     def __init__(self, height: float, text: str, position: custom_types.Position):
-        super().__init__('dragons_game/fonts/pr_viking.ttf', height, text, 'white', position, (0, 0), 3, 'black')
+        super().__init__('dragons_game/fonts/pr_viking.ttf', height, text, 'white', position, (0, 0), 2, 'black')
 
 
 _page_section = Section((4 * universal_sizes.LARGE, _section_height), 'center', (0, 0))
@@ -40,12 +46,49 @@ bottom_bar_section.add_element('sort_section', _sort_section)
 _sort_text = _Text(_section_height / 1.5, 'Sorted by:', 'midleft')
 _sort_section.add_element('text', _sort_text)
 
-_sort_section.add_element('key', Button('dragons_game/graphics/buttons/sort_key.png',
-                                        (_sort_section.width / 2.5, _section_height), 'midleft',
-                                        (_sort_text.width + universal_sizes.SMALL, 0)))
 
-_sort_section.add_element('reverse', Button('dragons_game/graphics/buttons/sort_reverse.png',
-                                            (1.5 * _section_height, _section_height), 'midright', (0, 0)))
+class _SortButton(Button, Observer):
+    def __init__(self, key_or_reverse: Literal['key', 'reverse'], text: str, width: float,
+                 position: custom_types.Position, x_destination: float, click_callable: Callable[[], None]):
+        self._key_or_reverse = key_or_reverse
+
+        super().__init__(f'dragons_game/graphics/buttons/sort_{key_or_reverse}.png', (width, _section_height), position,
+                         (x_destination, 0), {'action': 'call', 'callable': click_callable})
+
+        self._text = Text('dragons_game/fonts/rurik.ttf', _section_height / 1.5, text, 'white', 'center',
+                          (0, self.height / 10), 2, 'black')
+        self.add_element('label', self._text)
+
+        if key_or_reverse == 'reverse':
+            self._arrow_reverse = False
+            self._rotate_reverse_arrow()
+
+    def update_on_notify(self) -> None:
+        if self._key_or_reverse == 'key':
+            self._text.text = user.dragons_sort_key
+        else:
+            self._rotate_reverse_arrow()
+
+    def _rotate_reverse_arrow(self) -> None:
+        if self._arrow_reverse != user.dragons_sort_reverse:
+            self._arrow_reverse = user.dragons_sort_reverse
+            self._text.transform_image(pygame.transform.rotate, 180)
+
+            if self._arrow_reverse:
+                self._text.rect.move_ip(0, -self.height / 7)
+            else:
+                self._text.rect.move_ip(0, self.height / 7)
+
+
+_key_button = _SortButton('key', user.dragons_sort_key, _sort_section.width / 2.5, 'midleft',
+                          _sort_text.width + universal_sizes.SMALL, user.change_dragons_sort_key)
+_reverse_button = _SortButton('reverse', 'T', 1.5 * _section_height, 'midright', 0, user.change_dragons_sort_reverse)
+
+user.add_dragons_sort_key_observer(_key_button)
+user.add_dragons_sort_reverse_observer(_reverse_button)
+
+_sort_section.add_element('key', _key_button)
+_sort_section.add_element('reverse', _reverse_button)
 
 _rarities_section = Section(_sort_section.size, 'topright', (0, 0))
 bottom_bar_section.add_element('rarities_section', _rarities_section)

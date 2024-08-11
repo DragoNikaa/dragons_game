@@ -1,3 +1,5 @@
+from typing import Any, Callable
+
 import pygame
 
 from dragons_game.utils import custom_types
@@ -23,6 +25,10 @@ class CustomSprite(pygame.sprite.Sprite):
 
         self.image = self.image_without_effects = image.convert_alpha()
         self.rect = self.image.get_rect(**{self._position: self._destination})
+
+    def transform_image(self, transform_callable: Callable[..., pygame.Surface], *callable_args: Any) -> None:
+        self.image = transform_callable(self.image, *callable_args).convert_alpha()
+        self.image_without_effects = transform_callable(self.image_without_effects, *callable_args).convert_alpha()
 
     @property
     def destination(self) -> tuple[int, int]:

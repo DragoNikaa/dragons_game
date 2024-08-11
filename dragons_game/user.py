@@ -1,7 +1,7 @@
 from dragons_game.dragons.database import dragons
 from dragons_game.dragons.dragon import Dragon
-from dragons_game.utils import custom_exceptions, custom_types
-from dragons_game.utils.observers import ObserverClass
+from dragons_game.utils import custom_exceptions
+from dragons_game.utils.observers import Observer, ObserverClass
 
 
 class User:
@@ -12,14 +12,21 @@ class User:
             team_dragons = []
 
         self._dragons = list(set(dragons))
-        self._dragons_sort_key: custom_types.DragonsSortKey | None = None
+
+        self._dragons_sort_keys = ('name', 'rarity', 'level', 'current_energy', 'current_health')
+        self._dragons_sort_key_index = 0
+        self._dragons_sort_key = self._dragons_sort_keys[self._dragons_sort_key_index]
         self._dragons_sort_reverse = False
 
         self._team_dragons = list(set(team_dragons))
         self._check_team_dragons()
 
         self._dragons_observers: list[type[ObserverClass]] = []
+        self._dragons_sort_key_observers: list[Observer] = []
+        self._dragons_sort_reverse_observers: list[Observer] = []
         self._team_dragons_observers: list[type[ObserverClass]] = []
+
+        self._sort_dragons()
 
     def _check_team_dragons(self) -> None:
         if len(self._team_dragons) > 3:
@@ -33,22 +40,17 @@ class User:
         if dragon in self._dragons:
             raise custom_exceptions.DragonAlreadyOwnedError(dragon.name)
 
-        if self._dragons_sort_key:
-            if self._dragons_sort_reverse:
-                dragon_lt_or_gt = getattr(dragon, self._dragons_sort_key).__lt__
-            else:
-                dragon_lt_or_gt = getattr(dragon, self._dragons_sort_key).__gt__
-
-            index = 0
-            while index < len(self._dragons) and dragon_lt_or_gt(
-                    getattr(self._dragons[index], self._dragons_sort_key)):
-                index += 1
-
-            self._dragons.insert(index, dragon)
+        if self._dragons_sort_reverse:
+            dragon_lt_or_gt = getattr(dragon, self._dragons_sort_key).__lt__
         else:
-            self._dragons.append(dragon)
+            dragon_lt_or_gt = getattr(dragon, self._dragons_sort_key).__gt__
 
-        self.notify_dragons_observers()
+        index = 0
+        while index < len(self._dragons) and dragon_lt_or_gt(getattr(self._dragons[index], self._dragons_sort_key)):
+            index += 1
+
+        self._dragons.insert(index, dragon)
+        self._notify_dragons_observers()
 
     def add_team_dragon(self, dragon_to_add: Dragon, dragon_to_remove_index: int = 2) -> None:
         if dragon_to_add not in self._dragons:
@@ -62,34 +64,73 @@ class User:
         else:
             self._team_dragons[dragon_to_remove_index] = dragon_to_add
 
-        self.notify_team_dragons_observers()
+        self._notify_team_dragons_observers()
 
-    def sort_dragons(self, key: custom_types.DragonsSortKey, reverse: bool = False) -> None:
-        self._dragons_sort_key = key
-        self._dragons_sort_reverse = reverse
+    def _sort_dragons(self) -> None:
+        self._dragons.sort(key=lambda dragon: getattr(dragon, self._dragons_sort_key),
+                           reverse=self._dragons_sort_reverse)
+        self._notify_dragons_observers()
 
-        self._dragons.sort(key=lambda dragon: getattr(dragon, key), reverse=reverse)
-        self.notify_dragons_observers()
+    def change_dragons_sort_key(self) -> None:
+        self._dragons_sort_key_index += 1
+        if self._dragons_sort_key_index >= len(self._dragons_sort_keys):
+            self._dragons_sort_key_index = 0
+
+        self._dragons_sort_key = self._dragons_sort_keys[self._dragons_sort_key_index]
+
+        self._sort_dragons()
+        self._notify_dragons_sort_key_observers()
+
+    def change_dragons_sort_reverse(self) -> None:
+        self._dragons_sort_reverse = not self._dragons_sort_reverse
+        self._dragons.reverse()
+
+        self._notify_dragons_observers()
+        self._notify_dragons_sort_reverse_observers()
 
     def add_dragons_observer(self, observer: type[ObserverClass]) -> None:
         self._dragons_observers.append(observer)
         observer.update_on_notify(self._dragons)
 
-    def notify_dragons_observers(self) -> None:
+    def _notify_dragons_observers(self) -> None:
         for observer in self._dragons_observers:
             observer.update_on_notify(self._dragons)
+
+    def add_dragons_sort_key_observer(self, observer: Observer) -> None:
+        self._dragons_sort_key_observers.append(observer)
+        observer.update_on_notify()
+
+    def _notify_dragons_sort_key_observers(self) -> None:
+        for observer in self._dragons_sort_key_observers:
+            observer.update_on_notify()
+
+    def add_dragons_sort_reverse_observer(self, observer: Observer) -> None:
+        self._dragons_sort_reverse_observers.append(observer)
+        observer.update_on_notify()
+
+    def _notify_dragons_sort_reverse_observers(self) -> None:
+        for observer in self._dragons_sort_reverse_observers:
+            observer.update_on_notify()
 
     def add_team_dragons_observer(self, observer: type[ObserverClass]) -> None:
         self._team_dragons_observers.append(observer)
         observer.update_on_notify(self._team_dragons)
 
-    def notify_team_dragons_observers(self) -> None:
+    def _notify_team_dragons_observers(self) -> None:
         for observer in self._team_dragons_observers:
             observer.update_on_notify(self._team_dragons)
 
     @property
     def dragons(self) -> list[Dragon]:
         return self._dragons
+
+    @property
+    def dragons_sort_key(self) -> str:
+        return self._dragons_sort_key.replace('current_', '')
+
+    @property
+    def dragons_sort_reverse(self) -> bool:
+        return self._dragons_sort_reverse
 
     @property
     def team_dragons(self) -> list[Dragon]:
