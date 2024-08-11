@@ -18,6 +18,9 @@ class Section(CustomSprite):
         if name in self._elements:
             raise custom_exceptions.ElementAlreadyInSectionError(name)
 
+        self.upsert_element(name, element)
+
+    def upsert_element(self, name: str, element: CustomSprite) -> None:
         section_destination = getattr(self.rect, element.position)
 
         if isinstance(element, Section):
@@ -27,6 +30,13 @@ class Section(CustomSprite):
             element.rect.move_ip(section_destination)
 
         self._elements[name] = element
+        self.notify_observers()
+
+    def remove_element(self, name: str) -> None:
+        if name not in self._elements:
+            raise custom_exceptions.ElementNotInSectionError(name)
+
+        del self._elements[name]
         self.notify_observers()
 
     def get_element(self, name: str) -> CustomSprite:
