@@ -23,12 +23,37 @@ class CustomSprite(pygame.sprite.Sprite):
         else:
             image = pygame.transform.scale(image, size)
 
-        self.image = self.image_without_effects = image.convert_alpha()
+        self.image = image.convert_alpha()
+        self._image_without_effects = self.image.copy()
         self.rect = self.image.get_rect(**{self._position: self._destination})
 
+    def set_image(self, new_image: pygame.Surface) -> None:
+        self.image = new_image.convert_alpha()
+        self._image_without_effects = self.image.copy()
+
     def transform_image(self, transform_callable: Callable[..., pygame.Surface], *callable_args: Any) -> None:
-        self.image = transform_callable(self.image, *callable_args).convert_alpha()
-        self.image_without_effects = transform_callable(self.image_without_effects, *callable_args).convert_alpha()
+        self.image = transform_callable(self._image_without_effects, *callable_args).convert_alpha()
+        self._image_without_effects = self.image.copy()
+
+    @property
+    def image_copy(self) -> pygame.Surface:
+        return self._image_without_effects.copy()
+
+    @property
+    def size(self) -> tuple[int, int]:
+        return self.rect.size
+
+    @property
+    def width(self) -> int:
+        return self.rect.width
+
+    @property
+    def height(self) -> int:
+        return self.rect.height
+
+    @property
+    def position(self) -> str:
+        return self._position
 
     @property
     def destination(self) -> tuple[int, int]:
@@ -48,22 +73,6 @@ class CustomSprite(pygame.sprite.Sprite):
             self.rect.move_ip(destination_difference)
 
         self._destination = new_destination
-
-    @property
-    def size(self) -> tuple[int, int]:
-        return self.rect.size
-
-    @property
-    def width(self) -> int:
-        return self.rect.width
-
-    @property
-    def height(self) -> int:
-        return self.rect.height
-
-    @property
-    def position(self) -> str:
-        return self._position
 
     @property
     def x_destination(self) -> int:

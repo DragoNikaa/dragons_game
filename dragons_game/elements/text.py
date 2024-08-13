@@ -32,7 +32,7 @@ class Text(CustomSprite):
             self._add_text_border()
 
         self.image.set_alpha(self._alpha)
-        self.image_without_effects = self.image
+        self._image_without_effects = self.image.copy()
 
     def _add_text_border(self) -> None:
         added_size = 4 * self._border_thickness

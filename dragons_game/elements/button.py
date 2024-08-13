@@ -79,7 +79,7 @@ class Button(Section):
         return True
 
     def _highlight(self) -> None:
-        if self._update_current_brightness():
+        if self._update_current_brightness() or self._check_mouse_collision():
             self._update_element_image(self)
 
             for element in self._elements.values():
@@ -99,7 +99,7 @@ class Button(Section):
         return False
 
     def _update_element_image(self, element: 'Button | Image | Text') -> None:
-        image_copy = element.image_without_effects.copy()
+        image_copy = element.image_copy
         image_copy.fill((self._current_brightness, self._current_brightness, self._current_brightness),
                         special_flags=pygame.BLEND_RGB_ADD)
         element.image = image_copy

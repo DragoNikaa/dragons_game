@@ -3,11 +3,10 @@ from abc import ABC, abstractmethod
 from dragons_game.dragons.dragon import Dragon
 from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
-from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
 from dragons_game.elements.tooltip import Tooltip
 from dragons_game.game_states.common import universal_sizes
-from dragons_game.utils import custom_exceptions, custom_types
+from dragons_game.utils import custom_types
 from dragons_game.utils.image_proportions import calculate_proportional_width
 from dragons_game.utils.observers import ObserverClass
 
@@ -66,23 +65,3 @@ class DragonButton(Button, ObserverClass, ABC):
 
         tooltip.add_element('text', text)
         return tooltip
-
-    @classmethod
-    def update_on_notify(cls, dragons: list[Dragon], section: Section) -> None:
-        for dragon_index, dragon in enumerate(dragons):
-            try:
-                dragon_button = section.get_element(dragon.name)
-                dragon_button.destination = cls._new_destination(dragon_index)
-            except custom_exceptions.ElementNotInSectionError:
-                dragon_button = cls._create_instance(dragon_index, dragon)
-                section.add_element(dragon.name, dragon_button)
-
-    @classmethod
-    @abstractmethod
-    def _new_destination(cls, dragon_index: int) -> tuple[int, int]:
-        ...
-
-    @classmethod
-    @abstractmethod
-    def _create_instance(cls, dragon_index: int, dragon: Dragon) -> 'DragonButton':
-        ...
