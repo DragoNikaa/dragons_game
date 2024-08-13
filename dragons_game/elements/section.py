@@ -29,7 +29,7 @@ class Section(CustomSprite):
         else:
             element.rect.move_ip(section_destination)
 
-        self.notify_observers(added_element=element, removed_element=getattr(self._elements, name, None))
+        self.notify_observers(added_element=element, removed_element=self._elements.get(name))
         self._elements[name] = element
 
     def remove_element(self, name: str) -> None:
@@ -45,14 +45,6 @@ class Section(CustomSprite):
 
         return self._elements[name]
 
-    def add_observer(self, observer: Observer) -> None:
-        self._observers.append(observer)
-
-    def notify_observers(self, added_element: CustomSprite | None = None,
-                         removed_element: CustomSprite | None = None) -> None:
-        for observer in self._observers:
-            observer.update_on_notify(self, added_element, removed_element)
-
     @property
     def elements(self) -> list[CustomSprite]:
         elements: list[CustomSprite] = [self]
@@ -64,3 +56,22 @@ class Section(CustomSprite):
                 elements.append(element)
 
         return elements
+
+    def add_observer(self, observer: Observer) -> None:
+        self._observers.append(observer)
+
+    def notify_observers(self, added_element: CustomSprite | None = None,
+                         removed_element: CustomSprite | None = None) -> None:
+        added_elements = self._get_modified_elements(added_element)
+        removed_elements = self._get_modified_elements(removed_element)
+
+        for observer in self._observers:
+            observer.update_on_notify(self, added_elements, removed_elements)
+
+    @staticmethod
+    def _get_modified_elements(element: CustomSprite | None) -> list[CustomSprite] | None:
+        if isinstance(element, Section):
+            return element.elements
+        if element:
+            return [element]
+        return None

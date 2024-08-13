@@ -21,7 +21,6 @@ class Tooltip(Section):
             self._add_border()
 
         self.image.set_alpha(alpha)
-        self.image_without_effects = self.image
 
     def update(self) -> None:
         setattr(self.rect, self._position, self._dynamic_destination)

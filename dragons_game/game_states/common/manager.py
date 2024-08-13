@@ -14,10 +14,15 @@ class GameStateManager(Observer, ABC):
     def __init__(self, *sections: Section):
         super().__init__()
 
-        for section in sections:
-            section.add_observer(self)
+        self._elements: pygame.sprite.Group[CustomSprite] = pygame.sprite.Group()
 
-        self._section_to_elements = {section: pygame.sprite.Group(*section.elements) for section in sections}
+        for section in sections:
+            for element in section.elements:
+                self._elements.add(element)
+
+                if isinstance(element, Section):
+                    element.add_observer(self)
+
         self._tooltip: Tooltip | None = None
 
     @abstractmethod
@@ -34,27 +39,25 @@ class GameStateManager(Observer, ABC):
             if event.action == 'show_tooltip':
                 if self._tooltip is None:
                     self._tooltip = event.tooltip
-                    self._section_to_elements[self._tooltip] = pygame.sprite.Group(*self._tooltip.elements)
+                    self._elements.add(*self._tooltip.elements)
 
             elif event.action == 'end_hover':
                 self._remove_tooltip()
 
     def update(self) -> None:
-        for elements in self._section_to_elements.values():
-            elements.update()
+        self._elements.update()
 
     def draw(self, screen: pygame.Surface) -> None:
-        for elements in self._section_to_elements.values():
-            elements.draw(screen)
+        self._elements.draw(screen)
 
-    def update_on_notify(self, section: Section, added_element: CustomSprite | None = None,
-                         removed_element: CustomSprite | None = None) -> None:
-        if added_element:
-            self._section_to_elements[section].add(added_element)
-        if removed_element:
-            self._section_to_elements[section].remove(removed_element)
+    def update_on_notify(self, section: Section, added_elements: list[CustomSprite] | None = None,
+                         removed_elements: list[CustomSprite] | None = None) -> None:
+        if added_elements:
+            self._elements.add(*added_elements)
+        if removed_elements:
+            self._elements.remove(*removed_elements)
 
     def _remove_tooltip(self) -> None:
         if self._tooltip:
-            del self._section_to_elements[self._tooltip]
+            self._elements.remove(*self._tooltip.elements)
             self._tooltip = None
