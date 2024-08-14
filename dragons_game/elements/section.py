@@ -1,8 +1,15 @@
+from typing import TYPE_CHECKING
+
 import pygame
 
 from dragons_game.elements.custom_sprite import CustomSprite
 from dragons_game.utils import custom_exceptions, custom_types
 from dragons_game.utils.observers import Observer
+
+if TYPE_CHECKING:
+    from dragons_game.elements.button import Button
+    from dragons_game.elements.image import Image
+    from dragons_game.elements.text import Text
 
 
 class Section(CustomSprite):
@@ -39,11 +46,58 @@ class Section(CustomSprite):
         self.notify_observers(removed_element=self._elements[name])
         del self._elements[name]
 
-    def get_element(self, name: str) -> CustomSprite:
+    def get_button(self, name: str) -> 'Button':
+        from dragons_game.elements.button import Button
+
+        element = self._get_element(name)
+        if not isinstance(element, Button):
+            raise custom_exceptions.IncorrectMethodError(name, self._get_actual_element_type(name, element))
+        return element
+
+    def get_image(self, name: str) -> 'Image':
+        from dragons_game.elements.image import Image
+
+        element = self._get_element(name)
+        if not isinstance(element, Image):
+            raise custom_exceptions.IncorrectMethodError(name, self._get_actual_element_type(name, element))
+        return element
+
+    def get_section(self, name: str) -> 'Section':
+        element = self._get_element(name)
+        if issubclass(type(element), Section):
+            raise custom_exceptions.IncorrectMethodError(name, self._get_actual_element_type(name, element))
+        if not isinstance(element, Section):
+            raise custom_exceptions.IncorrectMethodError(name, self._get_actual_element_type(name, element))
+        return element
+
+    def get_text(self, name: str) -> 'Text':
+        from dragons_game.elements.text import Text
+
+        element = self._get_element(name)
+        if not isinstance(element, Text):
+            raise custom_exceptions.IncorrectMethodError(name, self._get_actual_element_type(name, element))
+        return element
+
+    def _get_element(self, name: str) -> CustomSprite:
         if name not in self._elements:
             raise custom_exceptions.ElementNotInSectionError(name)
 
         return self._elements[name]
+
+    @staticmethod
+    def _get_actual_element_type(name: str, element: CustomSprite) -> type[CustomSprite]:
+        from dragons_game.elements.button import Button
+        from dragons_game.elements.image import Image
+        from dragons_game.elements.text import Text
+
+        element_type: type[CustomSprite] | None = type(element)
+
+        while element_type not in (Button, Image, Section, Text):
+            if element_type is None:
+                raise custom_exceptions.ElementTypeError(name, CustomSprite)
+            element_type = element_type.__base__
+
+        return element_type
 
     @property
     def elements(self) -> list[CustomSprite]:

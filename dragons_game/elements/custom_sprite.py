@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from typing import Any, Callable
 
 import pygame
@@ -5,7 +6,8 @@ import pygame
 from dragons_game.utils import custom_types
 
 
-class CustomSprite(pygame.sprite.Sprite):
+class CustomSprite(pygame.sprite.Sprite, ABC):
+    @abstractmethod
     def __init__(self, position: custom_types.Position, destination: tuple[float, float],
                  image: pygame.Surface | None = None, size: tuple[float, float] | None = None):
         super().__init__()
