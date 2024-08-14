@@ -40,28 +40,28 @@ class _DragonButton(DragonButton):
         if dragons:
             for dragon_index, dragon in enumerate(dragons):
                 try:
-                    dragon_button = dragons_section.get_element(dragon.name)
+                    dragon_button = dragons_section.get_button(dragon.name)
                     dragon_button.destination = cls._new_destination(dragon_index)
                 except custom_exceptions.ElementNotInSectionError:
                     dragons_section.add_element(dragon.name, cls(dragon_index, dragon))
 
         if added_team_dragon:
-            dragon_button = dragons_section.get_element(added_team_dragon.name)
+            dragon_button = dragons_section.get_button(added_team_dragon.name)
 
             team_mark = Text('dragons_game/fonts/pr_viking.ttf', dragon_button.height / 10, 'In team', 'white',
                              'center', (dragon_button.width / 45, -dragon_button.height / 7), 2, 'black')
             team_mark.transform_image(pygame.transform.rotate, 45)
             dragon_button.add_element('team_mark', team_mark)
 
-            dragon_image = dragon_button.get_element('dragon').image_copy
+            dragon_image = dragon_button.get_image('dragon').image_copy
             cls._TEAM_DRAGON_IMAGES[added_team_dragon] = dragon_image.copy()
             dragon_image.fill((0, 0, 0, 128), special_flags=pygame.BLEND_RGBA_SUB)
-            dragon_button.get_element('dragon').set_image(dragon_image)
+            dragon_button.get_image('dragon').set_image(dragon_image)
 
         if removed_team_dragon:
-            dragon_button = dragons_section.get_element(removed_team_dragon.name)
+            dragon_button = dragons_section.get_button(removed_team_dragon.name)
             dragon_button.remove_element('team_mark')
-            dragon_button.get_element('dragon').set_image(cls._TEAM_DRAGON_IMAGES[removed_team_dragon])
+            dragon_button.get_image('dragon').set_image(cls._TEAM_DRAGON_IMAGES[removed_team_dragon])
             del cls._TEAM_DRAGON_IMAGES[removed_team_dragon]
 
     @classmethod

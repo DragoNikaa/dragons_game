@@ -41,3 +41,16 @@ class ElementNotInSectionError(SectionError):
 class ElementAlreadyInSectionError(SectionError):
     def __init__(self, element_name: str):
         super().__init__(element_name, f"Element '{element_name}' is already in section")
+
+
+class IncorrectMethodError(SectionError):
+    def __init__(self, element_name: str, element_type: type):
+        super().__init__(element_name,
+                         f"For element '{element_name}' method 'get_{element_type.__name__.lower()}' should be used")
+        self.element_type = element_type
+
+
+class ElementTypeError(SectionError):
+    def __init__(self, element_name: str, expected_type: type):
+        super().__init__(element_name, f"Element '{element_name}' must be instance of '{expected_type.__name__}'")
+        self.expected_type = expected_type
