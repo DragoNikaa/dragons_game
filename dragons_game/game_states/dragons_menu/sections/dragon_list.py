@@ -12,20 +12,20 @@ from dragons_game.game_states.dragons_menu.sections.title_bar import title_bar_s
 from dragons_game.user import user
 from dragons_game.utils import custom_exceptions
 
-dragons_section = Section(
+dragon_list_section = Section(
     (GameConfig.WINDOW_WIDTH - team_section.width, GameConfig.WINDOW_HEIGHT - title_bar_section.height), 'topleft',
     (team_section.rect.right, title_bar_section.rect.bottom))
 
-dragons_section.add_element('background',
-                            Image('dragons_game/graphics/backgrounds/dragons_menu/dragons.png', dragons_section.size,
-                                  'topleft', (0, 0)))
+dragon_list_section.add_element('background', Image('dragons_game/graphics/backgrounds/dragons_menu/dragons.png',
+                                                    dragon_list_section.size, 'topleft', (0, 0)))
 
 
 class _DragonButton(DragonButton):
-    _WIDTH = (dragons_section.width - universal_sizes.LARGE) / 5 - universal_sizes.LARGE
-    _HEIGHT = (dragons_section.height - 2 * universal_sizes.MEDIUM - universal_sizes.LARGE) / 2 - universal_sizes.MEDIUM
+    _WIDTH = (dragon_list_section.width - universal_sizes.LARGE) / 5 - universal_sizes.LARGE
+    _HEIGHT = ((dragon_list_section.height - 2 * universal_sizes.MEDIUM - universal_sizes.LARGE) / 2
+               - universal_sizes.MEDIUM)
     _X_DESTINATIONS = [x for x in
-                       range(universal_sizes.LARGE, dragons_section.width, round(_WIDTH) + universal_sizes.LARGE)]
+                       range(universal_sizes.LARGE, dragon_list_section.width, round(_WIDTH) + universal_sizes.LARGE)]
     _ROW_1_Y_DESTINATION: float = universal_sizes.MEDIUM
     _ROW_2_Y_DESTINATION = 2 * universal_sizes.MEDIUM + _HEIGHT
 
@@ -40,13 +40,13 @@ class _DragonButton(DragonButton):
         if dragons:
             for dragon_index, dragon in enumerate(dragons):
                 try:
-                    dragon_button = dragons_section.get_button(dragon.name)
+                    dragon_button = dragon_list_section.get_button(dragon.name)
                     dragon_button.destination = cls._new_destination(dragon_index)
                 except custom_exceptions.ElementNotInSectionError:
-                    dragons_section.add_element(dragon.name, cls(dragon_index, dragon))
+                    dragon_list_section.add_element(dragon.name, cls(dragon_index, dragon))
 
         if added_team_dragon:
-            dragon_button = dragons_section.get_button(added_team_dragon.name)
+            dragon_button = dragon_list_section.get_button(added_team_dragon.name)
 
             team_mark = Text('dragons_game/fonts/pr_viking.ttf', dragon_button.height / 10, 'In team', 'white',
                              'center', (dragon_button.width / 45, -dragon_button.height / 7), 2, 'black')
@@ -59,7 +59,7 @@ class _DragonButton(DragonButton):
             dragon_button.get_image('dragon').set_image(dragon_image)
 
         if removed_team_dragon:
-            dragon_button = dragons_section.get_button(removed_team_dragon.name)
+            dragon_button = dragon_list_section.get_button(removed_team_dragon.name)
             dragon_button.remove_element('team_mark')
             dragon_button.get_image('dragon').set_image(cls._TEAM_DRAGON_IMAGES[removed_team_dragon])
             del cls._TEAM_DRAGON_IMAGES[removed_team_dragon]

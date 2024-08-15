@@ -8,14 +8,15 @@ from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
 from dragons_game.elements.tooltip import Tooltip
 from dragons_game.game_states.common import universal_sizes
-from dragons_game.game_states.dragons_menu.sections.dragons import dragons_section
+from dragons_game.game_states.dragons_menu.sections.dragon_list import dragon_list_section
 from dragons_game.user import user
 from dragons_game.utils import custom_types
 from dragons_game.utils.image_proportions import calculate_proportional_width
 from dragons_game.utils.observers import Observer
 
-bottom_bar_section = Section((dragons_section.width - 4 * universal_sizes.LARGE, universal_sizes.LARGE), 'midbottom',
-                             (dragons_section.rect.centerx, dragons_section.rect.bottom - universal_sizes.MEDIUM))
+bottom_bar_section = Section((dragon_list_section.width - 4 * universal_sizes.LARGE, universal_sizes.LARGE),
+                             'midbottom', (dragon_list_section.rect.centerx,
+                                           dragon_list_section.rect.bottom - universal_sizes.MEDIUM))
 _section_height = bottom_bar_section.height
 
 

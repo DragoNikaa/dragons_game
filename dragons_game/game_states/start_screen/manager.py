@@ -17,4 +17,4 @@ class StartScreenManager(GameStateManager):
             return new_state
 
         if event.type == pygame.KEYUP and event.key == pygame.K_RETURN:
-            return GameState.MAIN_MENU
+            return self._change_state(GameState.MAIN_MENU)
