@@ -19,4 +19,4 @@ class MainMenuManager(GameStateManager):
             return new_state
 
         if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
-            return GameState.UNKNOWN
+            return self._change_state(GameState.UNKNOWN)

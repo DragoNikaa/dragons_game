@@ -6,6 +6,7 @@ from dragons_game.elements.image import Image
 from dragons_game.elements.text import Text
 from dragons_game.elements.tooltip import Tooltip
 from dragons_game.game_states.common import universal_sizes
+from dragons_game.game_states.dragons_menu.sections.dragon_details import DragonDetails
 from dragons_game.utils import custom_types
 from dragons_game.utils.image_proportions import calculate_proportional_width
 from dragons_game.utils.observers import ObserverClass
@@ -15,7 +16,8 @@ class DragonButton(Button, ObserverClass, ABC):
     @abstractmethod
     def __init__(self, dragon: Dragon, size: tuple[float, float], position: custom_types.Position,
                  destination: tuple[float, float]):
-        super().__init__(f'dragons_game/graphics/buttons/dragons/{dragon.rarity}.png', size, position, destination)
+        super().__init__(f'dragons_game/graphics/buttons/dragons/{dragon.rarity}.png', size, position, destination,
+                         {'action': 'open_details', 'details': DragonDetails(dragon)})
 
         self._add_text('name', dragon.name, 'midtop', self.height / 5.45)
 

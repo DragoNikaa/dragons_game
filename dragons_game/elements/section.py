@@ -119,7 +119,7 @@ class Section(CustomSprite):
         removed_elements = self._get_modified_elements(removed_element)
 
         for observer in self._observers:
-            observer.update_on_notify(self, added_elements, removed_elements)
+            observer.update_on_notify(added_elements, removed_elements)
 
     @staticmethod
     def _get_modified_elements(element: CustomSprite | None) -> list[CustomSprite] | None:

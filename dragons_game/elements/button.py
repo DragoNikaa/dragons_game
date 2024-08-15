@@ -65,7 +65,7 @@ class Button(Section):
 
             elif self._hover_active:
                 self._hover_active = False
-                pygame.event.post(pygame.event.Event(custom_events.BUTTON_HOVER, {'action': 'end_hover'}))
+                pygame.event.post(pygame.event.Event(custom_events.BUTTON_HOVER, {'action': 'hide_tooltip'}))
 
     def _check_mouse_collision(self) -> bool:
         mouse_position = pygame.mouse.get_pos()
