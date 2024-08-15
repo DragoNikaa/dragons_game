@@ -51,7 +51,7 @@ class Section(CustomSprite):
 
         element = self._get_element(name)
         if not isinstance(element, Button):
-            raise custom_exceptions.IncorrectMethodError(name, self._get_actual_element_type(name, element))
+            raise custom_exceptions.IncorrectMethodError(name, self._get_expected_element_type(name, element))
         return element
 
     def get_image(self, name: str) -> 'Image':
@@ -59,15 +59,13 @@ class Section(CustomSprite):
 
         element = self._get_element(name)
         if not isinstance(element, Image):
-            raise custom_exceptions.IncorrectMethodError(name, self._get_actual_element_type(name, element))
+            raise custom_exceptions.IncorrectMethodError(name, self._get_expected_element_type(name, element))
         return element
 
     def get_section(self, name: str) -> 'Section':
         element = self._get_element(name)
-        if issubclass(type(element), Section):
-            raise custom_exceptions.IncorrectMethodError(name, self._get_actual_element_type(name, element))
-        if not isinstance(element, Section):
-            raise custom_exceptions.IncorrectMethodError(name, self._get_actual_element_type(name, element))
+        if not isinstance(element, Section) or issubclass(type(element), Section):
+            raise custom_exceptions.IncorrectMethodError(name, self._get_expected_element_type(name, element))
         return element
 
     def get_text(self, name: str) -> 'Text':
@@ -75,7 +73,7 @@ class Section(CustomSprite):
 
         element = self._get_element(name)
         if not isinstance(element, Text):
-            raise custom_exceptions.IncorrectMethodError(name, self._get_actual_element_type(name, element))
+            raise custom_exceptions.IncorrectMethodError(name, self._get_expected_element_type(name, element))
         return element
 
     def _get_element(self, name: str) -> CustomSprite:
@@ -85,16 +83,17 @@ class Section(CustomSprite):
         return self._elements[name]
 
     @staticmethod
-    def _get_actual_element_type(name: str, element: CustomSprite) -> type[CustomSprite]:
+    def _get_expected_element_type(name: str, element: CustomSprite) -> type[CustomSprite]:
         from dragons_game.elements.button import Button
         from dragons_game.elements.image import Image
         from dragons_game.elements.text import Text
 
         element_type: type[CustomSprite] | None = type(element)
+        expected_types = (Button, Image, Section, Text)
 
-        while element_type not in (Button, Image, Section, Text):
+        while element_type not in expected_types:
             if element_type is None:
-                raise custom_exceptions.ElementTypeError(name, CustomSprite)
+                raise custom_exceptions.ElementTypeError(name, expected_types)
             element_type = element_type.__base__
 
         return element_type

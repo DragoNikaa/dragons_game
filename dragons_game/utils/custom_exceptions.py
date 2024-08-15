@@ -51,6 +51,8 @@ class IncorrectMethodError(SectionError):
 
 
 class ElementTypeError(SectionError):
-    def __init__(self, element_name: str, expected_type: type):
-        super().__init__(element_name, f"Element '{element_name}' must be instance of '{expected_type.__name__}'")
-        self.expected_type = expected_type
+    def __init__(self, element_name: str, expected_types: tuple[type, ...]):
+        types = ', '.join([f"'{expected_type.__name__}'" for expected_type in expected_types])
+        super().__init__(element_name,
+                         f"Element '{element_name}' must be instance of one of following classes: {types}")
+        self.expected_types = expected_types

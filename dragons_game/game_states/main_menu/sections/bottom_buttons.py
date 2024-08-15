@@ -14,7 +14,7 @@ bottom_buttons_section = Section((GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEI
 class _BottomButton(Button):
     _WIDTH = bottom_buttons_section.width / 5
     _X_DESTINATIONS = [x for x in
-                       range(bottom_buttons_section.rect.left, bottom_buttons_section.rect.right, int(_WIDTH))]
+                       range(bottom_buttons_section.rect.left, bottom_buttons_section.rect.right, round(_WIDTH))]
 
     def __init__(self, button_index: int, icon_image_path: str, label: str,
                  click_action: custom_types.CustomEventDict | None = None,

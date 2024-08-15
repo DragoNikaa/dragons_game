@@ -32,8 +32,8 @@ class Dragon:
         self._level += 1
         self._current_experience -= self._experience_to_next_level
 
-        self._experience_to_next_level = int(1.5 * self._experience_to_next_level)
-        self._max_health = int(1.1 * self._max_health)
+        self._experience_to_next_level = round(1.5 * self._experience_to_next_level)
+        self._max_health = round(1.1 * self._max_health)
         if self._level % 3 == 0:
             self._max_energy += 1
 

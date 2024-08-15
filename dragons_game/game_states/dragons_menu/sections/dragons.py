@@ -74,7 +74,7 @@ class _DragonButton(DragonButton):
         else:
             y = cls._ROW_2_Y_DESTINATION
 
-        return x, int(y)
+        return x, round(y)
 
 
 user.add_dragons_observer(_DragonButton)

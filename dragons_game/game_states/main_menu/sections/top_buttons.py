@@ -11,7 +11,7 @@ top_buttons_section = Section((GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEIGHT
 
 class _TopButton(Button):
     _WIDTH = top_buttons_section.width / 4
-    _X_DESTINATIONS = [x for x in range(top_buttons_section.rect.left, top_buttons_section.rect.right, int(_WIDTH))]
+    _X_DESTINATIONS = [x for x in range(top_buttons_section.rect.left, top_buttons_section.rect.right, round(_WIDTH))]
 
     def __init__(self, button_index: int, icon_image_path: str, amount: int,
                  click_action: custom_types.CustomEventDict | None = None,
