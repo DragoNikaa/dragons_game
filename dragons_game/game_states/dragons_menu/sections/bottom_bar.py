@@ -2,6 +2,7 @@ from typing import Callable, Literal
 
 import pygame
 
+from dragons_game.dragons.rarity import Rarity
 from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
 from dragons_game.elements.section import Section
@@ -150,12 +151,12 @@ class _RarityButton(Button):
         return self._name
 
 
-_common = _RarityButton('common', '#985a1f')
-_uncommon = _RarityButton('uncommon', '#08de31', _common)
-_rare = _RarityButton('rare', '#016ece', _uncommon)
-_epic = _RarityButton('epic', '#fdd53d', _rare)
-_legendary = _RarityButton('legendary', '#f31e17', _epic)
-_mythical = _RarityButton('mythical', '#d338de', _legendary)
+_common = _RarityButton('common', Rarity.COMMON.color)
+_uncommon = _RarityButton('uncommon', Rarity.UNCOMMON.color, _common)
+_rare = _RarityButton('rare', Rarity.RARE.color, _uncommon)
+_epic = _RarityButton('epic', Rarity.EPIC.color, _rare)
+_legendary = _RarityButton('legendary', Rarity.LEGENDARY.color, _epic)
+_mythical = _RarityButton('mythical', Rarity.MYTHICAL.color, _legendary)
 
 _all_buttons = (_common, _uncommon, _rare, _epic, _legendary, _mythical)
 _button_widths_sum = sum([button.width for button in _all_buttons])
