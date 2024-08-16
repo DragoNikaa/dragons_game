@@ -74,7 +74,7 @@ class GameStateManager(Observer, ABC):
         self._remove_details_window()
 
         for element in self._elements:
-            if element.rect.colliderect(details.rect):
+            if details.rect.contains(element.rect):
                 self._removed_elements.append(element)
                 self._elements.remove(element)
 
