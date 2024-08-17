@@ -1,6 +1,6 @@
 from dragons_game.dragons.attack import Attack
-from dragons_game.dragons.features import Feature, RARITY_TO_FEATURES
 from dragons_game.dragons.rarity import Rarity
+from dragons_game.dragons.stats import RARITY_TO_STATS, Stat
 
 
 class Dragon:
@@ -14,13 +14,13 @@ class Dragon:
         self._special_attack = special_attack
 
         self._level = 1
-        self._experience_to_next_level = RARITY_TO_FEATURES[rarity][Feature.EXPERIENCE_TO_NEXT_LEVEL]
+        self._experience_to_next_level = RARITY_TO_STATS[rarity][Stat.EXPERIENCE_TO_NEXT_LEVEL]
         self._current_experience = 0
 
-        self._max_energy = RARITY_TO_FEATURES[rarity][Feature.MAX_ENERGY]
+        self._max_energy = RARITY_TO_STATS[rarity][Stat.MAX_ENERGY]
         self._current_energy = self._max_energy
 
-        self._max_health = RARITY_TO_FEATURES[rarity][Feature.MAX_HEALTH]
+        self._max_health = RARITY_TO_STATS[rarity][Stat.MAX_HEALTH]
         self._current_health = self._max_health
 
     def add_experience(self, experience: int) -> None:

@@ -1,0 +1,19 @@
+from enum import Enum
+
+from dragons_game.dragons.rarity import Rarity
+
+
+class Stat(Enum):
+    EXPERIENCE_TO_NEXT_LEVEL = 1
+    MAX_ENERGY = 2
+    MAX_HEALTH = 3
+
+
+RARITY_TO_STATS = {
+    Rarity.COMMON: {Stat.EXPERIENCE_TO_NEXT_LEVEL: 20, Stat.MAX_ENERGY: 2, Stat.MAX_HEALTH: 100},
+    Rarity.UNCOMMON: {Stat.EXPERIENCE_TO_NEXT_LEVEL: 30, Stat.MAX_ENERGY: 2, Stat.MAX_HEALTH: 125},
+    Rarity.RARE: {Stat.EXPERIENCE_TO_NEXT_LEVEL: 40, Stat.MAX_ENERGY: 3, Stat.MAX_HEALTH: 150},
+    Rarity.EPIC: {Stat.EXPERIENCE_TO_NEXT_LEVEL: 60, Stat.MAX_ENERGY: 3, Stat.MAX_HEALTH: 175},
+    Rarity.LEGENDARY: {Stat.EXPERIENCE_TO_NEXT_LEVEL: 80, Stat.MAX_ENERGY: 4, Stat.MAX_HEALTH: 200},
+    Rarity.MYTHICAL: {Stat.EXPERIENCE_TO_NEXT_LEVEL: 100, Stat.MAX_ENERGY: 5, Stat.MAX_HEALTH: 225}
+}

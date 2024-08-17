@@ -46,12 +46,12 @@ class DragonDetails(Section):
 
         rarity_section = self._section(0.1, 'Rarity')
         description_section = self._section(0.3, 'Description', rarity_section)
-        features_section = self._section(0.4, 'Features', description_section)
-        attacks_section = self._section(0.2, 'Attacks', features_section)
+        stats_section = self._section(0.4, 'Statistics', description_section)
+        attacks_section = self._section(0.2, 'Attacks', stats_section)
 
         self.add_element('rarity_section', rarity_section)
         self.add_element('description_section', description_section)
-        self.add_element('features_section', features_section)
+        self.add_element('stats_section', stats_section)
         self.add_element('attacks_section', attacks_section)
 
     def _section(self, height_percentage: float, title: str, previous_section: Section | None = None) -> Section:
