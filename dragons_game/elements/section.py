@@ -4,7 +4,6 @@ import pygame
 
 from dragons_game.elements.custom_sprite import CustomSprite
 from dragons_game.utils import custom_exceptions, custom_types
-from dragons_game.utils.observers import Observer
 
 if TYPE_CHECKING:
     from dragons_game.elements.button import Button
@@ -18,8 +17,6 @@ class Section(CustomSprite):
         super().__init__(position, destination, image, size)
 
         self._elements: dict[str, CustomSprite] = {}
-
-        self._observers: list[Observer] = []
 
     def add_element(self, name: str, element: CustomSprite) -> None:
         if name in self._elements:
@@ -36,14 +33,12 @@ class Section(CustomSprite):
         else:
             element.rect.move_ip(section_destination)
 
-        self.notify_observers(added_element=element, removed_element=self._elements.get(name))
         self._elements[name] = element
 
     def remove_element(self, name: str) -> None:
         if name not in self._elements:
             raise custom_exceptions.ElementNotInSectionError(name)
 
-        self.notify_observers(removed_element=self._elements[name])
         del self._elements[name]
 
     def get_button(self, name: str) -> 'Button':
@@ -109,22 +104,3 @@ class Section(CustomSprite):
                 elements.append(element)
 
         return elements
-
-    def add_observer(self, observer: Observer) -> None:
-        self._observers.append(observer)
-
-    def notify_observers(self, added_element: CustomSprite | None = None,
-                         removed_element: CustomSprite | None = None) -> None:
-        added_elements = self._get_modified_elements(added_element)
-        removed_elements = self._get_modified_elements(removed_element)
-
-        for observer in self._observers:
-            observer.update_on_notify(added_elements, removed_elements)
-
-    @staticmethod
-    def _get_modified_elements(element: CustomSprite | None) -> list[CustomSprite] | None:
-        if isinstance(element, Section):
-            return element.elements
-        if element:
-            return [element]
-        return None
