@@ -9,7 +9,9 @@ from dragons_game.game.configuration import GameConfig
 from dragons_game.game_states.common import universal_sizes
 from dragons_game.game_states.dragons_menu.sections.title_bar import title_bar_section
 from dragons_game.game_states.game_state import GameState
+from dragons_game.user import user
 from dragons_game.utils.image_proportions import calculate_proportional_height, calculate_proportional_width
+from dragons_game.utils.observers import Observer
 
 
 class DragonDetails(Section):
@@ -54,8 +56,11 @@ class DragonDetails(Section):
         self.add_element('stats_section', stats_section)
         self.add_element('attacks_section', attacks_section)
 
+        self._team_section = _TeamSection(dragon, self.width)
+        self.add_element('team', self._team_section)
+
     def _section(self, height_percentage: float, title: str, previous_section: Section | None = None) -> Section:
-        total_height = self.height - 7 * universal_sizes.LARGE
+        total_height = self.height - 8.5 * universal_sizes.LARGE
         height = height_percentage * total_height
 
         if previous_section:
@@ -85,3 +90,60 @@ class DragonDetails(Section):
                                           (0, border_size[1] - title_size), 3, 'black'))
 
         return section
+
+    def clean_up(self) -> None:
+        self._team_section.clean_up()
+        self._team_section.update_on_notify()
+
+
+class _TeamSection(Section, Observer):
+    def __init__(self, dragon: Dragon, section_width: float):
+        super().__init__((section_width / 2.75, universal_sizes.LARGE), 'midbottom',
+                         (section_width / 4, -universal_sizes.LARGE / 1.5))
+
+        self._dragon = dragon
+        dragon.add_in_team_observer(self)
+
+    def update_on_notify(self) -> None:
+        if self._dragon.in_team:
+            in_team_section = Section((self.width / 2.25, self.height), 'center', (0, 0))
+            in_team_section.add_element('background',
+                                        Image('dragons_game/graphics/buttons/sort_key.png', in_team_section.size,
+                                              'center', (0, 0)))
+            in_team_section.add_element('label', self._text('In team'))
+
+            self.upsert_element('team_status', in_team_section)
+        else:
+            add_button = Button('dragons_game/graphics/buttons/sort_key.png', (self.width / 2.25, self.height),
+                                'center', (0, 0), {'action': 'call', 'callable': self._add_choose_section})
+            add_button.add_element('label', self._text('Add to team'))
+
+            self.upsert_element('team_status', add_button)
+            self.clean_up()
+
+    def _add_choose_section(self) -> None:
+        from dragons_game.game_states.dragons_menu.sections.team import team_section
+
+        choose_section = Section(self.size, 'center', (0, 0))
+        choose_section.add_element('background',
+                                   Image('dragons_game/graphics/buttons/sort_key.png', choose_section.size, 'center',
+                                         (0, 0)))
+        choose_section.add_element('label', self._text('Choose team dragon to replace'))
+
+        self.upsert_element('team_status', choose_section)
+
+        for dragon_index in range(3):
+            team_section.get_button(f'team_dragon_{dragon_index}').add_temporary_click_action(
+                {'action': 'call', 'callable': user.add_team_dragon,
+                 'kwargs': {'dragon': self._dragon, 'dragon_index': dragon_index}})
+
+    def _text(self, text: str) -> Text:
+        return Text('dragons_game/fonts/rurik.ttf', self.height / 1.5, text, 'white', 'center', (0, self.height / 10),
+                    2, 'black')
+
+    @staticmethod
+    def clean_up() -> None:
+        from dragons_game.game_states.dragons_menu.sections.team import team_section
+
+        for dragon_index in range(3):
+            team_section.get_button(f'team_dragon_{dragon_index}').remove_temporary_click_action()

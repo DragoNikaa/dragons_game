@@ -36,6 +36,8 @@ class User:
             if dragon not in self._dragons:
                 raise custom_exceptions.DragonNotOwnedError(dragon.name)
 
+            dragon.in_team = True
+
     def add_dragon(self, dragon: Dragon) -> None:
         if dragon in self._dragons:
             raise custom_exceptions.DragonAlreadyOwnedError(dragon.name)
@@ -64,8 +66,10 @@ class User:
             removed_team_dragon = None
         else:
             removed_team_dragon = self._team_dragons[dragon_index]
+            removed_team_dragon.in_team = False
             self._team_dragons[dragon_index] = dragon
 
+        dragon.in_team = True
         self._notify_team_dragons_observers(dragon_index, dragon)
         self._notify_dragons_observers(added_team_dragon=dragon, removed_team_dragon=removed_team_dragon)
 

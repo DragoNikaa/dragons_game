@@ -18,13 +18,19 @@ class Button(Section):
         image = pygame.image.load(image_path)
         super().__init__(size, position, destination, image)
 
-        self._click_action = self._adjust_action(click_action)
+        self._click_action = self._original_click_action = self._adjust_action(click_action)
         self._hover_action = self._adjust_action(hover_action)
 
         self._mouse_pressed_outside = self._mouse_pressed_inside = self._mouse_released = False
         self._hover_active = False
 
         self._current_brightness = 0
+
+    def add_temporary_click_action(self, click_action: custom_types.CustomEventDict) -> None:
+        self._click_action = self._adjust_action(click_action)
+
+    def remove_temporary_click_action(self) -> None:
+        self._click_action = self._original_click_action
 
     def update(self) -> None:
         self._handle_click()

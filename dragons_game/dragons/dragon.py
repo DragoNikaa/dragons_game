@@ -1,6 +1,7 @@
 from dragons_game.dragons.attack import Attack
 from dragons_game.dragons.rarity import Rarity
 from dragons_game.dragons.stats import RARITY_TO_STATS, Stat
+from dragons_game.utils.observers import Observer
 
 
 class Dragon:
@@ -23,6 +24,10 @@ class Dragon:
         self._max_health = RARITY_TO_STATS[rarity][Stat.MAX_HEALTH]
         self._current_health = self._max_health
 
+        self._in_team = False
+
+        self._in_team_observers: list[Observer] = []
+
     def add_experience(self, experience: int) -> None:
         self._current_experience += experience
         while self._current_experience >= self._experience_to_next_level:
@@ -36,6 +41,14 @@ class Dragon:
         self._max_health = round(1.1 * self._max_health)
         if self._level % 3 == 0:
             self._max_energy += 1
+
+    def add_in_team_observer(self, observer: Observer) -> None:
+        self._in_team_observers.append(observer)
+        observer.update_on_notify()
+
+    def _notify_in_team_observers(self) -> None:
+        for observer in self._in_team_observers:
+            observer.update_on_notify()
 
     @property
     def name(self) -> str:
@@ -88,3 +101,12 @@ class Dragon:
     @property
     def current_health(self) -> int:
         return self._current_health
+
+    @property
+    def in_team(self) -> bool:
+        return self._in_team
+
+    @in_team.setter
+    def in_team(self, value: bool) -> None:
+        self._in_team = value
+        self._notify_in_team_observers()

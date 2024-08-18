@@ -15,7 +15,7 @@ team_section.add_element('background',
                          Image('dragons_game/graphics/backgrounds/dragons_menu/team.png', team_section.size, 'topleft',
                                (0, 0)))
 
-title = Text('dragons_game/fonts/pr_viking.ttf', team_section.height / 20.5, 'My team', 'white', 'midtop',
+title = Text('dragons_game/fonts/pr_viking.ttf', team_section.height / 18, 'Team', 'white', 'midtop',
              (0, universal_sizes.SMALL), 3, 'black')
 team_section.add_element('title', title)
 
