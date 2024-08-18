@@ -58,8 +58,10 @@ class Section(CustomSprite):
         return element
 
     def get_section(self, name: str) -> 'Section':
+        from dragons_game.elements.button import Button
+
         element = self._get_element(name)
-        if not isinstance(element, Section) or issubclass(type(element), Section):
+        if not isinstance(element, Section) or isinstance(element, Button):
             raise custom_exceptions.IncorrectMethodError(name, self._get_expected_element_type(name, element))
         return element
 
