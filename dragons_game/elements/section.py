@@ -25,6 +25,9 @@ class Section(CustomSprite):
         self.upsert_element(name, element)
 
     def upsert_element(self, name: str, element: CustomSprite) -> None:
+        if name in self._elements:
+            self.remove_element(name)
+
         section_destination = getattr(self.rect, element.position)
 
         if isinstance(element, Section):
