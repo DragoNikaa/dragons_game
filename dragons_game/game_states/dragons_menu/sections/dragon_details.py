@@ -3,6 +3,7 @@ import pygame
 from dragons_game.dragons.dragon import Dragon
 from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
+from dragons_game.elements.new_line_text import NewLineText
 from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
 from dragons_game.game.configuration import GameConfig
@@ -47,7 +48,13 @@ class DragonDetails(Section):
                                          {'action': 'change_state', 'next_state': GameState.DRAGONS_MENU}))
 
         rarity_section = self._section(0.1, 'Rarity')
+
         description_section = self._section(0.3, 'Description', rarity_section)
+        self.description_text = NewLineText(description_section.size, 'topleft', (0, 0),
+                                            description_section.height / 10, 'dragons_game/fonts/friz_quadrata.ttf',
+                                            description_section.height / 7.3, dragon.description, 'white', 1, 'black')
+        description_section.add_element('text', self.description_text)
+
         stats_section = self._section(0.4, 'Statistics', description_section)
         attacks_section = self._section(0.2, 'Attacks', stats_section)
 
@@ -94,6 +101,7 @@ class DragonDetails(Section):
     def clean_up(self) -> None:
         self._team_section.clean_up()
         self._team_section.update_on_notify()
+        self.description_text.clean_up()
 
 
 class _TeamSection(Section, Observer):

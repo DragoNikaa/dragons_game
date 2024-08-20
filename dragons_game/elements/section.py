@@ -39,6 +39,14 @@ class Section(CustomSprite):
         if name not in self._elements:
             raise custom_exceptions.ElementNotInSectionError(name)
 
+        element = self._elements[name]
+
+        if isinstance(element, Section):
+            for inner_element in element.elements:
+                setattr(inner_element.rect, inner_element.position, inner_element.destination)
+        else:
+            setattr(element.rect, element.position, element.destination)
+
         del self._elements[name]
 
     def get_button(self, name: str) -> 'Button':
