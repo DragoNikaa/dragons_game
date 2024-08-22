@@ -1,9 +1,9 @@
-from dragons_game.game.game import Game
+from dragons_game.game.game import game
 
 
 def main() -> None:
-    while Game.running:
-        Game.update()
+    while game.running:
+        game.update()
 
 
 if __name__ == '__main__':

@@ -1,9 +1,7 @@
 import pygame
 
-from dragons_game.utils.class_without_instances import ClassWithoutInstances
 
-
-class GameConfig(ClassWithoutInstances):
+class GameConfig:
     NAME = 'Dragons'
     # ICON = pygame.image.load('').convert_alpha()
     FRAME_RATE = 60
