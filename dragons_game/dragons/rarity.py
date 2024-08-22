@@ -15,13 +15,13 @@ class Rarity(IntEnum):
     @property
     def color(self) -> str:
         if self is Rarity.COMMON:
-            return '#985a1f'
+            return '#b67630'
         elif self is Rarity.UNCOMMON:
             return '#08de31'
         elif self is Rarity.RARE:
-            return '#016ece'
+            return '#1279d7'
         elif self is Rarity.EPIC:
-            return '#fdd53d'
+            return '#f4bb15'
         elif self is Rarity.LEGENDARY:
             return '#f31e17'
         else:

@@ -20,6 +20,8 @@ class DragonDetails(Section):
         super().__init__((GameConfig.WINDOW_WIDTH * 6 / 7, GameConfig.WINDOW_HEIGHT), 'topleft',
                          (GameConfig.WINDOW_WIDTH / 7, 0))
 
+        self._dragon = dragon
+
         self.add_element('dragon_background',
                          Image('dragons_game/graphics/backgrounds/dragons_menu/dragon_details/dragon_background.png',
                                (self.width / 2, self.height), 'topleft', (0, 0)))
@@ -93,8 +95,8 @@ class DragonDetails(Section):
         section.add_element('bottom_border', bottom_border)
 
         title_size = universal_sizes.LARGE
-        section.add_element('title', Text('dragons_game/fonts/rurik.ttf', title_size, title, 'white', 'topleft',
-                                          (0, border_size[1] - title_size), 3, 'black'))
+        section.add_element('title', Text('dragons_game/fonts/rurik.ttf', title_size, title, self._dragon.rarity.color,
+                                          'topleft', (0, border_size[1] - title_size), 3, 'black'))
 
         return section
 
