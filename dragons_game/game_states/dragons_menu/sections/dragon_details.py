@@ -8,6 +8,7 @@ from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
 from dragons_game.game.configuration import GameConfig
 from dragons_game.game_states.common import universal_sizes
+from dragons_game.game_states.dragons_menu.sections.common.rarity_stars import rarity_stars
 from dragons_game.game_states.dragons_menu.sections.title_bar import title_bar_section
 from dragons_game.game_states.game_state import GameState
 from dragons_game.user import user
@@ -49,24 +50,50 @@ class DragonDetails(Section):
                                          (title_bar_section.height, title_bar_section.height), 'topright', (0, 0),
                                          {'action': 'change_state', 'next_state': GameState.DRAGONS_MENU}))
 
-        rarity_section = self._section(0.1, 'Rarity')
+        self._padding = self.width / 80
 
-        description_section = self._section(0.3, 'Description', rarity_section)
-        self.description_text = NewLineText(description_section.size, 'topleft', (0, 0),
-                                            description_section.height / 10, 'dragons_game/fonts/friz_quadrata.ttf',
-                                            description_section.height / 7.3, dragon.description, 'white', 1, 'black')
-        description_section.add_element('text', self.description_text)
-
-        stats_section = self._section(0.4, 'Statistics', description_section)
-        attacks_section = self._section(0.2, 'Attacks', stats_section)
-
-        self.add_element('rarity_section', rarity_section)
-        self.add_element('description_section', description_section)
-        self.add_element('stats_section', stats_section)
-        self.add_element('attacks_section', attacks_section)
+        self._add_rarity_section()
+        self._add_description_section()
+        self._add_stats_section()
+        self._add_attacks_section()
 
         self._team_section = _TeamSection(dragon, self.width)
         self.add_element('team', self._team_section)
+
+    def _add_rarity_section(self) -> None:
+        rarity_section = self._section(0.1, 'Rarity')
+
+        for star_index, star in enumerate(
+                rarity_stars(self._dragon.rarity, rarity_section.height / 2.25, self._padding)):
+            rarity_section.add_element(f'star_{star_index}', star)
+        last_star = rarity_section.get_image('star_5')
+
+        rarity_section.add_element('text', Text('dragons_game/fonts/friz_quadrata.ttf', rarity_section.height / 2.25,
+                                                f'{str(self._dragon.rarity).title()}', 'white', 'midleft',
+                                                (last_star.x_destination + last_star.width + self._padding, 0), 1,
+                                                'black'))
+
+        self.add_element('rarity', rarity_section)
+
+    def _add_description_section(self) -> None:
+        description_section = self._section(0.3, 'Description', self.get_section('rarity'))
+
+        self.description_text = NewLineText(description_section.size, 'topleft', (0, 0), self._padding,
+                                            'dragons_game/fonts/friz_quadrata.ttf', description_section.height / 7.295,
+                                            self._dragon.description, 'white', 1, 'black')
+        description_section.add_element('text', self.description_text)
+
+        self.add_element('description', description_section)
+
+    def _add_stats_section(self) -> None:
+        stats_section = self._section(0.4, 'Statistics', self.get_section('description'))
+
+        self.add_element('stats', stats_section)
+
+    def _add_attacks_section(self) -> None:
+        attacks_section = self._section(0.2, 'Attacks', self.get_section('stats'))
+
+        self.add_element('attacks', attacks_section)
 
     def _section(self, height_percentage: float, title: str, previous_section: Section | None = None) -> Section:
         total_height = self.height - 8.5 * universal_sizes.LARGE

@@ -4,11 +4,11 @@ import pygame
 
 from dragons_game.dragons.rarity import Rarity
 from dragons_game.elements.button import Button
-from dragons_game.elements.image import Image
 from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
 from dragons_game.elements.tooltip import Tooltip
 from dragons_game.game_states.common import universal_sizes
+from dragons_game.game_states.dragons_menu.sections.common.rarity_stars import rarity_stars
 from dragons_game.game_states.dragons_menu.sections.dragon_list import dragon_list_section
 from dragons_game.user import user
 from dragons_game.utils import custom_types
@@ -120,31 +120,21 @@ class _RarityButton(Button):
                          hover_action={'action': 'show_tooltip', 'tooltip': tooltip})
 
     def _tooltip(self, name: str, color: custom_types.Color) -> Tooltip:
-        stars = [self._star(star_number) for star_number in range(1, 7)]
+        padding = universal_sizes.SMALL / 1.5
 
+        stars = rarity_stars(self._stars_number, universal_sizes.MEDIUM / 1.75, padding)
         text = Text('dragons_game/fonts/friz_quadrata.ttf', universal_sizes.MEDIUM / 1.5, f'{name.title()}', 'white',
-                    'midleft', (stars[5].rect.right + universal_sizes.SMALL / 2, 0), 1, 'black')
+                    'midright', (-padding, 0), 1, 'black')
 
-        tooltip = Tooltip('midbottom', (
-            1.5 * universal_sizes.SMALL + 6 * stars[0].width + text.width, text.height + universal_sizes.SMALL), color,
-                          3, 'black', 200)
+        tooltip = Tooltip('midbottom',
+                          (2.25 * padding + 6 * stars[0].width + text.width, text.height + 2 * padding), color, 3,
+                          'black', 200)
 
         for star_index, star in enumerate(stars):
             tooltip.add_element(f'star_{star_index}', star)
         tooltip.add_element('text', text)
 
         return tooltip
-
-    def _star(self, star_number: int) -> Image:
-        if star_number <= self._stars_number:
-            color = 'gold'
-        else:
-            color = 'grey'
-
-        width = universal_sizes.MEDIUM / 1.75
-        x = universal_sizes.SMALL / 2 + (star_number - 1) * width
-
-        return Image(f'dragons_game/graphics/icons/{color}_star.png', (width, width), 'midleft', (x, 0))
 
     @property
     def name(self) -> str:
