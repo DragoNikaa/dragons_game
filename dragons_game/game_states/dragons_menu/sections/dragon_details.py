@@ -86,12 +86,83 @@ class DragonDetails(Section):
         self.add_element('description', description_section)
 
     def _add_stats_section(self) -> None:
-        stats_section = self._section(0.4, 'Statistics', self.get_section('description'))
+        stats_section = self._section(0.3, 'Statistics', self.get_section('description'))
+
+        level = Text('dragons_game/fonts/friz_quadrata.ttf', stats_section.height / 8, f'Level {self._dragon.level}',
+                     'white', 'midtop', (self._padding, self._padding), 1, 'black')
+        stats_section.add_element('level', level)
+
+        progress_bar_size = (stats_section.width / 1.5, (stats_section.height - level.height - 4 * self._padding) / 3)
+
+        health_bar = self._add_progress_bar(stats_section, 'health', progress_bar_size, -self._padding,
+                                            'dragons_game/graphics/buttons/health_bar.png', self._dragon.current_health,
+                                            self._dragon.max_health)
+        energy_bar = self._add_progress_bar(stats_section, 'energy', progress_bar_size,
+                                            health_bar.y_destination - health_bar.height - self._padding / 2,
+                                            'dragons_game/graphics/buttons/energy_bar.png', self._dragon.current_energy,
+                                            self._dragon.max_energy)
+        experience_bar = self._add_progress_bar(stats_section, 'experience', progress_bar_size,
+                                                energy_bar.y_destination - health_bar.height - self._padding / 2,
+                                                'dragons_game/graphics/buttons/experience_bar.png',
+                                                self._dragon.current_experience, self._dragon.experience_to_next_level)
 
         self.add_element('stats', stats_section)
 
+    def _add_progress_bar(self, stats_section: Section, name: str, size: tuple[float, float],
+                          y_destination: float, current_image_path: str, current_value: float,
+                          max_value: float) -> Section:
+        progress_bar = Section(size, 'bottomright', (-self._padding, y_destination))
+
+        progress_bar.add_element('progress_bar',
+                                 Image('dragons_game/graphics/buttons/progress_bar.png', progress_bar.size, 'topleft',
+                                       (0, 0)))
+        progress_bar.add_element(f'current', Image(current_image_path, (
+            current_value / max_value * progress_bar.width, progress_bar.height), 'topleft', (0, 0)))
+
+        progress_bar.add_element('numbers', Text('dragons_game/fonts/friz_quadrata.ttf', progress_bar.height / 1.5,
+                                                 f'{current_value}/{max_value}', 'white', 'center', (0, 0), 1, 'black'))
+
+        progress_bar.add_element('label',
+                                 Text('dragons_game/fonts/friz_quadrata.ttf', progress_bar.height / 1.5, name.title(),
+                                      'white', 'midleft',
+                                      (progress_bar.width + 2 * self._padding - stats_section.width, 0), 1, 'black'))
+
+        stats_section.add_element(name, progress_bar)
+        return progress_bar
+
     def _add_attacks_section(self) -> None:
-        attacks_section = self._section(0.2, 'Attacks', self.get_section('stats'))
+        attacks_section = self._section(0.3, 'Attacks', self.get_section('stats'))
+
+        icon_size = (attacks_section.height - 2.5 * self._padding) / 2
+
+        attacks_section.add_element('basic_icon',
+                                    Image('dragons_game/graphics/icons/grey_star.png', (icon_size, icon_size),
+                                          'topleft', (self._padding, self._padding)))
+        attacks_section.add_element('special_icon',
+                                    Image('dragons_game/graphics/icons/gold_star.png', (icon_size, icon_size),
+                                          'bottomleft', (self._padding, -self._padding)))
+
+        basic_name = Text('dragons_game/fonts/friz_quadrata.ttf', attacks_section.height / 9,
+                          self._dragon.basic_attack._name, 'white', 'topleft',
+                          (icon_size + 2 * self._padding, self._padding), 1, 'black')
+        special_name = Text('dragons_game/fonts/friz_quadrata.ttf', attacks_section.height / 9,
+                            self._dragon.special_attack._name, 'white', 'topleft',
+                            (basic_name.x_destination, icon_size + 1.5 * self._padding), 1, 'black')
+
+        basic_description = NewLineText(
+            (attacks_section.width - icon_size - 3 * self._padding, icon_size - basic_name.height), 'topleft',
+            (basic_name.x_destination, basic_name.height + self._padding), 0, 'dragons_game/fonts/friz_quadrata.ttf',
+            attacks_section.height / 11, self._dragon.basic_attack._description, 'white', 1, 'black')
+        attacks_section.add_element('special_description',
+                                    NewLineText((basic_description.width, icon_size - special_name.height), 'topleft', (
+                                        basic_description.x_destination,
+                                        icon_size + special_name.height + 1.5 * self._padding), 0,
+                                                'dragons_game/fonts/friz_quadrata.ttf', attacks_section.height / 11,
+                                                self._dragon.special_attack._description, 'white', 1, 'black'))
+
+        attacks_section.add_element('basic_name', basic_name)
+        attacks_section.add_element('special_name', special_name)
+        attacks_section.add_element('basic_description', basic_description)
 
         self.add_element('attacks', attacks_section)
 
