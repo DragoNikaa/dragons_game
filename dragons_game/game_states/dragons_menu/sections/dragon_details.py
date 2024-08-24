@@ -12,6 +12,7 @@ from dragons_game.game_states.dragons_menu.sections.common.rarity_stars import r
 from dragons_game.game_states.dragons_menu.sections.title_bar import title_bar_section
 from dragons_game.game_states.game_state import GameState
 from dragons_game.user import user
+from dragons_game.utils import custom_types
 from dragons_game.utils.image_proportions import calculate_proportional_height, calculate_proportional_width
 from dragons_game.utils.observers import Observer
 
@@ -31,16 +32,20 @@ class DragonDetails(Section):
                     (-self.width / 4, 1.5 * universal_sizes.LARGE), 4, 'black')
         self.add_element('name', name)
 
+        self._team_section = _TeamSection(dragon, self.width / 2.75, (name.x_destination, -universal_sizes.LARGE))
+        self.add_element('team', self._team_section)
+
         dragon_image_width = self.width / 2.5
         dragon_image_height = calculate_proportional_height(dragon.image_path, dragon_image_width)
 
-        max_height = self.height - name.height - 3.5 * universal_sizes.LARGE
+        max_height = (self.height - name.height - name.y_destination - self._team_section.height
+                      + self._team_section.y_destination - universal_sizes.LARGE)
         if dragon_image_height > max_height:
             dragon_image_height = max_height
             dragon_image_width = calculate_proportional_width(dragon.image_path, dragon_image_height)
 
         self.add_element('dragon', Image(dragon.image_path, (dragon_image_width, dragon_image_height), 'center',
-                                         (name.x_destination, self.height / 13.5)))
+                                         (name.x_destination, self.height / 28)))
 
         self.add_element('right_background',
                          Image('dragons_game/graphics/backgrounds/dragons_menu/dragon_details/right_background.png',
@@ -51,36 +56,32 @@ class DragonDetails(Section):
                                          {'action': 'change_state', 'next_state': GameState.DRAGONS_MENU}))
 
         self._padding = self.width / 80
+        self._text_size = self.height / 38
 
         self._add_rarity_section()
         self._add_description_section()
         self._add_stats_section()
         self._add_attacks_section()
 
-        self._team_section = _TeamSection(dragon, self.width)
-        self.add_element('team', self._team_section)
-
     def _add_rarity_section(self) -> None:
         rarity_section = self._section(0.1, 'Rarity')
 
-        for star_index, star in enumerate(
-                rarity_stars(self._dragon.rarity, rarity_section.height / 2.25, self._padding)):
+        for star_index, star in enumerate(rarity_stars(self._dragon.rarity, self._text_size, self._padding)):
             rarity_section.add_element(f'star_{star_index}', star)
         last_star = rarity_section.get_image('star_5')
 
-        rarity_section.add_element('text', Text('dragons_game/fonts/friz_quadrata.ttf', rarity_section.height / 2.25,
-                                                f'{str(self._dragon.rarity).title()}', 'white', 'midleft',
-                                                (last_star.x_destination + last_star.width + self._padding, 0), 1,
-                                                'black'))
+        rarity_section.add_element('text', self._text(f'{str(self._dragon.rarity).title()}', 'midleft',
+                                                      (last_star.x_destination + last_star.width + self._padding, 0)))
 
         self.add_element('rarity', rarity_section)
 
     def _add_description_section(self) -> None:
-        description_section = self._section(0.3, 'Description', self.get_section('rarity'))
+        description_section = self._section(0.2, 'Description', self.get_section('rarity'))
 
-        self.description_text = NewLineText(description_section.size, 'topleft', (0, 0), self._padding,
-                                            'dragons_game/fonts/friz_quadrata.ttf', description_section.height / 7.295,
-                                            self._dragon.description, 'white', 1, 'black')
+        self.description_text = NewLineText(
+            (description_section.width - 2 * self._padding, description_section.height - 2 * self._padding), 'topleft',
+            (self._padding, self._padding), 4, 'dragons_game/fonts/friz_quadrata.ttf', self._dragon.description,
+            'white', 1, 'black')
         description_section.add_element('text', self.description_text)
 
         self.add_element('description', description_section)
@@ -88,11 +89,11 @@ class DragonDetails(Section):
     def _add_stats_section(self) -> None:
         stats_section = self._section(0.3, 'Statistics', self.get_section('description'))
 
-        level = Text('dragons_game/fonts/friz_quadrata.ttf', stats_section.height / 8, f'Level {self._dragon.level}',
-                     'white', 'midtop', (self._padding, self._padding), 1, 'black')
-        stats_section.add_element('level', level)
+        stats_section.add_element('level',
+                                  self._text(f'Level {self._dragon.level}', 'midtop', (self._padding, self._padding)))
 
-        progress_bar_size = (stats_section.width / 1.5, (stats_section.height - level.height - 4 * self._padding) / 3)
+        progress_bar_size = (
+            stats_section.width / 1.5, (stats_section.height - self._text_size - 4 * self._padding) / 3)
 
         health_bar = self._add_progress_bar(stats_section, 'health', progress_bar_size, -self._padding,
                                             'dragons_game/graphics/buttons/health_bar.png', self._dragon.current_health,
@@ -119,55 +120,49 @@ class DragonDetails(Section):
         progress_bar.add_element(f'current', Image(current_image_path, (
             current_value / max_value * progress_bar.width, progress_bar.height), 'topleft', (0, 0)))
 
-        progress_bar.add_element('numbers', Text('dragons_game/fonts/friz_quadrata.ttf', progress_bar.height / 1.5,
-                                                 f'{current_value}/{max_value}', 'white', 'center', (0, 0), 1, 'black'))
+        progress_bar.add_element('numbers', self._text(f'{current_value}/{max_value}', 'center', (0, 0)))
 
-        progress_bar.add_element('label',
-                                 Text('dragons_game/fonts/friz_quadrata.ttf', progress_bar.height / 1.5, name.title(),
-                                      'white', 'midleft',
-                                      (progress_bar.width + 2 * self._padding - stats_section.width, 0), 1, 'black'))
+        progress_bar.add_element('label', self._text(name.title(), 'midleft',
+                                                     (progress_bar.width + 2 * self._padding - stats_section.width, 0)))
 
         stats_section.add_element(name, progress_bar)
         return progress_bar
 
     def _add_attacks_section(self) -> None:
-        attacks_section = self._section(0.3, 'Attacks', self.get_section('stats'))
+        attacks_section = self._section(0.4, 'Attacks', self.get_section('stats'))
 
         icon_size = (attacks_section.height - 2.5 * self._padding) / 2
 
         attacks_section.add_element('basic_icon',
-                                    Image('dragons_game/graphics/icons/grey_star.png', (icon_size, icon_size),
+                                    Image('dragons_game/graphics/icons/special_attack.png', (icon_size, icon_size),
                                           'topleft', (self._padding, self._padding)))
         attacks_section.add_element('special_icon',
-                                    Image('dragons_game/graphics/icons/gold_star.png', (icon_size, icon_size),
+                                    Image('dragons_game/graphics/icons/special_attack.png', (icon_size, icon_size),
                                           'bottomleft', (self._padding, -self._padding)))
 
-        basic_name = Text('dragons_game/fonts/friz_quadrata.ttf', attacks_section.height / 9,
-                          self._dragon.basic_attack._name, 'white', 'topleft',
-                          (icon_size + 2 * self._padding, self._padding), 1, 'black')
-        special_name = Text('dragons_game/fonts/friz_quadrata.ttf', attacks_section.height / 9,
-                            self._dragon.special_attack._name, 'white', 'topleft',
-                            (basic_name.x_destination, icon_size + 1.5 * self._padding), 1, 'black')
+        basic_name = self._text(self._dragon.basic_attack._name, 'topleft',
+                                (icon_size + 2 * self._padding, self._padding))
+        attacks_section.add_element('special_name', self._text(self._dragon.special_attack._name, 'topleft', (
+            basic_name.x_destination, icon_size + 1.5 * self._padding)))
 
         basic_description = NewLineText(
-            (attacks_section.width - icon_size - 3 * self._padding, icon_size - basic_name.height), 'topleft',
-            (basic_name.x_destination, basic_name.height + self._padding), 0, 'dragons_game/fonts/friz_quadrata.ttf',
-            attacks_section.height / 11, self._dragon.basic_attack._description, 'white', 1, 'black')
-        attacks_section.add_element('special_description',
-                                    NewLineText((basic_description.width, icon_size - special_name.height), 'topleft', (
-                                        basic_description.x_destination,
-                                        icon_size + special_name.height + 1.5 * self._padding), 0,
-                                                'dragons_game/fonts/friz_quadrata.ttf', attacks_section.height / 11,
-                                                self._dragon.special_attack._description, 'white', 1, 'black'))
+            (attacks_section.width - icon_size - 3 * self._padding, icon_size - self._text_size - self._padding / 2),
+            'topleft', (basic_name.x_destination, self._text_size + 1.5 * self._padding), 3,
+            'dragons_game/fonts/friz_quadrata.ttf', self._dragon.basic_attack._description, 'white', 1, 'black')
+
+        attacks_section.add_element('special_description', NewLineText(basic_description.size, 'topleft', (
+            basic_description.x_destination, icon_size + self._text_size + 2 * self._padding), 3,
+                                                                       'dragons_game/fonts/friz_quadrata.ttf',
+                                                                       self._dragon.special_attack._description,
+                                                                       'white', 1, 'black'))
 
         attacks_section.add_element('basic_name', basic_name)
-        attacks_section.add_element('special_name', special_name)
         attacks_section.add_element('basic_description', basic_description)
 
         self.add_element('attacks', attacks_section)
 
     def _section(self, height_percentage: float, title: str, previous_section: Section | None = None) -> Section:
-        total_height = self.height - 8.5 * universal_sizes.LARGE
+        total_height = self.height - 7 * universal_sizes.LARGE
         height = height_percentage * total_height
 
         if previous_section:
@@ -198,6 +193,10 @@ class DragonDetails(Section):
 
         return section
 
+    def _text(self, text: str, position: custom_types.Position, destination: tuple[float, float]) -> Text:
+        return Text('dragons_game/fonts/friz_quadrata.ttf', self._text_size, text, 'white', position, destination, 1,
+                    'black')
+
     def clean_up(self) -> None:
         self._team_section.clean_up()
         self._team_section.update_on_notify()
@@ -205,9 +204,8 @@ class DragonDetails(Section):
 
 
 class _TeamSection(Section, Observer):
-    def __init__(self, dragon: Dragon, section_width: float):
-        super().__init__((section_width / 2.75, universal_sizes.LARGE), 'midbottom',
-                         (section_width / 4, -universal_sizes.LARGE / 1.5))
+    def __init__(self, dragon: Dragon, width: float, destination: tuple[float, float]):
+        super().__init__((width, universal_sizes.LARGE), 'midbottom', destination)
 
         self._in_team_section = Section((self.width / 2.25, self.height), 'center', (0, 0))
         self._in_team_section.add_element('background', Image('dragons_game/graphics/buttons/sort_key.png',

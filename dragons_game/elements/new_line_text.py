@@ -8,13 +8,13 @@ from dragons_game.utils.observers import Observer
 
 class NewLineText(Section, Observer):
     def __init__(self, size: tuple[float, float], position: custom_types.Position, destination: tuple[float, float],
-                 padding: float, font_path: str, text_size: float, text: str, color: custom_types.Color,
-                 border_thickness: int = 0, border_color: custom_types.Color = 0, alpha: int = 255):
+                 visible_lines: int, font_path: str, text: str, color: custom_types.Color, border_thickness: int = 0,
+                 border_color: custom_types.Color = 0, alpha: int = 255):
         super().__init__(size, position, destination)
 
-        self._padding = padding
+        self._visible_lines = visible_lines
         self._font_path = font_path
-        self._text_size = text_size
+        self._text_size = self.height / (1.25 * self._visible_lines)
         self._color = color
         self._border_thickness = border_thickness
         self._border_color = border_color
@@ -22,12 +22,12 @@ class NewLineText(Section, Observer):
 
         self._first_visible_line = 0
         self._last_visible_line = 0
-        self._y_destinations = []
+        self._y_destinations: list[float] = []
         self._lines = {}
 
         words = text.split(' ')
         line_index = 0
-        y_destination = padding
+        y_destination = 0.0
 
         while words:
             start_index = 0
@@ -35,13 +35,13 @@ class NewLineText(Section, Observer):
             text = ' '.join(words[start_index:end_index])
             line = previous_line = self._line(text, y_destination)
 
-            while line.width <= self.width - 2 * padding and end_index <= len(words):
+            while line.width <= self.width and end_index <= len(words):
                 previous_line = line
                 end_index += 1
                 text = ' '.join(words[start_index:end_index])
                 line = self._line(text, y_destination)
 
-            if y_destination + previous_line.height <= self.height - padding:
+            if len(self._y_destinations) < self._visible_lines:
                 self.add_element(f'line_{line_index}', previous_line)
                 self._y_destinations.append(y_destination)
                 self._last_visible_line = line_index
@@ -49,10 +49,10 @@ class NewLineText(Section, Observer):
             self._lines[f'line_{line_index}'] = previous_line
             line_index += 1
             words = words[end_index - 1:]
-            y_destination += previous_line.height
+            y_destination += 1.25 * self._text_size
 
     def _line(self, text: str, y_destination: float) -> Text:
-        return Text(self._font_path, self._text_size, text, self._color, 'topleft', (self._padding, y_destination),
+        return Text(self._font_path, self._text_size, text, self._color, 'topleft', (0, y_destination),
                     self._border_thickness, self._border_color, self._alpha)
 
     def update_on_notify(self, y: int) -> None:
