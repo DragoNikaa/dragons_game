@@ -134,7 +134,7 @@ class DragonDetails(Section):
         icon_size = (attacks_section.height - 2.5 * self._padding) / 2
 
         attacks_section.add_element('basic_icon',
-                                    Image('dragons_game/graphics/icons/special_attack.png', (icon_size, icon_size),
+                                    Image('dragons_game/graphics/icons/basic_attack.png', (icon_size, icon_size),
                                           'topleft', (self._padding, self._padding)))
         attacks_section.add_element('special_icon',
                                     Image('dragons_game/graphics/icons/special_attack.png', (icon_size, icon_size),
