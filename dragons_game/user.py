@@ -1,5 +1,6 @@
 from dragons_game.dragons.database import dragons
 from dragons_game.dragons.dragon import Dragon
+from dragons_game.islands.database import island_1
 from dragons_game.utils import custom_exceptions
 from dragons_game.utils.observers import Observer, ObserverClass
 
@@ -27,6 +28,9 @@ class User:
         self._team_dragons_observers: list[type[ObserverClass]] = []
 
         self._sort_dragons()
+
+        self.current_island = island_1
+        self.current_level = self.current_island.easy_level
 
     def _check_team_dragons(self) -> None:
         if len(self._team_dragons) > 3:
@@ -148,6 +152,12 @@ class User:
         return self._team_dragons
 
 
-user = User(
+user_1 = User(
     [dragons.toothless, dragons.skyflame, dragons.prismscale, dragons.frostreaver, dragons.valentira, dragons.nyxar],
     [dragons.toothless, dragons.skyflame, dragons.frostreaver])
+
+user_2 = User(
+    [dragons.toothless, dragons.skyflame, dragons.prismscale, dragons.frostreaver, dragons.valentira, dragons.nyxar],
+    [dragons.nyxar, dragons.valentira, dragons.prismscale])
+
+user = user_1

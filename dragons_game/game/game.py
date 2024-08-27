@@ -47,6 +47,9 @@ class Game(GameConfig):
             loading_manager_thread.join()
             loading_screen_thread.join()
 
+        if new_state is not GameState.BATTLE:
+            self._initialized_managers.pop(GameState.BATTLE, None)
+
         return self._initialized_managers[new_state]
 
     def _load_manager(self, new_state: GameState, loading_done_event: threading.Event) -> None:
@@ -58,6 +61,10 @@ class Game(GameConfig):
             case GameState.MAIN_MENU:
                 from dragons_game.game_states.main_menu.manager import MainMenuManager
                 self._initialized_managers[new_state] = MainMenuManager()
+
+            case GameState.BATTLE:
+                from dragons_game.game_states.battle.manager import BattleManager
+                self._initialized_managers[new_state] = BattleManager()
 
             case GameState.DRAGONS_MENU:
                 from dragons_game.game_states.dragons_menu.manager import DragonsMenuManager
