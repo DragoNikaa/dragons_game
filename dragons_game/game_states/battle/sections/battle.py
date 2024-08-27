@@ -1,3 +1,5 @@
+import pygame.transform
+
 from dragons_game.dragons.dragon import Dragon
 from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
@@ -19,9 +21,12 @@ class BattleSection(Section):
         for dragon_index, dragon in enumerate(user.team_dragons):
             factors = user.current_level.dragons_factors[dragon_index]
 
-            self.add_element(f'user_dragon_{dragon_index}',
-                             Button(dragon.image_path, self._scaled_size(dragon), 'center',
-                                    (self.width / factors[0], self.height / factors[1])))
+            dragon_button = Button(dragon.image_path, self._scaled_size(dragon), 'center',
+                                   (self.width / factors[0], self.height / factors[1]))
+            self.add_element(f'user_dragon_{dragon_index}', dragon_button)
+
+            if dragon.facing == 'left':
+                dragon_button.transform_image(pygame.transform.flip, 1, 0)
 
     def _scaled_size(self, dragon: Dragon) -> tuple[float, float]:
         original_width = self.width / 8

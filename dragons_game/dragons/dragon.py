@@ -1,3 +1,5 @@
+from typing import Literal
+
 from dragons_game.dragons.attack import Attack
 from dragons_game.dragons.rarity import Rarity
 from dragons_game.dragons.stats import RARITY_TO_STATS, Stat
@@ -5,12 +7,13 @@ from dragons_game.utils.observers import Observer
 
 
 class Dragon:
-    def __init__(self, name: str, rarity: Rarity, description: str, image_path: str, basic_attack: Attack,
-                 special_attack: Attack):
+    def __init__(self, name: str, rarity: Rarity, description: str, image_path: str, facing: Literal['left', 'right'],
+                 basic_attack: Attack, special_attack: Attack):
         self._name = name
         self._rarity = rarity
         self._description = description
         self._image_path = image_path
+        self._facing = facing
         self._basic_attack = basic_attack
         self._special_attack = special_attack
 
@@ -65,6 +68,10 @@ class Dragon:
     @property
     def image_path(self) -> str:
         return self._image_path
+
+    @property
+    def facing(self) -> Literal['left', 'right']:
+        return self._facing
 
     @property
     def basic_attack(self) -> Attack:
