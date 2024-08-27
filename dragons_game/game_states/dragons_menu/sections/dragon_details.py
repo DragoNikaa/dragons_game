@@ -13,7 +13,7 @@ from dragons_game.game_states.dragons_menu.sections.title_bar import title_bar_s
 from dragons_game.game_states.game_state import GameState
 from dragons_game.user import user
 from dragons_game.utils import custom_types
-from dragons_game.utils.image_proportions import calculate_proportional_height, calculate_proportional_width
+from dragons_game.utils.image_proportions import proportional_height, proportional_width
 from dragons_game.utils.observers import Observer
 
 
@@ -36,13 +36,13 @@ class DragonDetails(Section):
         self.add_element('team', self._team_section)
 
         dragon_image_width = self.width / 2.5
-        dragon_image_height = calculate_proportional_height(dragon.image_path, dragon_image_width)
+        dragon_image_height = proportional_height(dragon.image_path, dragon_image_width)
 
         max_height = (self.height - name.height - name.y_destination - self._team_section.height
                       + self._team_section.y_destination - universal_sizes.LARGE)
         if dragon_image_height > max_height:
             dragon_image_height = max_height
-            dragon_image_width = calculate_proportional_width(dragon.image_path, dragon_image_height)
+            dragon_image_width = proportional_width(dragon.image_path, dragon_image_height)
 
         self.add_element('dragon', Image(dragon.image_path, (dragon_image_width, dragon_image_height), 'center',
                                          (name.x_destination, self.height / 28)))
@@ -140,21 +140,21 @@ class DragonDetails(Section):
                                     Image('dragons_game/graphics/icons/special_attack.png', (icon_size, icon_size),
                                           'bottomleft', (self._padding, -self._padding)))
 
-        basic_name = self._text(self._dragon.basic_attack._name, 'topleft',
+        basic_name = self._text(self._dragon.basic_attack.name, 'topleft',
                                 (icon_size + 2 * self._padding, self._padding))
-        attacks_section.add_element('special_name', self._text(self._dragon.special_attack._name, 'topleft', (
+        attacks_section.add_element('special_name', self._text(self._dragon.special_attack.name, 'topleft', (
             basic_name.x_destination, icon_size + 1.5 * self._padding)))
 
         basic_description = NewLineText(
             (attacks_section.width - icon_size - 3 * self._padding, icon_size - self._text_size - self._padding / 2),
             'topleft', (basic_name.x_destination, self._text_size + 1.5 * self._padding), 3,
-            'dragons_game/fonts/friz_quadrata.ttf', self._dragon.basic_attack._description, 'white', 1, 'black')
+            'dragons_game/fonts/friz_quadrata.ttf', self._dragon.basic_attack.description, 'white', 1, 'black')
 
         attacks_section.add_element('special_description', NewLineText(basic_description.size, 'topleft', (
             basic_description.x_destination, icon_size + self._text_size + 2 * self._padding), 3,
                                                                        'dragons_game/fonts/friz_quadrata.ttf',
-                                                                       self._dragon.special_attack._description,
-                                                                       'white', 1, 'black'))
+                                                                       self._dragon.special_attack.description, 'white',
+                                                                       1, 'black'))
 
         attacks_section.add_element('basic_name', basic_name)
         attacks_section.add_element('basic_description', basic_description)

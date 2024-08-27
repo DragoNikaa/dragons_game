@@ -8,7 +8,7 @@ from dragons_game.elements.tooltip import Tooltip
 from dragons_game.game_states.common import universal_sizes
 from dragons_game.game_states.dragons_menu.sections.dragon_details import DragonDetails
 from dragons_game.utils import custom_types
-from dragons_game.utils.image_proportions import calculate_proportional_width
+from dragons_game.utils.image_proportions import proportional_width
 from dragons_game.utils.observers import ObserverClass
 
 
@@ -22,7 +22,7 @@ class DragonButton(Button, ObserverClass, ABC):
         self._add_text('name', dragon.name, 'midtop', self.height / 5.45)
 
         dragon_image_height = self.height / 3.1
-        dragon_image_width = calculate_proportional_width(dragon.image_path, dragon_image_height)
+        dragon_image_width = proportional_width(dragon.image_path, dragon_image_height)
         self.add_element('dragon', Image(dragon.image_path, (dragon_image_width, dragon_image_height), 'center',
                                          (0, -self.height / 50)))
 

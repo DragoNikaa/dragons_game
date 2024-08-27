@@ -25,5 +25,5 @@ class MainMenuManager(GameStateManager):
                 user.current_level = event.level
                 return self._change_state(GameState.BATTLE)
 
-        if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
+        elif event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
             return self._change_state(GameState.UNKNOWN)

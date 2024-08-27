@@ -4,7 +4,7 @@ from dragons_game.elements.image import Image
 from dragons_game.elements.section import Section
 from dragons_game.game.configuration import GameConfig
 from dragons_game.user import user
-from dragons_game.utils.image_proportions import calculate_proportional_height
+from dragons_game.utils.image_proportions import proportional_height
 
 
 class BattleSection(Section):
@@ -25,7 +25,7 @@ class BattleSection(Section):
 
     def _scaled_size(self, dragon: Dragon) -> tuple[float, float]:
         original_width = self.width / 8
-        height = calculate_proportional_height(dragon.image_path, original_width)
+        height = proportional_height(dragon.image_path, original_width)
 
         width = original_width * original_width / height
 
@@ -34,4 +34,4 @@ class BattleSection(Section):
         elif width < 0.9 * original_width:
             width = 0.9 * original_width
 
-        return width, calculate_proportional_height(dragon.image_path, width)
+        return width, proportional_height(dragon.image_path, width)

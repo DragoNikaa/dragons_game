@@ -4,7 +4,7 @@ from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
 from dragons_game.game.configuration import GameConfig
 from dragons_game.utils import custom_types
-from dragons_game.utils.image_proportions import calculate_proportional_width
+from dragons_game.utils.image_proportions import proportional_width
 
 top_buttons_section = Section((GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEIGHT / 9), 'topleft', (0, 0))
 
@@ -20,7 +20,7 @@ class _TopButton(Button):
                          'topleft', (self._X_DESTINATIONS[button_index], 0), click_action, hover_action)
 
         icon_height = self.height / 1.85
-        icon_width = calculate_proportional_width(icon_image_path, icon_height)
+        icon_width = proportional_width(icon_image_path, icon_height)
         self.add_element('icon', Image(icon_image_path, (icon_width, icon_height), 'center', (-self._WIDTH / 3, 0)))
 
         self.add_element('amount',

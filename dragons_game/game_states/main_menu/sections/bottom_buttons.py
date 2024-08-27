@@ -5,7 +5,7 @@ from dragons_game.elements.text import Text
 from dragons_game.game.configuration import GameConfig
 from dragons_game.game_states.game_state import GameState
 from dragons_game.utils import custom_types
-from dragons_game.utils.image_proportions import calculate_proportional_width
+from dragons_game.utils.image_proportions import proportional_width
 
 bottom_buttons_section = Section((GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEIGHT / 7), 'bottomleft',
                                  (0, GameConfig.WINDOW_HEIGHT))
@@ -24,7 +24,7 @@ class _BottomButton(Button):
                          (self._X_DESTINATIONS[button_index], 0), click_action, hover_action)
 
         icon_height = self.height / 1.85
-        icon_width = calculate_proportional_width(icon_image_path, icon_height)
+        icon_width = proportional_width(icon_image_path, icon_height)
         self.add_element('icon', Image(icon_image_path, (icon_width, icon_height), 'center', (-self._WIDTH / 3.15, 0)))
 
         self.add_element('label', Text('dragons_game/fonts/pr_viking.ttf', self.height / 2.8, label, 'white', 'center',

@@ -1,4 +1,5 @@
-from typing import Callable, Literal
+from collections.abc import Callable
+from typing import Literal
 
 import pygame
 
@@ -12,7 +13,7 @@ from dragons_game.game_states.dragons_menu.sections.common.rarity_stars import r
 from dragons_game.game_states.dragons_menu.sections.dragon_list import dragon_list_section
 from dragons_game.user import user
 from dragons_game.utils import custom_types
-from dragons_game.utils.image_proportions import calculate_proportional_width
+from dragons_game.utils.image_proportions import proportional_width
 from dragons_game.utils.observers import Observer
 
 bottom_bar_section = Section((dragon_list_section.width - 4 * universal_sizes.LARGE, universal_sizes.LARGE),
@@ -105,7 +106,7 @@ class _RarityButton(Button):
         image_path = f'dragons_game/graphics/buttons/rarities/{name}.png'
 
         height = _section_height / 1.1
-        width = calculate_proportional_width(image_path, height)
+        width = proportional_width(image_path, height)
 
         if previous_button is None:
             x = _rarities_text.x_destination + _rarities_text.width + universal_sizes.SMALL
