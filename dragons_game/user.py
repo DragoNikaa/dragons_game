@@ -152,12 +152,10 @@ class User:
         return self._team_dragons
 
 
-user_1 = User(
+user = User(
     [dragons.toothless, dragons.skyflame, dragons.prismscale, dragons.frostreaver, dragons.valentira, dragons.nyxar],
     [dragons.toothless, dragons.skyflame, dragons.frostreaver])
 
-user_2 = User(
-    [dragons.toothless, dragons.skyflame, dragons.prismscale, dragons.frostreaver, dragons.valentira, dragons.nyxar],
-    [dragons.nyxar, dragons.valentira, dragons.prismscale])
-
-user = user_1
+# user = User(
+#     [dragons.toothless, dragons.skyflame, dragons.prismscale, dragons.frostreaver, dragons.valentira, dragons.nyxar],
+#     [dragons.nyxar, dragons.valentira, dragons.prismscale])
