@@ -14,12 +14,10 @@ class LevelType(Enum):
 
 
 class Level:
-    def __init__(self, level_type: LevelType, button_image_path: str, button_factors: tuple[float, float],
-                 battle_image_path: str,
+    def __init__(self, level_type: LevelType, button_factors: tuple[float, float], battle_image_path: str,
                  dragons_factors: tuple[tuple[float, float], tuple[float, float], tuple[float, float]],
                  enemies_factors: tuple[tuple[float, float], tuple[float, float], tuple[float, float]]):
         self._level_type = level_type
-        self._button_image_path = button_image_path
         self._button_factors = button_factors
         self._battle_image_path = battle_image_path
         self._dragons_factors = dragons_factors
@@ -34,7 +32,7 @@ class Level:
 
     @property
     def button_image_path(self) -> str:
-        return self._button_image_path
+        return f'dragons_game/graphics/buttons/levels/{self._level_type.value}.png'
 
     @property
     def button_factors(self) -> tuple[float, float]:

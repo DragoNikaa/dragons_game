@@ -24,7 +24,7 @@ class _IslandSection(Section):
         self.add_element('fiendish', self._level_button(island.fiendish_level))
 
     def _level_button(self, level: Level) -> Button:
-        return Button(level.button_image_path, (self.height / 6.5, self.height / 6.5), 'center',
+        return Button(level.button_image_path, (self.height / 5, self.height / 5), 'center',
                       (self.width / level.button_factors[0], self.height / level.button_factors[1]),
                       {'action': 'battle', 'level': level}, {'action': 'show_tooltip', 'tooltip': level.tooltip})
 
