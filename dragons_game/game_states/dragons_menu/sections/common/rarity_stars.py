@@ -7,7 +7,7 @@ def _star(star_number: int, stars_number: int, size: float, x_destination: float
     else:
         color = 'grey'
 
-    return Image(f'dragons_game/graphics/icons/{color}_star.png', (size, size), 'midleft',
+    return Image(f'dragons_game/graphics/icons/stars/{color}.png', (size, size), 'midleft',
                  (x_destination + (star_number - 1) * size, 0))
 
 

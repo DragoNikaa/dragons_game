@@ -25,7 +25,7 @@ class DragonDetails(Section):
         self._dragon = dragon
 
         self.add_element('dragon_background',
-                         Image('dragons_game/graphics/backgrounds/dragons_menu/dragon_details/dragon_background.png',
+                         Image('dragons_game/graphics/backgrounds/dragons_menu/dragon_details/dragon.png',
                                (self.width / 2, self.height), 'topleft', (0, 0)))
 
         name = Text('dragons_game/fonts/rurik.ttf', self.height / 9, dragon.name, dragon.rarity.color, 'midtop',
@@ -48,7 +48,7 @@ class DragonDetails(Section):
                                          (name.x_destination, self.height / 28)))
 
         self.add_element('right_background',
-                         Image('dragons_game/graphics/backgrounds/dragons_menu/dragon_details/right_background.png',
+                         Image('dragons_game/graphics/backgrounds/dragons_menu/dragon_details/right.png',
                                (self.width / 2, self.height), 'topright', (0, 0)))
 
         self.add_element('close', Button('dragons_game/graphics/buttons/close.png',
@@ -96,28 +96,25 @@ class DragonDetails(Section):
             stats_section.width / 1.5, (stats_section.height - self._text_size - 4 * self._padding) / 3)
 
         health_bar = self._add_progress_bar(stats_section, 'health', progress_bar_size, -self._padding,
-                                            'dragons_game/graphics/buttons/health_bar.png', self._dragon.current_health,
-                                            self._dragon.max_health)
+                                            self._dragon.current_health, self._dragon.max_health)
         energy_bar = self._add_progress_bar(stats_section, 'energy', progress_bar_size,
                                             health_bar.y_destination - health_bar.height - self._padding / 2,
-                                            'dragons_game/graphics/buttons/energy_bar.png', self._dragon.current_energy,
-                                            self._dragon.max_energy)
+                                            self._dragon.current_energy, self._dragon.max_energy)
         experience_bar = self._add_progress_bar(stats_section, 'experience', progress_bar_size,
                                                 energy_bar.y_destination - health_bar.height - self._padding / 2,
-                                                'dragons_game/graphics/buttons/experience_bar.png',
                                                 self._dragon.current_experience, self._dragon.experience_to_next_level)
 
         self.add_element('stats', stats_section)
 
     def _add_progress_bar(self, stats_section: Section, name: str, size: tuple[float, float],
-                          y_destination: float, current_image_path: str, current_value: float,
-                          max_value: float) -> Section:
+                          y_destination: float, current_value: float, max_value: float) -> Section:
         progress_bar = Section(size, 'bottomright', (-self._padding, y_destination))
 
-        progress_bar.add_element('progress_bar',
-                                 Image('dragons_game/graphics/buttons/progress_bar.png', progress_bar.size, 'topleft',
-                                       (0, 0)))
-        progress_bar.add_element(f'current', Image(current_image_path, (
+        progress_bar.add_element('background',
+                                 Image('dragons_game/graphics/progress_bars/background.png', progress_bar.size,
+                                       'topleft', (0, 0)))
+
+        progress_bar.add_element(f'current', Image(f'dragons_game/graphics/progress_bars/{name}.png', (
             current_value / max_value * progress_bar.width, progress_bar.height), 'topleft', (0, 0)))
 
         progress_bar.add_element('numbers', self._text(f'{current_value}/{max_value}', 'center', (0, 0)))
@@ -134,10 +131,10 @@ class DragonDetails(Section):
         icon_size = (attacks_section.height - 2.5 * self._padding) / 2
 
         attacks_section.add_element('basic_icon',
-                                    Image('dragons_game/graphics/icons/basic_attack.png', (icon_size, icon_size),
+                                    Image('dragons_game/graphics/icons/attacks/basic.png', (icon_size, icon_size),
                                           'topleft', (self._padding, self._padding)))
         attacks_section.add_element('special_icon',
-                                    Image('dragons_game/graphics/icons/special_attack.png', (icon_size, icon_size),
+                                    Image('dragons_game/graphics/icons/attacks/special.png', (icon_size, icon_size),
                                           'bottomleft', (self._padding, -self._padding)))
 
         basic_name = self._text(self._dragon.basic_attack.name, 'topleft',
@@ -174,16 +171,15 @@ class DragonDetails(Section):
                           (self.width / 2 + 1.5 * universal_sizes.LARGE, y_destination))
 
         section.add_element('background',
-                            Image('dragons_game/graphics/backgrounds/dragons_menu/dragon_details/text_background.png',
+                            Image('dragons_game/graphics/backgrounds/dragons_menu/dragon_details/text.png',
                                   section.size, 'topleft', (0, 0)))
 
         border_size = (section.width, self.height / 130)
-        section.add_element('top_border', Image(
-            'dragons_game/graphics/backgrounds/dragons_menu/dragon_details/text_background_top_border.png', border_size,
-            'topleft', (0, 0)))
-        bottom_border = Image(
-            'dragons_game/graphics/backgrounds/dragons_menu/dragon_details/text_background_top_border.png', border_size,
-            'bottomleft', (0, 0))
+        section.add_element('top_border',
+                            Image('dragons_game/graphics/backgrounds/dragons_menu/dragon_details/text_top_border.png',
+                                  border_size, 'topleft', (0, 0)))
+        bottom_border = Image('dragons_game/graphics/backgrounds/dragons_menu/dragon_details/text_top_border.png',
+                              border_size, 'bottomleft', (0, 0))
         bottom_border.transform_image(pygame.transform.rotate, 180)
         section.add_element('bottom_border', bottom_border)
 
