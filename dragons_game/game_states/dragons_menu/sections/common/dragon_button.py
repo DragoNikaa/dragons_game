@@ -26,14 +26,11 @@ class DragonButton(Button, ObserverClass, ABC):
         self.add_element('dragon', Image(dragon.image_path, (dragon_image_width, dragon_image_height), 'center',
                                          (0, -self.height / 50)))
 
-        health_bar = self._add_progress_bar('health', -self.height / 7.4,
-                                            'dragons_game/graphics/buttons/health_bar.png', dragon.current_health,
-                                            dragon.max_health, '#dc0000')
+        health_bar = self._add_progress_bar('health', -self.height / 7.4, dragon.current_health, dragon.max_health,
+                                            '#dc0000')
         energy_bar = self._add_progress_bar('energy', health_bar.y_destination - self.height / 22.5,
-                                            'dragons_game/graphics/buttons/energy_bar.png', dragon.current_energy,
-                                            dragon.max_energy, '#eaea00')
+                                            dragon.current_energy, dragon.max_energy, '#eaea00')
         experience_bar = self._add_progress_bar('experience', energy_bar.y_destination - self.height / 22.5,
-                                                'dragons_game/graphics/buttons/experience_bar.png',
                                                 dragon.current_experience, dragon.experience_to_next_level, '#00da00')
 
         self._add_text('level', f'Level {dragon.level}', 'midbottom', experience_bar.y_destination - self.height / 22.5)
@@ -42,15 +39,15 @@ class DragonButton(Button, ObserverClass, ABC):
         self.add_element(name, Text('dragons_game/fonts/rurik.ttf', self.height / 16, text, 'white', position,
                                     (0, y_destination), 1, 'black'))
 
-    def _add_progress_bar(self, name: str, y_destination: float, current_image_path: str, current_value: float,
-                          max_value: float, tooltip_color: custom_types.Color) -> Button:
+    def _add_progress_bar(self, name: str, y_destination: float, current_value: float, max_value: float,
+                          tooltip_color: custom_types.Color) -> Button:
         tooltip = self._tooltip(name, current_value, max_value, tooltip_color)
 
-        progress_bar = Button('dragons_game/graphics/buttons/progress_bar.png', (self.width / 2, self.height / 30),
+        progress_bar = Button('dragons_game/graphics/progress_bars/background.png', (self.width / 2, self.height / 30),
                               'midbottom', (0, y_destination),
                               hover_action={'action': 'show_tooltip', 'tooltip': tooltip})
 
-        progress_bar.add_element('current', Image(current_image_path,
+        progress_bar.add_element('current', Image(f'dragons_game/graphics/progress_bars/{name}.png',
                                                   (current_value / max_value * progress_bar.width, progress_bar.height),
                                                   'midleft', (0, 0)))
 

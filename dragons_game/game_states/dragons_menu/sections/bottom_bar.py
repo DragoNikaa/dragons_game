@@ -38,8 +38,8 @@ class _PageButton(Button):
         super().__init__(image_path, (_section_height, _section_height), position, (0, 0))
 
 
-_page_section.add_element('left_page', _PageButton('dragons_game/graphics/buttons/left_page.png', 'topleft'))
-_page_section.add_element('right_page', _PageButton('dragons_game/graphics/buttons/right_page.png', 'topright'))
+_page_section.add_element('left_page', _PageButton('dragons_game/graphics/buttons/page/left.png', 'topleft'))
+_page_section.add_element('right_page', _PageButton('dragons_game/graphics/buttons/page/right.png', 'topright'))
 
 _sort_section = Section(
     ((bottom_bar_section.width - _page_section.width) / 2 - 2 * universal_sizes.LARGE, _section_height), 'topleft',
