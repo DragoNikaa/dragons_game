@@ -9,7 +9,7 @@ from dragons_game.user import user
 from dragons_game.utils.image_proportions import proportional_height
 
 
-class BattleSection(Section):
+class BattlefieldSection(Section):
     def __init__(self) -> None:
         super().__init__((GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEIGHT), 'topleft', (0, 0))
 
