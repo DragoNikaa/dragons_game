@@ -29,8 +29,6 @@ class _DragonButton(DragonButton):
     _ROW_1_Y_DESTINATION: float = universal_sizes.MEDIUM
     _ROW_2_Y_DESTINATION = 2 * universal_sizes.MEDIUM + _HEIGHT
 
-    _TEAM_DRAGON_IMAGES: dict[Dragon, pygame.Surface] = {}
-
     def __init__(self, dragon_index: int, dragon: Dragon):
         super().__init__(dragon, (self._WIDTH, self._HEIGHT), 'topleft', self._new_destination(dragon_index))
 
@@ -54,15 +52,13 @@ class _DragonButton(DragonButton):
             dragon_button.add_element('team_mark', team_mark)
 
             dragon_image = dragon_button.get_image('dragon').image_copy
-            cls._TEAM_DRAGON_IMAGES[added_team_dragon] = dragon_image.copy()
             dragon_image.fill((0, 0, 0, 128), special_flags=pygame.BLEND_RGBA_SUB)
-            dragon_button.get_image('dragon').set_image(dragon_image)
+            dragon_button.get_image('dragon').add_temporary_image(dragon_image)
 
         if removed_team_dragon:
             dragon_button = dragon_list_section.get_button(removed_team_dragon.name)
             dragon_button.remove_element('team_mark')
-            dragon_button.get_image('dragon').set_image(cls._TEAM_DRAGON_IMAGES[removed_team_dragon])
-            del cls._TEAM_DRAGON_IMAGES[removed_team_dragon]
+            dragon_button.get_image('dragon').remove_temporary_image()
 
     @classmethod
     def _new_destination(cls, dragon_index: int) -> tuple[int, int]:
