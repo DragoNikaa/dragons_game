@@ -4,5 +4,5 @@ from dragons_game.game_states.common.title_bar import TitleBar
 from dragons_game.game_states.game_state import GameState
 
 title_bar_section = TitleBar((GameConfig.WINDOW_WIDTH, universal_sizes.LARGE), 'topleft', (0, 0),
-                             'dragons_game/graphics/icons/dragons.png', 'Battle',
+                             'dragons_game/graphics/icons/battle.png', 'Battle',
                              {'action': 'change_state', 'next_state': GameState.MAIN_MENU})

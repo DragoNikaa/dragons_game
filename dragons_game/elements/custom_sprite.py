@@ -27,11 +27,20 @@ class CustomSprite(pygame.sprite.Sprite, ABC):
             image = pygame.transform.scale(image, size)
 
         self.image = image.convert_alpha()
+        self._original_image = self.image.copy()
         self._image_without_effects = self.image.copy()
         self.rect = self.image.get_rect(**{self._position: self._destination})
 
     def set_image(self, new_image: pygame.Surface) -> None:
+        self.add_temporary_image(new_image)
+        self._original_image = self.image.copy()
+
+    def add_temporary_image(self, new_image: pygame.Surface) -> None:
         self.image = new_image.convert_alpha()
+        self._image_without_effects = self.image.copy()
+
+    def remove_temporary_image(self) -> None:
+        self.image = self._original_image.copy()
         self._image_without_effects = self.image.copy()
 
     def transform_image(self, transform_callable: Callable[..., pygame.Surface], *callable_args: Any) -> None:
