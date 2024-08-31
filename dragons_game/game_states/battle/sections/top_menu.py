@@ -59,7 +59,7 @@ class HealthBarsSection(Section):
         self.add_element(f'dragon_{dragon_index}_health', progress_bar)
 
 
-class _AttacksSection(Section):
+class AttacksSection(Section):
     def __init__(self) -> None:
         super().__init__((GameConfig.WINDOW_WIDTH / 3.5, 0.63 * (top_menu_section.height - 2 * universal_sizes.MEDIUM)),
                          'midtop',
@@ -98,4 +98,28 @@ class _AttacksSection(Section):
         self.upsert_element('cost', _text(f'Cost: {self._selected_attack.cost} points', 'bottomleft', (0, 0)))
 
 
-attacks_section = _AttacksSection()
+class PointsBar(Section):
+    def __init__(self) -> None:
+        super().__init__((GameConfig.WINDOW_WIDTH / 5,
+                          0.37 * (top_menu_section.height - 2 * universal_sizes.MEDIUM) - universal_sizes.SMALL),
+                         'midbottom', (GameConfig.WINDOW_WIDTH / 2,
+                                       title_bar_section.rect.bottom + top_menu_section.height - universal_sizes.MEDIUM))
+
+        self.add_element('background',
+                         Image('dragons_game/graphics/progress_bars/points//background.png', self.size, 'topleft',
+                               (0, 0)))
+
+        self._color_points = []
+        x_destination = self.width / 20
+
+        for point_index in range(5):
+            args: tuple[tuple[float, float], custom_types.Position, tuple[float, float]] = (
+                (self.width / 6.1, self.height / 2.1), 'midleft', (x_destination, 0))
+
+            grey_point = Image('dragons_game/graphics/progress_bars/points/grey_point.png', *args)
+            self.add_element(f'grey_point_{point_index}', grey_point)
+
+            self._color_points.append(
+                Image(f'dragons_game/graphics/progress_bars/points/color_points/{point_index}.png', *args))
+
+            x_destination += grey_point.width + self.width / 50
