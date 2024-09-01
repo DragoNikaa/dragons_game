@@ -1,7 +1,7 @@
 import pygame
 
 from dragons_game.dragons.attack import AttackType
-from dragons_game.dragons.dragon import Dragon
+from dragons_game.dragons.user_dragon import UserDragon
 from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
 from dragons_game.elements.section import Section
@@ -43,7 +43,7 @@ class HealthBarsSection(Section):
             self.add_element(f'dragon_{dragon_index}_name', _text(f'{dragon.name}', 'topleft', (0, y_destination)))
             self._add_progress_bar(dragon_index, dragon, y_destination)
 
-    def _add_progress_bar(self, dragon_index: int, dragon: Dragon, y_destination: float) -> None:
+    def _add_progress_bar(self, dragon_index: int, dragon: UserDragon, y_destination: float) -> None:
         progress_bar = Section((0.6 * self.width, self._bar_height), 'topright', (0, y_destination))
 
         progress_bar.add_element('background',

@@ -1,4 +1,6 @@
-import pygame.transform
+from typing import Literal, Sequence
+
+import pygame
 
 from dragons_game.dragons.dragon import Dragon
 from dragons_game.elements.button import Button
@@ -6,6 +8,7 @@ from dragons_game.elements.image import Image
 from dragons_game.elements.section import Section
 from dragons_game.game.configuration import GameConfig
 from dragons_game.user import user
+from dragons_game.utils import custom_types
 from dragons_game.utils.image_proportions import proportional_height
 
 
@@ -15,17 +18,17 @@ class BattlefieldSection(Section):
 
         self.add_element('background', Image(user.current_level.battle_image_path, self.size, 'topleft', (0, 0)))
 
-        self._add_user_dragons()
+        self._add_dragons('user', user.team_dragons, 'left', user.current_level.user_dragons_factors)
+        self._add_dragons('enemy', user.current_level.enemy_dragons, 'right', user.current_level.enemy_dragons_factors)
 
-    def _add_user_dragons(self) -> None:
-        for dragon_index, dragon in enumerate(user.team_dragons):
-            factors = user.current_level.dragons_factors[dragon_index]
-
+    def _add_dragons(self, dragon_type: Literal['user', 'enemy'], dragons: Sequence[Dragon],
+                     facing_to_flip: custom_types.Facing, factors: custom_types.DragonsFactors) -> None:
+        for dragon_index, dragon in enumerate(dragons):
             dragon_button = Button(dragon.image_path, self._scaled_size(dragon), 'center',
-                                   (self.width / factors[0], self.height / factors[1]))
-            self.add_element(f'user_dragon_{dragon_index}', dragon_button)
+                                   (self.width / factors[dragon_index][0], self.height / factors[dragon_index][1]))
+            self.add_element(f'{dragon_type}_dragon_{dragon_index}', dragon_button)
 
-            if dragon.facing == 'left':
+            if dragon.facing == facing_to_flip:
                 dragon_button.transform_image(pygame.transform.flip, 1, 0)
 
     def _scaled_size(self, dragon: Dragon) -> tuple[float, float]:

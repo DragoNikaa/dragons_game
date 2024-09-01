@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from dragons_game.dragons.dragon import Dragon
+from dragons_game.dragons.user_dragon import UserDragon
 from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
 from dragons_game.elements.text import Text
@@ -14,7 +14,7 @@ from dragons_game.utils.observers import ObserverClass
 
 class DragonButton(Button, ObserverClass, ABC):
     @abstractmethod
-    def __init__(self, dragon: Dragon, size: tuple[float, float], position: custom_types.Position,
+    def __init__(self, dragon: UserDragon, size: tuple[float, float], position: custom_types.Position,
                  destination: tuple[float, float]):
         super().__init__(f'dragons_game/graphics/buttons/dragons/{dragon.rarity}.png', size, position, destination,
                          {'action': 'open_details', 'details': DragonDetails(dragon)})

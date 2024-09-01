@@ -1,12 +1,12 @@
-from dragons_game.dragons.database import dragons
-from dragons_game.dragons.dragon import Dragon
+from dragons_game.dragons.database import user_dragons
+from dragons_game.dragons.user_dragon import UserDragon
 from dragons_game.islands.database import island_1
 from dragons_game.utils import custom_exceptions
 from dragons_game.utils.observers import Observer, ObserverClass
 
 
 class User:
-    def __init__(self, dragons: list[Dragon] | None = None, team_dragons: list[Dragon] | None = None):
+    def __init__(self, dragons: list[UserDragon] | None = None, team_dragons: list[UserDragon] | None = None):
         if dragons is None:
             dragons = []
         if team_dragons is None:
@@ -42,7 +42,7 @@ class User:
 
             dragon.in_team = True
 
-    def add_dragon(self, dragon: Dragon) -> None:
+    def add_dragon(self, dragon: UserDragon) -> None:
         if dragon in self._dragons:
             raise custom_exceptions.DragonAlreadyOwnedError(dragon.name)
 
@@ -58,7 +58,7 @@ class User:
         self._dragons.insert(index, dragon)
         self._notify_dragons_observers(self._dragons)
 
-    def add_team_dragon(self, dragon: Dragon, dragon_index: int = 2) -> None:
+    def add_team_dragon(self, dragon: UserDragon, dragon_index: int = 2) -> None:
         if dragon not in self._dragons:
             raise custom_exceptions.DragonNotOwnedError(dragon.name)
 
@@ -105,8 +105,9 @@ class User:
         for team_dragon in self._team_dragons:
             observer.update_on_notify(added_team_dragon=team_dragon)
 
-    def _notify_dragons_observers(self, dragons: list[Dragon] | None = None, added_team_dragon: Dragon | None = None,
-                                  removed_team_dragon: Dragon | None = None) -> None:
+    def _notify_dragons_observers(self, dragons: list[UserDragon] | None = None,
+                                  added_team_dragon: UserDragon | None = None,
+                                  removed_team_dragon: UserDragon | None = None) -> None:
         for observer in self._dragons_observers:
             observer.update_on_notify(dragons, added_team_dragon, removed_team_dragon)
 
@@ -131,12 +132,12 @@ class User:
         for dragon_index, dragon in enumerate(self._team_dragons):
             observer.update_on_notify(dragon_index, dragon)
 
-    def _notify_team_dragons_observers(self, dragon_index: int, dragon: Dragon) -> None:
+    def _notify_team_dragons_observers(self, dragon_index: int, dragon: UserDragon) -> None:
         for observer in self._team_dragons_observers:
             observer.update_on_notify(dragon_index, dragon)
 
     @property
-    def dragons(self) -> list[Dragon]:
+    def dragons(self) -> list[UserDragon]:
         return self._dragons
 
     @property
@@ -148,14 +149,14 @@ class User:
         return self._dragons_sort_reverse
 
     @property
-    def team_dragons(self) -> list[Dragon]:
+    def team_dragons(self) -> list[UserDragon]:
         return self._team_dragons
 
 
-user = User(
-    [dragons.toothless, dragons.skyflame, dragons.prismscale, dragons.frostreaver, dragons.valentira, dragons.nyxar],
-    [dragons.toothless, dragons.skyflame, dragons.frostreaver])
+user = User([user_dragons.toothless, user_dragons.skyflame, user_dragons.prismscale, user_dragons.frostreaver,
+             user_dragons.valentira, user_dragons.nyxar],
+            [user_dragons.toothless, user_dragons.skyflame, user_dragons.frostreaver])
 
-# user = User(
-#     [dragons.toothless, dragons.skyflame, dragons.prismscale, dragons.frostreaver, dragons.valentira, dragons.nyxar],
-#     [dragons.nyxar, dragons.valentira, dragons.prismscale])
+# user = User([user_dragons.toothless, user_dragons.skyflame, user_dragons.prismscale, user_dragons.frostreaver,
+#              user_dragons.valentira, user_dragons.nyxar],
+#             [user_dragons.nyxar, user_dragons.valentira, user_dragons.prismscale])

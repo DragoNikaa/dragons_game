@@ -1,6 +1,6 @@
 import pygame
 
-from dragons_game.dragons.dragon import Dragon
+from dragons_game.dragons.user_dragon import UserDragon
 from dragons_game.elements.image import Image
 from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
@@ -29,12 +29,12 @@ class _DragonButton(DragonButton):
     _ROW_1_Y_DESTINATION: float = universal_sizes.MEDIUM
     _ROW_2_Y_DESTINATION = 2 * universal_sizes.MEDIUM + _HEIGHT
 
-    def __init__(self, dragon_index: int, dragon: Dragon):
+    def __init__(self, dragon_index: int, dragon: UserDragon):
         super().__init__(dragon, (self._WIDTH, self._HEIGHT), 'topleft', self._new_destination(dragon_index))
 
     @classmethod
-    def update_on_notify(cls, dragons: list[Dragon] | None = None, added_team_dragon: Dragon | None = None,
-                         removed_team_dragon: Dragon | None = None) -> None:
+    def update_on_notify(cls, dragons: list[UserDragon] | None = None, added_team_dragon: UserDragon | None = None,
+                         removed_team_dragon: UserDragon | None = None) -> None:
         if dragons:
             for dragon_index, dragon in enumerate(dragons):
                 try:

@@ -1,4 +1,4 @@
-from dragons_game.dragons.dragon import Dragon
+from dragons_game.dragons.user_dragon import UserDragon
 from dragons_game.elements.image import Image
 from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
@@ -26,11 +26,11 @@ class _TeamDragonButton(DragonButton):
     _Y_DESTINATIONS = [y for y in range(title.height + 2 * universal_sizes.SMALL, team_section.height,
                                         round(_HEIGHT) + universal_sizes.SMALL)]
 
-    def __init__(self, dragon_index: int, dragon: Dragon):
+    def __init__(self, dragon_index: int, dragon: UserDragon):
         super().__init__(dragon, (self._WIDTH, self._HEIGHT), 'midtop', (0, self._Y_DESTINATIONS[dragon_index]))
 
     @classmethod
-    def update_on_notify(cls, dragon_index: int, dragon: Dragon) -> None:
+    def update_on_notify(cls, dragon_index: int, dragon: UserDragon) -> None:
         team_section.upsert_element(f'team_dragon_{dragon_index}', cls(dragon_index, dragon))
 
 
