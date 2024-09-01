@@ -1,7 +1,9 @@
+from typing import Sequence
+
 import pygame
 
 from dragons_game.dragons.attack import AttackType
-from dragons_game.dragons.user_dragon import UserDragon
+from dragons_game.dragons.dragon import Dragon
 from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
 from dragons_game.elements.section import Section
@@ -31,20 +33,22 @@ def _text(text: str, position: custom_types.Position, destination: tuple[float, 
 
 
 class HealthBarsSection(Section):
-    def __init__(self) -> None:
+    def __init__(self, dragons: Sequence[Dragon], position: custom_types.Position, x_destination: float,
+                 name_position: custom_types.Position, bar_position: custom_types.Position):
         super().__init__((GameConfig.WINDOW_WIDTH / 3.5, top_menu_section.height - 2 * universal_sizes.MEDIUM),
-                         'topleft', (universal_sizes.MEDIUM, title_bar_section.rect.bottom + universal_sizes.MEDIUM))
+                         position, (x_destination, title_bar_section.rect.bottom + universal_sizes.MEDIUM))
 
         self._bar_height = (self.height - 2 * universal_sizes.SMALL) / 3
 
-        for dragon_index, dragon in enumerate(user.team_dragons):
+        for dragon_index, dragon in enumerate(dragons):
             y_destination = dragon_index * (self._bar_height + universal_sizes.SMALL)
 
-            self.add_element(f'dragon_{dragon_index}_name', _text(f'{dragon.name}', 'topleft', (0, y_destination)))
-            self._add_progress_bar(dragon_index, dragon, y_destination)
+            self.add_element(f'dragon_{dragon_index}_name', _text(f'{dragon.name}', name_position, (0, y_destination)))
+            self._add_progress_bar(dragon_index, dragon, bar_position, y_destination)
 
-    def _add_progress_bar(self, dragon_index: int, dragon: UserDragon, y_destination: float) -> None:
-        progress_bar = Section((0.6 * self.width, self._bar_height), 'topright', (0, y_destination))
+    def _add_progress_bar(self, dragon_index: int, dragon: Dragon, position: custom_types.Position,
+                          y_destination: float) -> None:
+        progress_bar = Section((0.6 * self.width, self._bar_height), position, (0, y_destination))
 
         progress_bar.add_element('background',
                                  Image('dragons_game/graphics/progress_bars/background.png', progress_bar.size,
@@ -57,6 +61,17 @@ class HealthBarsSection(Section):
                                                   0.8 * self._bar_height))
 
         self.add_element(f'dragon_{dragon_index}_health', progress_bar)
+
+
+class UserHealthBarsSection(HealthBarsSection):
+    def __init__(self) -> None:
+        super().__init__(user.team_dragons, 'topleft', universal_sizes.MEDIUM, 'topleft', 'topright')
+
+
+class EnemyHealthBarsSection(HealthBarsSection):
+    def __init__(self) -> None:
+        super().__init__(user.current_level.enemy_dragons, 'topright', GameConfig.WINDOW_WIDTH - universal_sizes.MEDIUM,
+                         'topright', 'topleft')
 
 
 class AttacksSection(Section):
