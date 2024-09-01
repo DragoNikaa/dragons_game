@@ -1,6 +1,6 @@
 import pygame
 
-from dragons_game.dragons.dragon import Dragon
+from dragons_game.dragons.user_dragon import UserDragon
 from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
 from dragons_game.elements.new_line_text import NewLineText
@@ -18,7 +18,7 @@ from dragons_game.utils.observers import Observer
 
 
 class DragonDetails(Section):
-    def __init__(self, dragon: Dragon):
+    def __init__(self, dragon: UserDragon):
         super().__init__((GameConfig.WINDOW_WIDTH * 6 / 7, GameConfig.WINDOW_HEIGHT), 'topleft',
                          (GameConfig.WINDOW_WIDTH / 7, 0))
 
@@ -200,7 +200,7 @@ class DragonDetails(Section):
 
 
 class _TeamSection(Section, Observer):
-    def __init__(self, dragon: Dragon, width: float, destination: tuple[float, float]):
+    def __init__(self, dragon: UserDragon, width: float, destination: tuple[float, float]):
         super().__init__((width, universal_sizes.LARGE), 'midbottom', destination)
 
         self._in_team_section = Section((self.width / 2.25, self.height), 'center', (0, 0))
