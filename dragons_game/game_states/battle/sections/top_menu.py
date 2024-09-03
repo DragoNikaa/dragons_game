@@ -22,9 +22,12 @@ _background = Image('dragons_game/graphics/backgrounds/dragons_menu/dragons.png'
 _background.image.set_alpha(128)
 top_menu_section.add_element('background', _background)
 
+_border_size = top_menu_section.height / 25
 top_menu_section.add_element('border', Image('dragons_game/graphics/backgrounds/bottom_border.png',
-                                             (top_menu_section.width, top_menu_section.height / 25), 'topleft',
+                                             (top_menu_section.width, _border_size), 'topleft',
                                              (0, top_menu_section.height)))
+
+_section_width = GameConfig.WINDOW_WIDTH / 3.5
 
 
 def _text(text: str, position: custom_types.Position, destination: tuple[float, float],
@@ -35,8 +38,8 @@ def _text(text: str, position: custom_types.Position, destination: tuple[float, 
 class HealthBarsSection(Section):
     def __init__(self, dragons: Sequence[Dragon], position: custom_types.Position, x_destination: float,
                  name_position: custom_types.Position, bar_position: custom_types.Position):
-        super().__init__((GameConfig.WINDOW_WIDTH / 3.5, top_menu_section.height - 2 * universal_sizes.MEDIUM),
-                         position, (x_destination, title_bar_section.rect.bottom + universal_sizes.MEDIUM))
+        super().__init__((_section_width, top_menu_section.height - 2 * universal_sizes.MEDIUM), position,
+                         (x_destination, title_bar_section.rect.bottom + universal_sizes.MEDIUM))
 
         self._bar_height = (self.height - 2 * universal_sizes.SMALL) / 3
 
@@ -64,8 +67,10 @@ class HealthBarsSection(Section):
 
 
 class UserHealthBarsSection(HealthBarsSection):
+    X_DESTINATION = universal_sizes.MEDIUM
+
     def __init__(self) -> None:
-        super().__init__(user.team_dragons, 'topleft', universal_sizes.MEDIUM, 'topleft', 'topright')
+        super().__init__(user.team_dragons, 'topleft', self.X_DESTINATION, 'topleft', 'topright')
 
 
 class EnemyHealthBarsSection(HealthBarsSection):
@@ -75,12 +80,13 @@ class EnemyHealthBarsSection(HealthBarsSection):
 
 
 class AttacksSection(Section):
-    def __init__(self) -> None:
-        super().__init__((GameConfig.WINDOW_WIDTH / 3.5, 0.63 * (top_menu_section.height - 2 * universal_sizes.MEDIUM)),
-                         'midtop',
-                         (GameConfig.WINDOW_WIDTH / 2, title_bar_section.rect.bottom + universal_sizes.MEDIUM))
+    HEIGHT = 0.48 * top_menu_section.height
 
-        icon_size = self.height, self.height
+    def __init__(self) -> None:
+        super().__init__((_section_width, self.HEIGHT), 'midtop',
+                         (GameConfig.WINDOW_WIDTH / 2, title_bar_section.rect.bottom + 1.5 * universal_sizes.SMALL))
+
+        icon_size = self.HEIGHT, self.HEIGHT
 
         special_attack = Button('dragons_game/graphics/icons/attacks/special.png', icon_size, 'topright', (0, 0),
                                 {'action': 'call', 'callable': self._change_selected_attack,
@@ -115,21 +121,21 @@ class AttacksSection(Section):
 
 class PointsBar(Section):
     def __init__(self) -> None:
-        super().__init__((GameConfig.WINDOW_WIDTH / 5,
-                          0.37 * (top_menu_section.height - 2 * universal_sizes.MEDIUM) - universal_sizes.SMALL),
-                         'midbottom', (GameConfig.WINDOW_WIDTH / 2,
-                                       title_bar_section.rect.bottom + top_menu_section.height - universal_sizes.MEDIUM))
+        super().__init__(
+            (_section_width / 1.5, top_menu_section.height - AttacksSection.HEIGHT - 4.5 * universal_sizes.SMALL),
+            'midbottom', (GameConfig.WINDOW_WIDTH / 2,
+                          title_bar_section.rect.bottom + top_menu_section.height - 1.5 * universal_sizes.SMALL))
 
         self.add_element('background',
                          Image('dragons_game/graphics/progress_bars/points//background.png', self.size, 'topleft',
                                (0, 0)))
 
         self._color_points = []
-        x_destination = self.width / 20
+        x_destination = self.width / 23
 
         for point_index in range(5):
             args: tuple[tuple[float, float], custom_types.Position, tuple[float, float]] = (
-                (self.width / 6.1, self.height / 2.1), 'midleft', (x_destination, 0))
+                (self.width / 5.95, self.height / 2.1), 'midleft', (x_destination, 0))
 
             grey_point = Image('dragons_game/graphics/progress_bars/points/grey_point.png', *args)
             self.add_element(f'grey_point_{point_index}', grey_point)
@@ -137,4 +143,12 @@ class PointsBar(Section):
             self._color_points.append(
                 Image(f'dragons_game/graphics/progress_bars/points/color_points/{point_index}.png', *args))
 
-            x_destination += grey_point.width + self.width / 50
+            x_destination += grey_point.width + self.width / 60
+
+
+_divider_x_destination = ((GameConfig.WINDOW_WIDTH - _section_width) / 2 - UserHealthBarsSection.X_DESTINATION) / 2
+
+for divider_side, x in zip(('left', 'right'), (-_divider_x_destination, _divider_x_destination)):
+    top_menu_section.add_element(f'{divider_side}_divider', Image('dragons_game/graphics/backgrounds/side_border.png',
+                                                                  (_border_size, top_menu_section.height), 'midtop',
+                                                                  (x, 0)))
