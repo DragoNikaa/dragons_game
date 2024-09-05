@@ -27,6 +27,12 @@ class TooManyDragonsError(DragonError):
         self.max_dragons = max_dragons
 
 
+class DragonHealthError(DragonError):
+    def __init__(self, dragon_name: str):
+        super().__init__(f"Dragon '{dragon_name}' has no health left")
+        self.dragon_name = dragon_name
+
+
 class SectionError(Exception):
     def __init__(self, element_name: str, message: str):
         super().__init__(message)

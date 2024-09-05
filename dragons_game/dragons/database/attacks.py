@@ -1,8 +1,9 @@
 from dragons_game.dragons.attack import Attack, AttackType
+from dragons_game.dragons.dragon import Dragon
 
 
-def fancy_action() -> None:
-    pass
+def fancy_action(dragon: Dragon) -> None:
+    dragon.remove_health(30)
 
 
 fancy_basic_attack = Attack(AttackType.BASIC, 'Fancy basic attack',

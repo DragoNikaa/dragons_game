@@ -1,7 +1,8 @@
 from dragons_game.dragons.attack import Attack
 from dragons_game.dragons.rarity import Rarity
 from dragons_game.dragons.stats import RARITY_TO_STATS, Stat
-from dragons_game.utils import custom_types
+from dragons_game.utils import custom_exceptions, custom_types
+from dragons_game.utils.observers import Observer
 
 
 class Dragon:
@@ -16,6 +17,29 @@ class Dragon:
 
         self._max_health = RARITY_TO_STATS[rarity][Stat.MAX_HEALTH]
         self._current_health = self._max_health
+
+        self._health_observers: list[Observer] = []
+
+    def remove_health(self, value: int) -> None:
+        self._current_health -= value
+
+        if self._current_health <= 0:
+            self._current_health = 0
+            raise custom_exceptions.DragonHealthError(self._name)
+
+        self._notify_health_observers()
+
+    def restore_health(self) -> None:
+        self._current_health = self._max_health
+        self._notify_health_observers()
+
+    def add_health_observer(self, observer: Observer) -> None:
+        self._health_observers.append(observer)
+        observer.update_on_notify()
+
+    def _notify_health_observers(self) -> None:
+        for observer in self._health_observers:
+            observer.update_on_notify()
 
     @property
     def name(self) -> str:

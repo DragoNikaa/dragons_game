@@ -2,17 +2,19 @@ from typing import Sequence
 
 import pygame
 
-from dragons_game.dragons.attack import AttackType
+from dragons_game.dragons.attack import Attack, AttackType
 from dragons_game.dragons.dragon import Dragon
 from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
 from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
 from dragons_game.game.configuration import GameConfig
+from dragons_game.game_states.battle.battle import battle
 from dragons_game.game_states.battle.sections.title_bar import title_bar_section
 from dragons_game.game_states.common import universal_sizes
 from dragons_game.user import user
 from dragons_game.utils import custom_types
+from dragons_game.utils.observers import Observer
 
 top_menu_section = Section((GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEIGHT / 4.5), 'topleft',
                            (0, title_bar_section.rect.bottom))
@@ -35,58 +37,63 @@ def _text(text: str, position: custom_types.Position, destination: tuple[float, 
     return Text('dragons_game/fonts/friz_quadrata.ttf', size, text, 'white', position, destination, 1, 'black')
 
 
-class HealthBarsSection(Section):
+class _HealthBarsSection(Section):
     def __init__(self, dragons: Sequence[Dragon], position: custom_types.Position, x_destination: float,
                  name_position: custom_types.Position, bar_position: custom_types.Position):
         super().__init__((_section_width, top_menu_section.height - 2 * universal_sizes.MEDIUM), position,
                          (x_destination, title_bar_section.rect.bottom + universal_sizes.MEDIUM))
 
-        self._bar_height = (self.height - 2 * universal_sizes.SMALL) / 3
+        bar_height = (self.height - 2 * universal_sizes.SMALL) / 3
 
         for dragon_index, dragon in enumerate(dragons):
-            y_destination = dragon_index * (self._bar_height + universal_sizes.SMALL)
+            y_destination = dragon_index * (bar_height + universal_sizes.SMALL)
 
             self.add_element(f'dragon_{dragon_index}_name', _text(f'{dragon.name}', name_position, (0, y_destination)))
-            self._add_progress_bar(dragon_index, dragon, bar_position, y_destination)
 
-    def _add_progress_bar(self, dragon_index: int, dragon: Dragon, position: custom_types.Position,
-                          y_destination: float) -> None:
-        progress_bar = Section((0.6 * self.width, self._bar_height), position, (0, y_destination))
-
-        progress_bar.add_element('background',
-                                 Image('dragons_game/graphics/progress_bars/background.png', progress_bar.size,
-                                       'topleft', (0, 0)))
-
-        progress_bar.add_element(f'current', Image(f'dragons_game/graphics/progress_bars/health.png', (
-            dragon.current_health / dragon.max_health * progress_bar.width, progress_bar.height), 'topleft', (0, 0)))
-
-        progress_bar.add_element('numbers', _text(f'{dragon.current_health}/{dragon.max_health}', 'center', (0, 0),
-                                                  0.8 * self._bar_height))
-
-        self.add_element(f'dragon_{dragon_index}_health', progress_bar)
+            self.add_element(f'dragon_{dragon_index}_health',
+                             _HealthBar(dragon, (0.6 * self.width, bar_height), bar_position, y_destination))
 
 
-class UserHealthBarsSection(HealthBarsSection):
+class _HealthBar(Section, Observer):
+    def __init__(self, dragon: Dragon, size: tuple[float, float], position: custom_types.Position,
+                 y_destination: float):
+        super().__init__(size, position, (0, y_destination))
+
+        self._dragon = dragon
+
+        self.add_element('background',
+                         Image('dragons_game/graphics/progress_bars/background.png', self.size, 'topleft', (0, 0)))
+
+        dragon.add_health_observer(self)
+
+    def update_on_notify(self) -> None:
+        self.upsert_element('current', Image(f'dragons_game/graphics/progress_bars/health.png', (
+            self._dragon.current_health / self._dragon.max_health * self.width, self.height), 'topleft', (0, 0)))
+
+        self.upsert_element('numbers',
+                            _text(f'{self._dragon.current_health}/{self._dragon.max_health}', 'center', (0, 0),
+                                  0.8 * self.height))
+
+
+class UserHealthBarsSection(_HealthBarsSection):
     X_DESTINATION = universal_sizes.MEDIUM
 
     def __init__(self) -> None:
         super().__init__(user.team_dragons, 'topleft', self.X_DESTINATION, 'topleft', 'topright')
 
 
-class EnemyHealthBarsSection(HealthBarsSection):
+class EnemyHealthBarsSection(_HealthBarsSection):
     def __init__(self) -> None:
         super().__init__(user.current_level.enemy_dragons, 'topright', GameConfig.WINDOW_WIDTH - universal_sizes.MEDIUM,
                          'topright', 'topleft')
 
 
-class AttacksSection(Section):
-    HEIGHT = 0.48 * top_menu_section.height
-
+class _AttacksSection(Section, Observer):
     def __init__(self) -> None:
-        super().__init__((_section_width, self.HEIGHT), 'midtop',
+        super().__init__((_section_width, 0.48 * top_menu_section.height), 'midtop',
                          (GameConfig.WINDOW_WIDTH / 2, title_bar_section.rect.bottom + 1.5 * universal_sizes.SMALL))
 
-        icon_size = self.HEIGHT, self.HEIGHT
+        icon_size = self.height, self.height
 
         special_attack = Button('dragons_game/graphics/icons/attacks/special.png', icon_size, 'topright', (0, 0),
                                 {'action': 'call', 'callable': self._change_selected_attack,
@@ -98,31 +105,69 @@ class AttacksSection(Section):
                                                 {'action': 'call', 'callable': self._change_selected_attack,
                                                  'kwargs': {'attack_type': AttackType.BASIC}}))
 
-        self._current_dragon = user.team_dragons[0]
-        self._selected_attack = self._current_dragon.special_attack
+        self._attack_name = _text('', 'topleft', (0, 0))
+        self._turn = _text('', 'midleft', (0, 0))
+        self._cost = _text('', 'bottomleft', (0, 0))
+
+        self.add_element('turn', self._turn)
+
+        self._selected_attack = battle.current_user_dragon.special_attack
         self._change_selected_attack(AttackType.BASIC)
 
+        battle.add_current_dragon_observer(self)
+
     def _change_selected_attack(self, attack_type: AttackType) -> None:
-        if attack_type is not self._selected_attack.type:
+        if battle.user_turn and attack_type is not self._selected_attack.type:
             unselected_button = self.get_button(f'{self._selected_attack.type.value}_attack')
             unselected_button.add_temporary_image(pygame.transform.grayscale(unselected_button.image_copy))
 
             selected_attack = f'{attack_type.value}_attack'
-            self._selected_attack = getattr(self._current_dragon, selected_attack)
+            self._selected_attack = getattr(battle.current_user_dragon, selected_attack)
             self.get_button(selected_attack).remove_temporary_image()
 
-            self._upsert_attack_details()
+            self._update_attack_and_cost()
 
-    def _upsert_attack_details(self) -> None:
-        self.upsert_element('dragon_name', _text(self._current_dragon.name, 'topleft', (0, 0)))
-        self.upsert_element('attack_name', _text(self._selected_attack.name, 'midleft', (0, 0)))
-        self.upsert_element('cost', _text(f'Cost: {self._selected_attack.cost} points', 'bottomleft', (0, 0)))
+    def _update_attack_and_cost(self) -> None:
+        self._attack_name.text = self._selected_attack.name
+        self._cost.text = f'Cost: {self._selected_attack.cost} points'
+
+    def update_on_notify(self) -> None:
+        if battle.user_turn:
+            self._change_selected_attack(AttackType.BASIC)
+
+            self._turn.text = f'Turn: {battle.current_user_dragon.name}'
+            self._update_attack_and_cost()
+
+            self.upsert_element('attack_name', self._attack_name)
+            self.upsert_element('cost', self._cost)
+
+            self.get_button(f'{self._selected_attack.type.value}_attack').remove_temporary_image()
+
+        else:
+            self._turn.text = f'Turn: Enemy'
+
+            self.remove_element('attack_name')
+            self.remove_element('cost')
+
+            selected_button = self.get_button(f'{self._selected_attack.type.value}_attack')
+            selected_button.add_temporary_image(pygame.transform.grayscale(selected_button.image_copy))
+
+    def clean_up(self) -> None:
+        self._change_selected_attack(AttackType.BASIC)
+        self.update_on_notify()
+
+    @property
+    def selected_attack(self) -> Attack:
+        return self._selected_attack
+
+
+attacks_section = _AttacksSection()
 
 
 class PointsBar(Section):
     def __init__(self) -> None:
         super().__init__(
-            (_section_width / 1.5, top_menu_section.height - AttacksSection.HEIGHT - 4.5 * universal_sizes.SMALL),
+            (_section_width / 1.5, top_menu_section.height - attacks_section.height - 4.5 * universal_sizes.SMALL),
             'midbottom', (GameConfig.WINDOW_WIDTH / 2,
                           title_bar_section.rect.bottom + top_menu_section.height - 1.5 * universal_sizes.SMALL))
 

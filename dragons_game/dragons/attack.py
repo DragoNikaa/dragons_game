@@ -1,5 +1,9 @@
 from collections.abc import Callable
 from enum import Enum
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from dragons_game.dragons.dragon import Dragon
 
 
 class AttackType(Enum):
@@ -8,7 +12,7 @@ class AttackType(Enum):
 
 
 class Attack:
-    def __init__(self, attack_type: AttackType, name: str, description: str, action: Callable[[], None]):
+    def __init__(self, attack_type: AttackType, name: str, description: str, action: Callable[['Dragon'], None]):
         self._attack_type = attack_type
         self._name = name
         self._description = description
@@ -27,7 +31,7 @@ class Attack:
         return self._description
 
     @property
-    def action(self) -> Callable[[], None]:
+    def action(self) -> Callable[['Dragon'], None]:
         return self._action
 
     @property
