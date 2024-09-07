@@ -8,6 +8,7 @@ from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
 from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
+from dragons_game.elements.tooltip import Tooltip
 from dragons_game.game.configuration import GameConfig
 from dragons_game.game_states.battle.battle import battle
 from dragons_game.game_states.battle.sections.title_bar import title_bar_section
@@ -118,6 +119,13 @@ class _AttacksSection(Section, Observer):
 
     def _change_selected_attack(self, attack_type: AttackType) -> None:
         if battle.user_turn and attack_type is not self._selected_attack.type:
+            if attack_type is AttackType.SPECIAL and points_bar.points < attack_type.cost:
+                self.get_button('special_attack').add_onetime_hover_action({'action': 'show_tooltip',
+                                                                            'tooltip': self._tooltip(
+                                                                                f'You need {attack_type.cost} points to use {attack_type.value} attack!',
+                                                                                '#dc0000')})
+                return
+
             unselected_button = self.get_button(f'{self._selected_attack.type.value}_attack')
             unselected_button.add_temporary_image(pygame.transform.grayscale(unselected_button.image_copy))
 
@@ -127,21 +135,40 @@ class _AttacksSection(Section, Observer):
 
             self._update_attack_and_cost()
 
+    @staticmethod
+    def _tooltip(text: str, color: custom_types.Color) -> Tooltip:
+        text_element = Text('dragons_game/fonts/friz_quadrata.ttf', universal_sizes.MEDIUM / 1.5, text, 'white',
+                            'center', (0, 0), 1, 'black')
+
+        tooltip = Tooltip('midbottom',
+                          (text_element.width + universal_sizes.SMALL, text_element.height + universal_sizes.SMALL),
+                          color, 3, 'black', 200)
+
+        tooltip.add_element('text', text_element)
+        return tooltip
+
     def _update_attack_and_cost(self) -> None:
         self._attack_name.text = self._selected_attack.name
         self._cost.text = f'Cost: {self._selected_attack.cost} points'
 
     def update_on_notify(self) -> None:
         if battle.user_turn:
+            dragon = battle.current_user_dragon
+
             self._change_selected_attack(AttackType.BASIC)
 
-            self._turn.text = f'Turn: {battle.current_user_dragon.name}'
+            self._turn.text = f'Turn: {dragon.name}'
             self._update_attack_and_cost()
 
             self.upsert_element('attack_name', self._attack_name)
             self.upsert_element('cost', self._cost)
 
             self.get_button(f'{self._selected_attack.type.value}_attack').remove_temporary_image()
+
+            self.get_button('basic_attack').set_hover_action(
+                {'action': 'show_tooltip', 'tooltip': self._tooltip(dragon.basic_attack.description, '#976eec')})
+            self.get_button('special_attack').set_hover_action(
+                {'action': 'show_tooltip', 'tooltip': self._tooltip(dragon.special_attack.description, '#b581a3')})
 
         else:
             self._turn.text = f'Turn: Enemy'
@@ -164,7 +191,7 @@ class _AttacksSection(Section, Observer):
 attacks_section = _AttacksSection()
 
 
-class PointsBar(Section):
+class _PointsBar(Section):
     def __init__(self) -> None:
         super().__init__(
             (_section_width / 1.5, top_menu_section.height - attacks_section.height - 4.5 * universal_sizes.SMALL),
@@ -190,6 +217,34 @@ class PointsBar(Section):
 
             x_destination += grey_point.width + self.width / 60
 
+        self._points = 0
+        self.add_point()
+
+    def add_point(self) -> None:
+        if self._points < 5:
+            self.add_element(f'color_point_{self._points}', self._color_points[self._points])
+            self._points += 1
+
+    def remove_points(self, value: int) -> None:
+        self._points -= value
+        for point_index in range(self._points, self._points + value):
+            self.remove_element(f'color_point_{point_index}')
+
+    def clean_up(self) -> None:
+        if self._points == 0:
+            self.add_point()
+            return
+
+        for point_index in range(1, self._points):
+            self.remove_element(f'color_point_{point_index}')
+        self._points = 1
+
+    @property
+    def points(self) -> int:
+        return self._points
+
+
+points_bar = _PointsBar()
 
 _divider_x_destination = ((GameConfig.WINDOW_WIDTH - _section_width) / 2 - UserHealthBarsSection.X_DESTINATION) / 2
 

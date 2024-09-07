@@ -10,6 +10,12 @@ class AttackType(Enum):
     BASIC = 'basic'
     SPECIAL = 'special'
 
+    @property
+    def cost(self) -> int:
+        if self is AttackType.BASIC:
+            return 0
+        return 3
+
 
 class Attack:
     def __init__(self, attack_type: AttackType, name: str, description: str, action: Callable[['Dragon'], None]):
@@ -36,6 +42,4 @@ class Attack:
 
     @property
     def cost(self) -> int:
-        if self._attack_type is AttackType.BASIC:
-            return 0
-        return 3
+        return self._attack_type.cost

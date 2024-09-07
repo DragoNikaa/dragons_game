@@ -5,8 +5,8 @@ import pygame
 from dragons_game.game_states.battle.battle import battle
 from dragons_game.game_states.battle.sections.battlefield import BattlefieldSection
 from dragons_game.game_states.battle.sections.title_bar import title_bar_section
-from dragons_game.game_states.battle.sections.top_menu import EnemyHealthBarsSection, PointsBar, UserHealthBarsSection, \
-    attacks_section, top_menu_section
+from dragons_game.game_states.battle.sections.top_menu import EnemyHealthBarsSection, UserHealthBarsSection, \
+    attacks_section, points_bar, top_menu_section
 from dragons_game.game_states.common.manager import GameStateManager
 from dragons_game.game_states.game_state import GameState
 from dragons_game.utils import custom_events
@@ -15,7 +15,7 @@ from dragons_game.utils import custom_events
 class BattleManager(GameStateManager):
     def __init__(self) -> None:
         super().__init__(BattlefieldSection(), title_bar_section, top_menu_section, UserHealthBarsSection(),
-                         EnemyHealthBarsSection(), attacks_section, PointsBar())
+                         EnemyHealthBarsSection(), attacks_section, points_bar)
 
     def handle_event(self, event: pygame.event.Event) -> Any:
         new_state = super().handle_event(event)

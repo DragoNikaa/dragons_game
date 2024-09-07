@@ -19,10 +19,14 @@ class _Battle:
 
     def user_attack(self, dragon_index: int) -> None:
         if self._user_turn:
-            from dragons_game.game_states.battle.sections.top_menu import attacks_section
+            from dragons_game.game_states.battle.sections.top_menu import attacks_section, points_bar
+
+            attack = attacks_section.selected_attack
+
+            points_bar.remove_points(attack.cost)
 
             try:
-                attacks_section.selected_attack.action(user.current_level.enemy_dragons[dragon_index])
+                attack.action(user.current_level.enemy_dragons[dragon_index])
             except custom_exceptions.DragonHealthError:
                 pygame.event.post(
                     pygame.event.Event(custom_events.BATTLE, {'action': 'call', 'callable': self._user_win}))
@@ -49,6 +53,10 @@ class _Battle:
             pygame.event.post(
                 pygame.event.Event(custom_events.BATTLE, {'action': 'call', 'callable': self.enemy_attack}))
         else:
+            from dragons_game.game_states.battle.sections.top_menu import points_bar
+
+            points_bar.add_point()
+
             self._current_dragon_index += 1
             if self._current_dragon_index > 2:
                 self._current_dragon_index = 0
@@ -67,7 +75,7 @@ class _Battle:
             pygame.event.Event(custom_events.BATTLE, {'action': 'change_state', 'next_state': GameState.MAIN_MENU}))
 
     def clean_up(self) -> None:
-        from dragons_game.game_states.battle.sections.top_menu import attacks_section
+        from dragons_game.game_states.battle.sections.top_menu import attacks_section, points_bar
 
         self._user_turn = True
         self._current_dragon_index = 0
@@ -76,6 +84,7 @@ class _Battle:
             dragon.restore_health()
 
         attacks_section.clean_up()
+        points_bar.clean_up()
 
     def add_current_dragon_observer(self, observer: Observer) -> None:
         self._current_dragon_observers.append(observer)
