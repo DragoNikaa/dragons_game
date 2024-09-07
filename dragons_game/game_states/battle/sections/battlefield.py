@@ -7,6 +7,7 @@ from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
 from dragons_game.elements.section import Section
 from dragons_game.game.configuration import GameConfig
+from dragons_game.game_states.battle.battle import battle
 from dragons_game.user import user
 from dragons_game.utils import custom_types
 from dragons_game.utils.image_proportions import proportional_height
@@ -24,8 +25,15 @@ class BattlefieldSection(Section):
     def _add_dragons(self, dragon_type: Literal['user', 'enemy'], dragons: Sequence[Dragon],
                      facing_to_flip: custom_types.Facing, factors: custom_types.DragonsFactors) -> None:
         for dragon_index, dragon in enumerate(dragons):
+            if dragon_type == 'enemy':
+                click_action: custom_types.CustomEventDict | None = {'action': 'call', 'callable': battle.user_attack,
+                                                                     'kwargs': {'dragon_index': dragon_index}}
+            else:
+                click_action = None
+
             dragon_button = Button(dragon.image_path, self._scaled_size(dragon), 'center',
-                                   (self.width / factors[dragon_index][0], self.height / factors[dragon_index][1]))
+                                   (self.width / factors[dragon_index][0], self.height / factors[dragon_index][1]),
+                                   click_action)
             self.add_element(f'{dragon_type}_dragon_{dragon_index}', dragon_button)
 
             if dragon.facing == facing_to_flip:

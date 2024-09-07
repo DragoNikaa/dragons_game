@@ -19,18 +19,25 @@ class Button(Section):
         super().__init__(size, position, destination, image)
 
         self._click_action = self._original_click_action = self._adjust_action(click_action)
-        self._hover_action = self._adjust_action(hover_action)
+        self._hover_action = self._original_hover_action = self._adjust_action(hover_action)
 
         self._mouse_pressed_outside = self._mouse_pressed_inside = self._mouse_released = False
         self._hover_active = False
 
         self._current_brightness = 0
 
-    def add_temporary_click_action(self, click_action: custom_types.CustomEventDict) -> None:
-        self._click_action = self._adjust_action(click_action)
+    def add_temporary_click_action(self, new_click_action: custom_types.CustomEventDict) -> None:
+        self._click_action = self._adjust_action(new_click_action)
 
     def remove_temporary_click_action(self) -> None:
         self._click_action = self._original_click_action
+
+    def set_hover_action(self, new_hover_action: custom_types.CustomEventDict) -> None:
+        self.add_onetime_hover_action(new_hover_action)
+        self._original_hover_action = self._hover_action
+
+    def add_onetime_hover_action(self, new_hover_action: custom_types.CustomEventDict) -> None:
+        self._hover_action = self._adjust_action(new_hover_action)
 
     def update(self) -> None:
         self._handle_click()
@@ -71,6 +78,7 @@ class Button(Section):
 
             elif self._hover_active:
                 self._hover_active = False
+                self._hover_action = self._original_hover_action
                 pygame.event.post(pygame.event.Event(custom_events.BUTTON_HOVER, {'action': 'hide_tooltip'}))
 
     def _check_mouse_collision(self) -> bool:
