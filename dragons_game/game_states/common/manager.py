@@ -47,11 +47,11 @@ class GameStateManager(ABC):
 
     def update(self) -> None:
         for section in self._active_sections:
-            pygame.sprite.Group(*section.elements).update()
+            pygame.sprite.Group(*section.all_elements).update()
 
     def draw(self, screen: pygame.Surface) -> None:
         for section in self._sections:
-            pygame.sprite.Group(*section.elements).draw(screen)
+            pygame.sprite.Group(*section.all_elements).draw(screen)
 
     def _change_state(self, next_state: GameState) -> GameState:
         self._remove_details_window()

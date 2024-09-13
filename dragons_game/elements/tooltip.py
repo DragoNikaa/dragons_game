@@ -25,9 +25,9 @@ class Tooltip(Section):
     def update(self) -> None:
         setattr(self.rect, self._position, self._dynamic_destination)
 
-        for element in self._elements.values():
+        for element in self.first_level_elements:
             if isinstance(element, Section):
-                for inner_element in element.elements:
+                for inner_element in element.all_elements[1:]:
                     tooltip_destination = getattr(self.rect, inner_element.position)
                     inner_element_destination = (
                         tooltip_destination[0] + element.x_destination + inner_element.x_destination,
@@ -35,12 +35,11 @@ class Tooltip(Section):
 
                     setattr(inner_element.rect, inner_element.position, inner_element_destination)
 
-            else:
-                tooltip_destination = getattr(self.rect, element.position)
-                element_destination = (
-                    tooltip_destination[0] + element.x_destination, tooltip_destination[1] + element.y_destination)
+            tooltip_destination = getattr(self.rect, element.position)
+            element_destination = (
+                tooltip_destination[0] + element.x_destination, tooltip_destination[1] + element.y_destination)
 
-                setattr(element.rect, element.position, element_destination)
+            setattr(element.rect, element.position, element_destination)
 
     def _add_border(self) -> None:
         border_image = self.image_copy

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import Iterable, TYPE_CHECKING
 
 import pygame
 
@@ -31,7 +31,7 @@ class Section(CustomSprite):
         section_destination = getattr(self.rect, element.position)
 
         if isinstance(element, Section):
-            for inner_element in element.elements:
+            for inner_element in element.all_elements:
                 inner_element.rect.move_ip(section_destination)
         else:
             element.rect.move_ip(section_destination)
@@ -45,7 +45,7 @@ class Section(CustomSprite):
         element = self._elements[name]
 
         if isinstance(element, Section):
-            for inner_element in element.elements:
+            for inner_element in element.all_elements:
                 setattr(inner_element.rect, inner_element.position, inner_element.destination)
         else:
             setattr(element.rect, element.position, element.destination)
@@ -107,12 +107,16 @@ class Section(CustomSprite):
         return element_type
 
     @property
-    def elements(self) -> list[CustomSprite]:
+    def first_level_elements(self) -> Iterable[CustomSprite]:
+        return self._elements.values()
+
+    @property
+    def all_elements(self) -> list[CustomSprite]:
         elements: list[CustomSprite] = [self]
 
         for element in self._elements.values():
             if isinstance(element, Section):
-                elements += element.elements
+                elements += element.all_elements
             else:
                 elements.append(element)
 

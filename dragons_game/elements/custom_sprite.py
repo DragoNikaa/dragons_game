@@ -72,14 +72,14 @@ class CustomSprite(pygame.sprite.Sprite, ABC):
         return self._destination
 
     @destination.setter
-    def destination(self, new_destination: tuple[float, float]) -> None:
+    def destination(self, new_destination: tuple[int, int]) -> None:
         from dragons_game.elements.section import Section
 
         new_destination = round(new_destination[0]), round(new_destination[1])
         destination_difference = new_destination[0] - self.x_destination, new_destination[1] - self.y_destination
 
         if isinstance(self, Section):
-            for element in self.elements:
+            for element in self.all_elements:
                 element.rect.move_ip(destination_difference)
         else:
             self.rect.move_ip(destination_difference)
