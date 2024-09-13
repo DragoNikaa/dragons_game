@@ -59,7 +59,8 @@ class DragonButton(Button, ObserverClass, ABC):
         text = Text('dragons_game/fonts/friz_quadrata.ttf', universal_sizes.MEDIUM / 1.5,
                     f'{name.title()}: {current_value}/{max_value}', 'white', 'center', (0, 0), 1, 'black')
 
-        tooltip = Tooltip('bottomleft', (text.width + universal_sizes.SMALL, text.height + universal_sizes.SMALL),
+        tooltip = Tooltip('bottomleft',
+                          (text.width + 1.25 * universal_sizes.SMALL, text.height + 1.25 * universal_sizes.SMALL),
                           color, 3, 'black', 200)
 
         tooltip.add_element('text', text)

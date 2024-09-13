@@ -76,7 +76,7 @@ class DragonDetails(Section):
         self.add_element('rarity', rarity_section)
 
     def _add_description_section(self) -> None:
-        description_section = self._section(0.2, 'Description', self.get_section('rarity'))
+        description_section = self._section(0.205, 'Description', self.get_section('rarity'))
 
         self.description_text = MultilineScrollText(
             (description_section.width - 2 * self._padding, description_section.height - 2 * self._padding), 'topleft',
@@ -126,7 +126,7 @@ class DragonDetails(Section):
         return progress_bar
 
     def _add_attacks_section(self) -> None:
-        attacks_section = self._section(0.4, 'Attacks', self.get_section('stats'))
+        attacks_section = self._section(0.395, 'Attacks', self.get_section('stats'))
 
         icon_size = (attacks_section.height - 2.5 * self._padding) / 2
 
