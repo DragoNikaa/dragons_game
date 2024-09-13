@@ -25,7 +25,16 @@ class Tooltip(Section):
     def update(self) -> None:
         setattr(self.rect, self._position, self._dynamic_destination)
 
-        for element in self.elements[1:]:
+        for element in self.first_level_elements:
+            if isinstance(element, Section):
+                for inner_element in element.all_elements[1:]:
+                    tooltip_destination = getattr(self.rect, inner_element.position)
+                    inner_element_destination = (
+                        tooltip_destination[0] + element.x_destination + inner_element.x_destination,
+                        tooltip_destination[1] + element.y_destination + inner_element.y_destination)
+
+                    setattr(inner_element.rect, inner_element.position, inner_element_destination)
+
             tooltip_destination = getattr(self.rect, element.position)
             element_destination = (
                 tooltip_destination[0] + element.x_destination, tooltip_destination[1] + element.y_destination)
@@ -33,13 +42,12 @@ class Tooltip(Section):
             setattr(element.rect, element.position, element_destination)
 
     def _add_border(self) -> None:
-        extended_image = pygame.Surface(
-            (self.width + 2 * self._border_thickness, self.height + 2 * self._border_thickness))
-        extended_image.fill(self._border_color)
-        extended_image.blit(self.image, (self._border_thickness, self._border_thickness))
-
-        self.image = extended_image.convert_alpha()
-        self.rect = self.image.get_rect(**{self._position: self._destination})
+        border_image = self.image_copy
+        border_image.fill(self._border_color)
+        border_image.blit(self.image, (self._border_thickness, self._border_thickness),
+                          pygame.Rect(0, 0, self.rect.width - 2 * self._border_thickness,
+                                      self.rect.height - 2 * self._border_thickness))
+        self.set_image(border_image)
 
     @property
     def _dynamic_destination(self) -> tuple[float, float]:

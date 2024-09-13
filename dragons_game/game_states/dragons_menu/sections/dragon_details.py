@@ -3,7 +3,7 @@ import pygame
 from dragons_game.dragons.user_dragon import UserDragon
 from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
-from dragons_game.elements.new_line_text import NewLineText
+from dragons_game.elements.multiline_text import MultilineScrollText, MultilineTextFixedSectionHeight
 from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
 from dragons_game.game.configuration import GameConfig
@@ -78,7 +78,7 @@ class DragonDetails(Section):
     def _add_description_section(self) -> None:
         description_section = self._section(0.2, 'Description', self.get_section('rarity'))
 
-        self.description_text = NewLineText(
+        self.description_text = MultilineScrollText(
             (description_section.width - 2 * self._padding, description_section.height - 2 * self._padding), 'topleft',
             (self._padding, self._padding), 4, 'dragons_game/fonts/friz_quadrata.ttf', self._dragon.description,
             'white', 1, 'black')
@@ -142,16 +142,21 @@ class DragonDetails(Section):
         attacks_section.add_element('special_name', self._text(self._dragon.special_attack.name, 'topleft', (
             basic_name.x_destination, icon_size + 1.5 * self._padding)))
 
-        basic_description = NewLineText(
-            (attacks_section.width - icon_size - 3 * self._padding, icon_size - self._text_size - self._padding / 2),
-            'topleft', (basic_name.x_destination, self._text_size + 1.5 * self._padding), 3,
-            'dragons_game/fonts/friz_quadrata.ttf', self._dragon.basic_attack.description, 'white', 1, 'black')
+        description_size = (
+            attacks_section.width - icon_size - 3 * self._padding, icon_size - self._text_size - self._padding / 2)
 
-        attacks_section.add_element('special_description', NewLineText(basic_description.size, 'topleft', (
-            basic_description.x_destination, icon_size + self._text_size + 2 * self._padding), 3,
-                                                                       'dragons_game/fonts/friz_quadrata.ttf',
-                                                                       self._dragon.special_attack.description, 'white',
-                                                                       1, 'black'))
+        basic_description = MultilineTextFixedSectionHeight(description_size, 'topleft', (
+            basic_name.x_destination, self._text_size + 1.5 * self._padding), 3, 'dragons_game/fonts/friz_quadrata.ttf',
+                                                            self._dragon.basic_attack.description, 'white', 1, 'black')
+
+        attacks_section.add_element('special_description', MultilineTextFixedSectionHeight(description_size, 'topleft',
+                                                                                           (
+                                                                                               basic_description.x_destination,
+                                                                                               icon_size + self._text_size + 2 * self._padding),
+                                                                                           3,
+                                                                                           'dragons_game/fonts/friz_quadrata.ttf',
+                                                                                           self._dragon.special_attack.description,
+                                                                                           'white', 1, 'black'))
 
         attacks_section.add_element('basic_name', basic_name)
         attacks_section.add_element('basic_description', basic_description)
