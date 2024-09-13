@@ -121,15 +121,14 @@ class _RarityButton(Button):
                          hover_action={'action': 'show_tooltip', 'tooltip': tooltip})
 
     def _tooltip(self, name: str, color: custom_types.Color) -> Tooltip:
-        padding = universal_sizes.SMALL / 1.5
+        padding = 0.75 * universal_sizes.SMALL
 
         stars = rarity_stars(self._stars_number, universal_sizes.MEDIUM / 1.75, padding)
         text = Text('dragons_game/fonts/friz_quadrata.ttf', universal_sizes.MEDIUM / 1.5, f'{name.title()}', 'white',
                     'midright', (-padding, 0), 1, 'black')
 
-        tooltip = Tooltip('midbottom',
-                          (2.25 * padding + 6 * stars[0].width + text.width, text.height + 2 * padding), color, 3,
-                          'black', 200)
+        tooltip = Tooltip('midbottom', (3 * padding + 6 * stars[0].width + text.width, 2 * padding + text.height),
+                          color, 3, 'black', 200)
 
         for star_index, star in enumerate(stars):
             tooltip.add_element(f'star_{star_index}', star)
