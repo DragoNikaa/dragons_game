@@ -6,6 +6,7 @@ from dragons_game.dragons.attack import Attack, AttackType
 from dragons_game.dragons.dragon import Dragon
 from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
+from dragons_game.elements.multiline_text import MultilineTextFixedTextSize
 from dragons_game.elements.section import Section
 from dragons_game.elements.text import Text
 from dragons_game.elements.tooltip import Tooltip
@@ -137,12 +138,14 @@ class _AttacksSection(Section, Observer):
 
     @staticmethod
     def _tooltip(text: str, color: custom_types.Color) -> Tooltip:
-        text_element = Text('dragons_game/fonts/friz_quadrata.ttf', universal_sizes.MEDIUM / 1.5, text, 'white',
-                            'center', (0, 0), 1, 'black')
+        text_element = MultilineTextFixedTextSize(GameConfig.WINDOW_WIDTH / 4, 'topleft',
+                                                  (0.75 * universal_sizes.SMALL, 0.75 * universal_sizes.SMALL),
+                                                  'dragons_game/fonts/friz_quadrata.ttf', universal_sizes.MEDIUM / 1.5,
+                                                  text, 'white', 1, 'black')
 
-        tooltip = Tooltip('midbottom',
-                          (text_element.width + universal_sizes.SMALL, text_element.height + universal_sizes.SMALL),
-                          color, 3, 'black', 200)
+        tooltip = Tooltip('midbottom', (
+            text_element.width + 1.5 * universal_sizes.SMALL, text_element.height + 1.5 * universal_sizes.SMALL), color,
+                          3, 'black', 200)
 
         tooltip.add_element('text', text_element)
         return tooltip
