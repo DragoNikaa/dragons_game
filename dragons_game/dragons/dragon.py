@@ -25,6 +25,7 @@ class Dragon:
 
         if self._current_health <= 0:
             self._current_health = 0
+            self._notify_health_observers()
             raise custom_exceptions.DragonHealthError(self._name)
 
         self._notify_health_observers()
