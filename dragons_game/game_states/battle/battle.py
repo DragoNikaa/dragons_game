@@ -5,6 +5,7 @@ import pygame
 
 from dragons_game.dragons.dragon import Dragon
 from dragons_game.dragons.enemy_dragon import EnemyDragon
+from dragons_game.dragons.user_dragon import UserDragon
 from dragons_game.game_states.game_state import GameState
 from dragons_game.user import user
 from dragons_game.utils import custom_events, custom_exceptions
@@ -13,22 +14,22 @@ from dragons_game.utils.observers import Observer
 
 class _Battle:
     def __init__(self) -> None:
-        self._user_turn = True
-        self._current_user_dragon_index = self._current_enemy_dragon_index = 0
-
         self._user_dragons = user.team_dragons.copy()
         self._enemy_dragons = user.current_level.enemy_dragons.copy()
+
+        self._dragons_queue = [dragon for pair in zip(self._user_dragons, self._enemy_dragons) for dragon in pair]
+        self._current_dragon_index = 0
 
         self._current_dragon_observers: list[Observer] = []
 
     def setup(self) -> None:
         from dragons_game.game_states.battle.sections.top_menu import attacks_section, points_bar
 
-        self._user_turn = True
-        self._current_user_dragon_index = self._current_enemy_dragon_index = 0
-
         self._user_dragons = user.team_dragons.copy()
         self._enemy_dragons = user.current_level.enemy_dragons.copy()
+
+        self._dragons_queue = [dragon for pair in zip(self._user_dragons, self._enemy_dragons) for dragon in pair]
+        self._current_dragon_index = 0
 
         for dragon in self._enemy_dragons:
             dragon.restore_health()
@@ -37,7 +38,7 @@ class _Battle:
         points_bar.clean_up()
 
     def user_attack(self, dragon: EnemyDragon) -> None:
-        if self._user_turn:
+        if self.user_turn:
             from dragons_game.game_states.battle.sections.top_menu import attacks_section, points_bar
 
             attack = attacks_section.selected_attack
@@ -49,6 +50,7 @@ class _Battle:
                 from dragons_game.game_states.battle.sections.battlefield import battlefield_section
 
                 battlefield_section.remove_element(dragon.name)
+                self._dragons_queue.remove(dragon)
                 self._enemy_dragons.remove(dragon)
 
                 if not self._enemy_dragons:
@@ -58,10 +60,10 @@ class _Battle:
             self._change_turn()
 
     def enemy_attack(self) -> None:
-        if not self._user_turn:
+        if not self.user_turn:
             time.sleep(1)
 
-            attack = self._enemy_dragons[self._current_enemy_dragon_index].basic_attack
+            attack = self._dragons_queue[self._current_dragon_index].basic_attack
             dragon = random.choice(self._user_dragons)
 
             try:
@@ -70,6 +72,7 @@ class _Battle:
                 from dragons_game.game_states.battle.sections.battlefield import battlefield_section
 
                 battlefield_section.remove_element(dragon.name)
+                self._dragons_queue.remove(dragon)
                 self._user_dragons.remove(dragon)
 
                 if not self._user_dragons:
@@ -79,26 +82,19 @@ class _Battle:
             self._change_turn()
 
     def _change_turn(self) -> None:
-        self._user_turn = not self._user_turn
+        self._current_dragon_index += 1
+        if self._current_dragon_index >= len(self._dragons_queue):
+            self._current_dragon_index = 0
 
-        if self._user_turn:
+        self._notify_current_dragon_observers()
+
+        if self.user_turn:
             from dragons_game.game_states.battle.sections.top_menu import points_bar
 
             points_bar.add_point()
-
-            self._current_user_dragon_index += 1
-            if self._current_user_dragon_index >= len(self._user_dragons):
-                self._current_user_dragon_index = 0
-
         else:
-            self._current_enemy_dragon_index += 1
-            if self._current_enemy_dragon_index >= len(self._enemy_dragons):
-                self._current_enemy_dragon_index = 0
-
             pygame.event.post(
                 pygame.event.Event(custom_events.BATTLE, {'action': 'call', 'callable': self.enemy_attack}))
-
-        self._notify_current_dragon_observers()
 
     def _user_win(self) -> None:
         print('Victory!')
@@ -119,12 +115,12 @@ class _Battle:
             observer.update_on_notify()
 
     @property
-    def user_turn(self) -> bool:
-        return self._user_turn
+    def current_dragon(self) -> Dragon:
+        return self._dragons_queue[self._current_dragon_index]
 
     @property
-    def current_user_dragon(self) -> Dragon:
-        return self._user_dragons[self._current_user_dragon_index]
+    def user_turn(self) -> bool:
+        return isinstance(self.current_dragon, UserDragon)
 
 
 battle = _Battle()

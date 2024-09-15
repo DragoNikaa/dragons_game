@@ -113,7 +113,7 @@ class _AttacksSection(Section, Observer):
 
         self.add_element('turn', self._turn)
 
-        self._selected_attack = battle.current_user_dragon.special_attack
+        self._selected_attack = battle.current_dragon.special_attack
         self._change_selected_attack(AttackType.BASIC)
 
         battle.add_current_dragon_observer(self)
@@ -131,7 +131,7 @@ class _AttacksSection(Section, Observer):
             unselected_button.add_temporary_image(pygame.transform.grayscale(unselected_button.image_copy))
 
             selected_attack = f'{attack_type.value}_attack'
-            self._selected_attack = getattr(battle.current_user_dragon, selected_attack)
+            self._selected_attack = getattr(battle.current_dragon, selected_attack)
             self.get_button(selected_attack).remove_temporary_image()
 
             self._update_attack_and_cost()
@@ -155,9 +155,9 @@ class _AttacksSection(Section, Observer):
         self._cost.text = f'Cost: {self._selected_attack.cost} points'
 
     def update_on_notify(self) -> None:
-        if battle.user_turn:
-            dragon = battle.current_user_dragon
+        dragon = battle.current_dragon
 
+        if battle.user_turn:
             self._change_selected_attack(AttackType.BASIC)
 
             self._turn.text = f'Turn: {dragon.name}'
@@ -174,7 +174,7 @@ class _AttacksSection(Section, Observer):
                 {'action': 'show_tooltip', 'tooltip': self._tooltip(dragon.special_attack.description, '#b581a3')})
 
         else:
-            self._turn.text = f'Turn: Enemy'
+            self._turn.text = f'Turn: {dragon.name}'
 
             self.remove_element('attack_name')
             self.remove_element('cost')
