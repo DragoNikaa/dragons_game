@@ -3,6 +3,7 @@ import time
 
 import pygame
 
+from dragons_game.dragons.attack import Attack
 from dragons_game.dragons.dragon import Dragon
 from dragons_game.dragons.enemy_dragon import EnemyDragon
 from dragons_game.dragons.user_dragon import UserDragon
@@ -44,20 +45,8 @@ class _Battle:
             attack = attacks_section.selected_attack
             points_bar.remove_points(attack.cost)
 
-            try:
-                attack.action(dragon)
-            except custom_exceptions.DragonHealthError:
-                from dragons_game.game_states.battle.sections.battlefield import battlefield_section
-
-                battlefield_section.remove_element(dragon.name)
-                self._dragons_queue.remove(dragon)
-                self._enemy_dragons.remove(dragon)
-
-                if not self._enemy_dragons:
-                    self._user_win()
-                    return
-
-            self._change_turn()
+            self._attack(attack, dragon)
+            self._next_turn()
 
     def enemy_attack(self) -> None:
         if not self.user_turn:
@@ -66,22 +55,32 @@ class _Battle:
             attack = self._dragons_queue[self._current_dragon_index].basic_attack
             dragon = random.choice(self._user_dragons)
 
-            try:
-                attack.action(dragon)
-            except custom_exceptions.DragonHealthError:
-                from dragons_game.game_states.battle.sections.battlefield import battlefield_section
+            self._attack(attack, dragon)
+            self._next_turn()
 
-                battlefield_section.remove_element(dragon.name)
-                self._dragons_queue.remove(dragon)
+    def _attack(self, attack: Attack, dragon: Dragon) -> None:
+        try:
+            attack.action(dragon)
+        except custom_exceptions.DragonHealthError:
+            from dragons_game.game_states.battle.sections.battlefield import battlefield_section
+
+            battlefield_section.remove_element(dragon.name)
+            self._dragons_queue.remove(dragon)
+
+            if isinstance(dragon, UserDragon):
                 self._user_dragons.remove(dragon)
+            elif isinstance(dragon, EnemyDragon):
+                self._enemy_dragons.remove(dragon)
 
-                if not self._user_dragons:
-                    self._enemy_win()
-                    return
+    def _next_turn(self) -> None:
+        if not self._enemy_dragons:
+            self._end(user_win=True)
+            return
 
-            self._change_turn()
+        elif not self._user_dragons:
+            self._end(user_win=False)
+            return
 
-    def _change_turn(self) -> None:
         self._current_dragon_index += 1
         if self._current_dragon_index >= len(self._dragons_queue):
             self._current_dragon_index = 0
@@ -96,13 +95,12 @@ class _Battle:
             pygame.event.post(
                 pygame.event.Event(custom_events.BATTLE, {'action': 'call', 'callable': self.enemy_attack}))
 
-    def _user_win(self) -> None:
-        print('Victory!')
-        pygame.event.post(
-            pygame.event.Event(custom_events.BATTLE, {'action': 'change_state', 'next_state': GameState.MAIN_MENU}))
+    def _end(self, user_win: bool) -> None:
+        if user_win:
+            print('Victory!')
+        else:
+            print('Defeat!')
 
-    def _enemy_win(self) -> None:
-        print('Defeat!')
         pygame.event.post(
             pygame.event.Event(custom_events.BATTLE, {'action': 'change_state', 'next_state': GameState.MAIN_MENU}))
 

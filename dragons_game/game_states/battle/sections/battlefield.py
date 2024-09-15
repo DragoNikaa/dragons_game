@@ -1,8 +1,9 @@
-from typing import Literal, Sequence
+from typing import Sequence
 
 import pygame
 
 from dragons_game.dragons.dragon import Dragon
+from dragons_game.dragons.enemy_dragon import EnemyDragon
 from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
 from dragons_game.elements.section import Section
@@ -24,13 +25,13 @@ class _BattlefieldSection(Section):
 
         self.add_element('background', Image(user.current_level.battle_image_path, self.size, 'topleft', (0, 0)))
 
-        self._add_dragons('user', user.team_dragons, 'left', user.current_level.user_dragons_factors)
-        self._add_dragons('enemy', user.current_level.enemy_dragons, 'right', user.current_level.enemy_dragons_factors)
+        self._add_dragons(user.team_dragons, 'left', user.current_level.user_dragons_factors)
+        self._add_dragons(user.current_level.enemy_dragons, 'right', user.current_level.enemy_dragons_factors)
 
-    def _add_dragons(self, dragon_type: Literal['user', 'enemy'], dragons: Sequence[Dragon],
-                     facing_to_flip: custom_types.Facing, factors: custom_types.DragonsFactors) -> None:
+    def _add_dragons(self, dragons: Sequence[Dragon], facing_to_flip: custom_types.Facing,
+                     factors: custom_types.DragonsFactors) -> None:
         for dragon_index, dragon in enumerate(dragons):
-            if dragon_type == 'enemy':
+            if isinstance(dragon, EnemyDragon):
                 click_action: custom_types.CustomEventDict | None = {'action': 'call', 'callable': battle.user_attack,
                                                                      'kwargs': {'dragon': dragon}}
             else:

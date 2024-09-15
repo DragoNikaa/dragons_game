@@ -15,7 +15,7 @@ from dragons_game.game_states.battle.battle import battle
 from dragons_game.game_states.battle.sections.title_bar import title_bar_section
 from dragons_game.game_states.common import universal_sizes
 from dragons_game.user import user
-from dragons_game.utils import custom_types
+from dragons_game.utils import custom_exceptions, custom_types
 from dragons_game.utils.observers import Observer
 
 top_menu_section = Section((GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEIGHT / 4.5), 'topleft',
@@ -176,8 +176,11 @@ class _AttacksSection(Section, Observer):
         else:
             self._turn.text = f'Turn: {dragon.name}'
 
-            self.remove_element('attack_name')
-            self.remove_element('cost')
+            try:
+                self.remove_element('attack_name')
+                self.remove_element('cost')
+            except custom_exceptions.ElementNotInSectionError:
+                pass
 
             selected_button = self.get_button(f'{self._selected_attack.type.value}_attack')
             selected_button.add_temporary_image(pygame.transform.grayscale(selected_button.image_copy))
