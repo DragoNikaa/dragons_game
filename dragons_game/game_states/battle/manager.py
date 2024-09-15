@@ -3,7 +3,7 @@ from typing import Any
 import pygame
 
 from dragons_game.game_states.battle.battle import battle
-from dragons_game.game_states.battle.sections.battlefield import BattlefieldSection
+from dragons_game.game_states.battle.sections.battlefield import battlefield_section
 from dragons_game.game_states.battle.sections.title_bar import title_bar_section
 from dragons_game.game_states.battle.sections.top_menu import EnemyHealthBarsSection, UserHealthBarsSection, \
     attacks_section, points_bar, top_menu_section
@@ -14,7 +14,9 @@ from dragons_game.utils import custom_events
 
 class BattleManager(GameStateManager):
     def __init__(self) -> None:
-        super().__init__(BattlefieldSection(), title_bar_section, top_menu_section, UserHealthBarsSection(),
+        battlefield_section.setup()
+        battle.setup()
+        super().__init__(battlefield_section, title_bar_section, top_menu_section, UserHealthBarsSection(),
                          EnemyHealthBarsSection(), attacks_section, points_bar)
 
     def handle_event(self, event: pygame.event.Event) -> Any:
@@ -34,7 +36,3 @@ class BattleManager(GameStateManager):
 
         elif event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
             return self._change_state(GameState.MAIN_MENU)
-
-    def _change_state(self, next_state: GameState) -> GameState:
-        battle.clean_up()
-        return super()._change_state(next_state)
