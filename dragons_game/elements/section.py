@@ -52,6 +52,11 @@ class Section(CustomSprite):
 
         del self._elements[name]
 
+    def remove_all_elements(self) -> None:
+        element_names = list(self._elements.keys())
+        for name in element_names:
+            self.remove_element(name)
+
     def get_button(self, name: str) -> 'Button':
         from dragons_game.elements.button import Button
 

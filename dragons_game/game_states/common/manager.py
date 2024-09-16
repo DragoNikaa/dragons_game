@@ -3,6 +3,7 @@ from typing import Any
 
 import pygame
 
+from dragons_game.elements.custom_sprite import CustomSprite
 from dragons_game.elements.section import Section
 from dragons_game.elements.tooltip import Tooltip
 from dragons_game.game_states.game_state import GameState
@@ -16,6 +17,8 @@ class GameStateManager(ABC):
 
         self._sections = [*sections]
         self._active_sections = self._sections.copy()
+
+        self._group: pygame.sprite.Group[CustomSprite] = pygame.sprite.Group()
 
         self._details: Section | None = None
         self._tooltip: Tooltip | None = None
@@ -46,12 +49,16 @@ class GameStateManager(ABC):
                 self._remove_tooltip()
 
     def update(self) -> None:
+        self._group.empty()
         for section in self._active_sections:
-            pygame.sprite.Group(*section.all_elements).update()
+            self._group.add(*section.all_elements)
+        self._group.update()
 
     def draw(self, screen: pygame.Surface) -> None:
+        self._group.empty()
         for section in self._sections:
-            pygame.sprite.Group(*section.all_elements).draw(screen)
+            self._group.add(*section.all_elements)
+        self._group.draw(screen)
 
     def _change_state(self, next_state: GameState) -> GameState:
         self._remove_details_window()
