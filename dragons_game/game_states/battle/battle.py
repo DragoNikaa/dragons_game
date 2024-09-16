@@ -60,7 +60,7 @@ class _Battle:
 
     def _attack(self, attack: Attack, dragon: Dragon) -> None:
         try:
-            attack.action(dragon)
+            attack(dragon)
         except custom_exceptions.DragonHealthError:
             from dragons_game.game_states.battle.sections.battlefield import battlefield_section
 

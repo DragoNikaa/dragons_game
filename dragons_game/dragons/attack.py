@@ -24,6 +24,9 @@ class Attack:
         self._description = description
         self._action = action
 
+    def __call__(self, dragon: 'Dragon') -> None:
+        self._action(dragon)
+
     @property
     def type(self) -> AttackType:
         return self._attack_type
@@ -35,10 +38,6 @@ class Attack:
     @property
     def description(self) -> str:
         return self._description
-
-    @property
-    def action(self) -> Callable[['Dragon'], None]:
-        return self._action
 
     @property
     def cost(self) -> int:
