@@ -19,9 +19,7 @@ class _BattlefieldSection(Section):
         super().__init__((GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEIGHT), 'topleft', (0, 0))
 
     def setup(self) -> None:
-        element_names = [key for key in self._elements.keys()]
-        for element_name in element_names:
-            self.remove_element(element_name)
+        self.remove_all_elements()
 
         self.add_element('background', Image(user.current_level.battle_image_path, self.size, 'topleft', (0, 0)))
 
