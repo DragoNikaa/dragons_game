@@ -47,7 +47,7 @@ class _DragonButton(DragonButton):
             dragon_button = dragon_list_section.get_button(added_team_dragon.name)
 
             team_mark = Text('dragons_game/fonts/pr_viking.ttf', dragon_button.height / 10, 'In team', 'white',
-                             'center', (dragon_button.width / 45, -dragon_button.height / 7), 2, 'black')
+                             'center', (0, -dragon_button.height / 40), 2, 'black')
             team_mark.transform_image(pygame.transform.rotate, 45)
             dragon_button.add_element('team_mark', team_mark)
 

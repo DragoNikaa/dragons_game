@@ -15,12 +15,11 @@ class Tooltip(Section):
         self._border_color = pygame.Color(border_color)
         self._alpha = alpha
 
-        self.image.fill(color)
+        self._render_image()
 
-        if border_thickness:
-            self._add_border()
-
-        self.image.set_alpha(alpha)
+    def change_size(self, size: tuple[float, float]) -> None:
+        self.set_image(pygame.Surface(size, flags=pygame.SRCALPHA))
+        self._render_image()
 
     def update(self) -> None:
         setattr(self.rect, self._position, self._dynamic_destination)
@@ -40,6 +39,14 @@ class Tooltip(Section):
                 tooltip_destination[0] + element.x_destination, tooltip_destination[1] + element.y_destination)
 
             setattr(element.rect, element.position, element_destination)
+
+    def _render_image(self) -> None:
+        self.image.fill(self._color)
+
+        if self._border_thickness:
+            self._add_border()
+
+        self.image.set_alpha(self._alpha)
 
     def _add_border(self) -> None:
         border_image = self.image_copy
