@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from dragons_game.dragons.dragon import Dragon
 from dragons_game.dragons.user_dragon import UserDragon
 from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
@@ -9,7 +10,7 @@ from dragons_game.game_states.common import universal_sizes
 from dragons_game.game_states.dragons_menu.sections.dragon_details import DragonDetails
 from dragons_game.utils import custom_types
 from dragons_game.utils.image_proportions import proportional_width
-from dragons_game.utils.observers import ObserverClass
+from dragons_game.utils.observers import Observer, ObserverClass
 
 
 class DragonButton(Button, ObserverClass, ABC):
@@ -26,12 +27,17 @@ class DragonButton(Button, ObserverClass, ABC):
         self.add_element('dragon', Image(dragon.image_path, (dragon_image_width, dragon_image_height), 'center',
                                          (0, -self.height / 50)))
 
-        health_bar = self._add_progress_bar('health', -self.height / 7.4, dragon.current_health, dragon.max_health,
-                                            '#dc0000')
-        energy_bar = self._add_progress_bar('energy', health_bar.y_destination - self.height / 22.5,
-                                            dragon.current_energy, dragon.max_energy, '#eaea00')
-        experience_bar = self._add_progress_bar('experience', energy_bar.y_destination - self.height / 22.5,
-                                                dragon.current_experience, dragon.experience_to_next_level, '#00da00')
+        progress_bar_size = (self.width / 2, self.height / 30)
+
+        health_bar = _ProgressBar('health', dragon, progress_bar_size, -self.height / 7.4, '#dc0000')
+        energy_bar = _ProgressBar('energy', dragon, progress_bar_size, health_bar.y_destination - self.height / 22.5,
+                                  '#eaea00')
+        experience_bar = _ProgressBar('experience', dragon, progress_bar_size,
+                                      energy_bar.y_destination - self.height / 22.5, '#00da00')
+
+        self.add_element('health', health_bar)
+        self.add_element('energy', energy_bar)
+        self.add_element('experience', experience_bar)
 
         self._add_text('level', f'Level {dragon.level}', 'midbottom', experience_bar.y_destination - self.height / 22.5)
 
@@ -39,29 +45,46 @@ class DragonButton(Button, ObserverClass, ABC):
         self.add_element(name, Text('dragons_game/fonts/rurik.ttf', self.height / 16, text, 'white', position,
                                     (0, y_destination), 1, 'black'))
 
-    def _add_progress_bar(self, name: str, y_destination: float, current_value: float, max_value: float,
-                          tooltip_color: custom_types.Color) -> Button:
-        tooltip = self._tooltip(name, current_value, max_value, tooltip_color)
 
-        progress_bar = Button('dragons_game/graphics/progress_bars/background.png', (self.width / 2, self.height / 30),
-                              'midbottom', (0, y_destination),
-                              hover_action={'action': 'show_tooltip', 'tooltip': tooltip})
+class _ProgressBar(Button, Observer):
+    def __init__(self, name: str, dragon: Dragon, size: tuple[float, float], y_destination: float,
+                 tooltip_color: custom_types.Color):
+        tooltip = _ProgressTooltip(name, dragon, tooltip_color)
 
-        progress_bar.add_element('current', Image(f'dragons_game/graphics/progress_bars/{name}.png',
-                                                  (current_value / max_value * progress_bar.width, progress_bar.height),
-                                                  'midleft', (0, 0)))
+        super().__init__('dragons_game/graphics/progress_bars/background.png', size, 'midbottom', (0, y_destination),
+                         hover_action={'action': 'show_tooltip', 'tooltip': tooltip})
 
-        self.add_element(name, progress_bar)
-        return progress_bar
+        self._name = name
+        self._dragon = dragon
 
-    @staticmethod
-    def _tooltip(name: str, current_value: float, max_value: float, color: custom_types.Color) -> Tooltip:
-        text = Text('dragons_game/fonts/friz_quadrata.ttf', universal_sizes.MEDIUM / 1.5,
-                    f'{name.title()}: {current_value}/{max_value}', 'white', 'center', (0, 0), 1, 'black')
+        getattr(dragon, f"add_{name}_observer")(self)
 
-        tooltip = Tooltip('bottomleft',
-                          (text.width + 1.25 * universal_sizes.SMALL, text.height + 1.25 * universal_sizes.SMALL),
-                          color, 3, 'black', 200)
+    def update_on_notify(self) -> None:
+        current_value = getattr(self._dragon, f'current_{self._name}')
+        max_value = getattr(self._dragon, f'max_{self._name}')
 
-        tooltip.add_element('text', text)
-        return tooltip
+        self.upsert_element('current', Image(f'dragons_game/graphics/progress_bars/{self._name}.png',
+                                             (current_value / max_value * self.width, self.height), 'midleft', (0, 0)))
+
+
+class _ProgressTooltip(Tooltip, Observer):
+    def __init__(self, name: str, dragon: Dragon, color: custom_types.Color):
+        super().__init__('bottomleft', (0, 0), color, 3, 'black', 200)
+
+        self._name = name
+        self._dragon = dragon
+
+        self._text = Text('dragons_game/fonts/friz_quadrata.ttf', universal_sizes.MEDIUM / 1.5, '', 'white', 'center',
+                          (0, 0), 1, 'black')
+        self.add_element('text', self._text)
+
+        getattr(dragon, f"add_{name}_observer")(self)
+
+    def update_on_notify(self) -> None:
+        current_value = getattr(self._dragon, f'current_{self._name}')
+        max_value = getattr(self._dragon, f'max_{self._name}')
+
+        self._text.text = f'{self._name.title()}: {current_value}/{max_value}'
+
+        self.change_size(
+            (self._text.width + 1.25 * universal_sizes.SMALL, self._text.height + 1.25 * universal_sizes.SMALL))

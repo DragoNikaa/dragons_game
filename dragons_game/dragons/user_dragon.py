@@ -23,6 +23,9 @@ class UserDragon(Dragon):
         self._in_team = False
         self._in_team_observers: list[Observer] = []
 
+        self._experience_observers: list[Observer] = []
+        self._energy_observers: list[Observer] = []
+
     def add_experience(self, experience: int) -> None:
         self._current_experience += experience
         while self._current_experience >= self._experience_to_next_level:
@@ -45,6 +48,22 @@ class UserDragon(Dragon):
         for observer in self._in_team_observers:
             observer.update_on_notify()
 
+    def add_experience_observer(self, observer: Observer) -> None:
+        self._experience_observers.append(observer)
+        observer.update_on_notify()
+
+    def _notify_experience_observers(self) -> None:
+        for observer in self._experience_observers:
+            observer.update_on_notify()
+
+    def add_energy_observer(self, observer: Observer) -> None:
+        self._energy_observers.append(observer)
+        observer.update_on_notify()
+
+    def _notify_energy_observers(self) -> None:
+        for observer in self._energy_observers:
+            observer.update_on_notify()
+
     @property
     def description(self) -> str:
         return self._description
@@ -54,7 +73,7 @@ class UserDragon(Dragon):
         return self._level
 
     @property
-    def experience_to_next_level(self) -> int:
+    def max_experience(self) -> int:
         return self._experience_to_next_level
 
     @property
