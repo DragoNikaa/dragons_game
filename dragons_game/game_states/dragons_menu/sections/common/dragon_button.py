@@ -20,7 +20,8 @@ class DragonButton(Button, ObserverClass, ABC):
         super().__init__(f'dragons_game/graphics/buttons/dragons/{dragon.rarity}.png', size, position, destination,
                          {'action': 'open_details', 'details': DragonDetails(dragon)})
 
-        self._add_text('name', dragon.name, 'midtop', self.height / 5.45)
+        text_size = self.height / 16
+        self.add_element('name', _Text(text_size, dragon.name, 'midtop', self.height / 5.45))
 
         dragon_image_height = self.height / 3.1
         dragon_image_width = proportional_width(dragon.image_path, dragon_image_height)
@@ -39,11 +40,23 @@ class DragonButton(Button, ObserverClass, ABC):
         self.add_element('energy', energy_bar)
         self.add_element('experience', experience_bar)
 
-        self._add_text('level', f'Level {dragon.level}', 'midbottom', experience_bar.y_destination - self.height / 22.5)
+        self.add_element('level', _LevelText(dragon, text_size, experience_bar.y_destination - self.height / 22.5))
 
-    def _add_text(self, name: str, text: str, position: custom_types.Position, y_destination: float) -> None:
-        self.add_element(name, Text('dragons_game/fonts/rurik.ttf', self.height / 16, text, 'white', position,
-                                    (0, y_destination), 1, 'black'))
+
+class _Text(Text):
+    def __init__(self, size: float, text: str, position: custom_types.Position, y_destination: float):
+        super().__init__('dragons_game/fonts/rurik.ttf', size, text, 'white', position, (0, y_destination), 1, 'black')
+
+
+class _LevelText(_Text, Observer):
+    def __init__(self, dragon: UserDragon, size: float, y_destination: float):
+        super().__init__(size, '', 'midbottom', y_destination)
+
+        self._dragon = dragon
+        dragon.add_level_observer(self)
+
+    def update_on_notify(self) -> None:
+        self.text = f'Level {self._dragon.level}'
 
 
 class _ProgressBar(Button, Observer):

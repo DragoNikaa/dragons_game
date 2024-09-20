@@ -23,6 +23,7 @@ class UserDragon(Dragon):
         self._in_team = False
         self._in_team_observers: list[Observer] = []
 
+        self._level_observers: list[Observer] = []
         self._experience_observers: list[Observer] = []
         self._energy_observers: list[Observer] = []
 
@@ -41,6 +42,10 @@ class UserDragon(Dragon):
         self._max_health = round(1.1 * self._max_health)
         if self._level % 3 == 0:
             self._max_energy += 1
+
+            self._notify_energy_observers()
+        self._notify_level_observers()
+        self._notify_health_observers()
 
     def add_energy(self, value: int = 1) -> None:
         self._current_energy += value
@@ -62,6 +67,14 @@ class UserDragon(Dragon):
 
     def _notify_in_team_observers(self) -> None:
         for observer in self._in_team_observers:
+            observer.update_on_notify()
+
+    def add_level_observer(self, observer: Observer) -> None:
+        self._level_observers.append(observer)
+        observer.update_on_notify()
+
+    def _notify_level_observers(self) -> None:
+        for observer in self._level_observers:
             observer.update_on_notify()
 
     def add_experience_observer(self, observer: Observer) -> None:

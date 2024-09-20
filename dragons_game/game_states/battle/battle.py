@@ -98,6 +98,10 @@ class _Battle:
     def _end(self, user_win: bool) -> None:
         if user_win:
             print('Victory!')
+
+            for dragon in user.team_dragons:
+                dragon.add_experience(100)
+
         else:
             print('Defeat!')
 
