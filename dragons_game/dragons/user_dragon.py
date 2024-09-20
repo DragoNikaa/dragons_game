@@ -2,7 +2,7 @@ from dragons_game.dragons.attack import Attack
 from dragons_game.dragons.dragon import Dragon
 from dragons_game.dragons.rarity import Rarity
 from dragons_game.dragons.stats import RARITY_TO_STATS, Stat
-from dragons_game.utils import custom_types
+from dragons_game.utils import custom_exceptions, custom_types
 from dragons_game.utils.observers import Observer
 
 
@@ -31,6 +31,8 @@ class UserDragon(Dragon):
         while self._current_experience >= self._experience_to_next_level:
             self._level_up()
 
+        self._notify_experience_observers()
+
     def _level_up(self) -> None:
         self._level += 1
         self._current_experience -= self._experience_to_next_level
@@ -39,6 +41,20 @@ class UserDragon(Dragon):
         self._max_health = round(1.1 * self._max_health)
         if self._level % 3 == 0:
             self._max_energy += 1
+
+    def add_energy(self, value: int = 1) -> None:
+        self._current_energy += value
+        if self._current_energy > self._max_energy:
+            self._current_energy = self._max_energy
+
+        self._notify_energy_observers()
+
+    def remove_energy(self, value: int = 1) -> None:
+        if self._current_energy < value:
+            raise custom_exceptions.DragonEnergyError(self._name, self._current_energy)
+
+        self._current_energy -= value
+        self._notify_energy_observers()
 
     def add_in_team_observer(self, observer: Observer) -> None:
         self._in_team_observers.append(observer)

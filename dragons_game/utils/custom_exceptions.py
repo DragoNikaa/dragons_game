@@ -1,36 +1,38 @@
 class DragonError(Exception):
-    def __init__(self, message: str):
+    def __init__(self, message: str, dragon_name: str):
         super().__init__(message)
+        self.dragon_name = dragon_name
 
 
 class DragonNotOwnedError(DragonError):
     def __init__(self, dragon_name: str):
-        super().__init__(f"User does not own dragon '{dragon_name}'")
-        self.dragon_name = dragon_name
+        super().__init__(f"User does not own dragon '{dragon_name}'", dragon_name)
 
 
 class DragonAlreadyOwnedError(DragonError):
     def __init__(self, dragon_name: str):
-        super().__init__(f"User already owns dragon '{dragon_name}'")
-        self.dragon_name = dragon_name
+        super().__init__(f"User already owns dragon '{dragon_name}'", dragon_name)
 
 
 class DragonAlreadyInTeamError(DragonError):
     def __init__(self, dragon_name: str):
-        super().__init__(f"Dragon '{dragon_name}' is already in team")
-        self.dragon_name = dragon_name
+        super().__init__(f"Dragon '{dragon_name}' is already in team", dragon_name)
 
 
 class TooManyDragonsError(DragonError):
     def __init__(self, max_dragons: int):
-        super().__init__(f'Cannot add more than {max_dragons} dragons to team')
+        super().__init__(f'Cannot add more than {max_dragons} dragons to team', '')
         self.max_dragons = max_dragons
 
 
 class DragonHealthError(DragonError):
     def __init__(self, dragon_name: str):
-        super().__init__(f"Dragon '{dragon_name}' has no health left")
-        self.dragon_name = dragon_name
+        super().__init__(f"Dragon '{dragon_name}' has no health left", dragon_name)
+
+
+class DragonEnergyError(DragonError):
+    def __init__(self, dragon_name: str, current_energy: int):
+        super().__init__(f"Dragon '{dragon_name}' has {current_energy} current energy", dragon_name)
 
 
 class SectionError(Exception):
