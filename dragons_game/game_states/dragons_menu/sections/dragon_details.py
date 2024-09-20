@@ -19,8 +19,6 @@ from dragons_game.utils.observers import Observer
 
 
 class DragonDetails(Section):
-    _TEXT_SIZE = GameConfig.WINDOW_HEIGHT / 38
-
     def __init__(self, dragon: UserDragon):
         super().__init__((GameConfig.WINDOW_WIDTH * 6 / 7, GameConfig.WINDOW_HEIGHT), 'topleft',
                          (GameConfig.WINDOW_WIDTH / 7, 0))
@@ -68,12 +66,12 @@ class DragonDetails(Section):
     def _add_rarity_section(self) -> None:
         rarity_section = self._section(0.1, 'Rarity')
 
-        for star_index, star in enumerate(rarity_stars(self._dragon.rarity, self._TEXT_SIZE, self._padding)):
+        for star_index, star in enumerate(rarity_stars(self._dragon.rarity, _Text.SIZE, self._padding)):
             rarity_section.add_element(f'star_{star_index}', star)
         last_star = rarity_section.get_image('star_5')
 
-        rarity_section.add_element('text', self.text(f'{str(self._dragon.rarity).title()}', 'midleft',
-                                                     (last_star.x_destination + last_star.width + self._padding, 0)))
+        rarity_section.add_element('text', _Text(f'{str(self._dragon.rarity).title()}', 'midleft',
+                                                 (last_star.x_destination + last_star.width + self._padding, 0)))
 
         self.add_element('rarity', rarity_section)
 
@@ -91,11 +89,9 @@ class DragonDetails(Section):
     def _add_stats_section(self) -> None:
         stats_section = self._section(0.3, 'Statistics', self.get_section('description'))
 
-        stats_section.add_element('level',
-                                  self.text(f'Level {self._dragon.level}', 'midtop', (self._padding, self._padding)))
+        stats_section.add_element('level', _LevelText(self._dragon, (self._padding, self._padding)))
 
-        progress_bar_size = (
-            stats_section.width / 1.5, (stats_section.height - self._TEXT_SIZE - 4 * self._padding) / 3)
+        progress_bar_size = (stats_section.width / 1.5, (stats_section.height - _Text.SIZE - 4 * self._padding) / 3)
         label_x_destination = progress_bar_size[0] + 2 * self._padding - stats_section.width
 
         health_bar = _ProgressBar('health', self._dragon, progress_bar_size, (-self._padding, -self._padding),
@@ -124,22 +120,21 @@ class DragonDetails(Section):
                                     Image('dragons_game/graphics/icons/attacks/special.png', (icon_size, icon_size),
                                           'bottomleft', (self._padding, -self._padding)))
 
-        basic_name = self.text(self._dragon.basic_attack.name, 'topleft',
-                               (icon_size + 2 * self._padding, self._padding))
-        attacks_section.add_element('special_name', self.text(self._dragon.special_attack.name, 'topleft', (
-            basic_name.x_destination, icon_size + 1.5 * self._padding)))
+        basic_name = _Text(self._dragon.basic_attack.name, 'topleft', (icon_size + 2 * self._padding, self._padding))
+        attacks_section.add_element('special_name', _Text(self._dragon.special_attack.name, 'topleft',
+                                                          (basic_name.x_destination, icon_size + 1.5 * self._padding)))
 
         description_size = (
-            attacks_section.width - icon_size - 3 * self._padding, icon_size - self._TEXT_SIZE - self._padding / 2)
+            attacks_section.width - icon_size - 3 * self._padding, icon_size - _Text.SIZE - self._padding / 2)
 
         basic_description = MultilineTextFixedSectionHeight(description_size, 'topleft', (
-            basic_name.x_destination, self._TEXT_SIZE + 1.5 * self._padding), 3, 'dragons_game/fonts/friz_quadrata.ttf',
+            basic_name.x_destination, _Text.SIZE + 1.5 * self._padding), 3, 'dragons_game/fonts/friz_quadrata.ttf',
                                                             self._dragon.basic_attack.description, 'white', 1, 'black')
 
         attacks_section.add_element('special_description', MultilineTextFixedSectionHeight(description_size, 'topleft',
                                                                                            (
                                                                                                basic_description.x_destination,
-                                                                                               icon_size + self._TEXT_SIZE + 2 * self._padding),
+                                                                                               icon_size + _Text.SIZE + 2 * self._padding),
                                                                                            3,
                                                                                            'dragons_game/fonts/friz_quadrata.ttf',
                                                                                            self._dragon.special_attack.description,
@@ -180,11 +175,6 @@ class DragonDetails(Section):
                                           'topleft', (0, border_size[1] - title_size), 3, 'black'))
 
         return section
-
-    @classmethod
-    def text(cls, text: str, position: custom_types.Position, destination: tuple[float, float]) -> Text:
-        return Text('dragons_game/fonts/friz_quadrata.ttf', cls._TEXT_SIZE, text, 'white', position, destination, 1,
-                    'black')
 
     def clean_up(self) -> None:
         self._team_section.clean_up()
@@ -243,6 +233,25 @@ class _TeamSection(Section, Observer):
             team_section.get_button(f'team_dragon_{dragon_index}').remove_temporary_click_action()
 
 
+class _Text(Text):
+    SIZE = GameConfig.WINDOW_HEIGHT / 38
+
+    def __init__(self, text: str, position: custom_types.Position, destination: tuple[float, float]):
+        super().__init__('dragons_game/fonts/friz_quadrata.ttf', self.SIZE, text, 'white', position, destination, 1,
+                         'black')
+
+
+class _LevelText(_Text, Observer):
+    def __init__(self, dragon: UserDragon, destination: tuple[float, float]):
+        super().__init__('', 'midtop', destination)
+
+        self._dragon = dragon
+        dragon.add_level_observer(self)
+
+    def update_on_notify(self) -> None:
+        self.text = f'Level {self._dragon.level}'
+
+
 class _ProgressBar(Section, Observer):
     def __init__(self, name: str, dragon: Dragon, size: tuple[float, float], destination: tuple[float, float],
                  label_x_destination: float):
@@ -254,7 +263,7 @@ class _ProgressBar(Section, Observer):
         self.add_element('background',
                          Image(f'dragons_game/graphics/progress_bars/background.png', size, 'topleft', (0, 0)))
 
-        self.add_element('label', DragonDetails.text(name.title(), 'midleft', (label_x_destination, 0)))
+        self.add_element('label', _Text(name.title(), 'midleft', (label_x_destination, 0)))
 
         getattr(dragon, f"add_{self._name}_observer")(self)
 
@@ -265,4 +274,4 @@ class _ProgressBar(Section, Observer):
         self.upsert_element('current', Image(f'dragons_game/graphics/progress_bars/{self._name}.png',
                                              (current_value / max_value * self.width, self.height), 'midleft', (0, 0)))
 
-        self.upsert_element('numbers', DragonDetails.text(f'{current_value}/{max_value}', 'center', (0, 0)))
+        self.upsert_element('numbers', _Text(f'{current_value}/{max_value}', 'center', (0, 0)))
