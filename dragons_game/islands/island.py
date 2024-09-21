@@ -2,9 +2,8 @@ from dragons_game.islands.level import Level
 
 
 class Island:
-    def __init__(self, image_path: str, easy_level: Level, medium_level: Level, hard_level: Level,
-                 fiendish_level: Level):
-        self._image_path = image_path
+    def __init__(self, number: int, easy_level: Level, medium_level: Level, hard_level: Level, fiendish_level: Level):
+        self._number = number
         self._easy_level = easy_level
         self._medium_level = medium_level
         self._hard_level = hard_level
@@ -12,7 +11,7 @@ class Island:
 
     @property
     def image_path(self) -> str:
-        return self._image_path
+        return f'dragons_game/graphics/islands/{self._number}.png'
 
     @property
     def easy_level(self) -> Level:

@@ -6,7 +6,18 @@ from dragons_game.utils.observers import Observer, ObserverClass
 
 
 class User:
-    def __init__(self, dragons: list[UserDragon] | None = None, team_dragons: list[UserDragon] | None = None):
+    def __init__(self, trophies: int = 0, eggs: int = 0, fish: int = 0, coins: int = 0,
+                 dragons: list[UserDragon] | None = None, team_dragons: list[UserDragon] | None = None):
+        self._trophies = trophies
+        self._eggs = eggs
+        self._fish = fish
+        self._coins = coins
+
+        self._trophies_observers: list[Observer] = []
+        self._eggs_observers: list[Observer] = []
+        self._fish_observers: list[Observer] = []
+        self._coins_observers: list[Observer] = []
+
         if dragons is None:
             dragons = []
         if team_dragons is None:
@@ -99,6 +110,38 @@ class User:
         self._notify_dragons_observers(self._dragons)
         self._notify_dragons_sort_reverse_observers()
 
+    def add_trophies_observer(self, observer: Observer) -> None:
+        self._trophies_observers.append(observer)
+        observer.update_on_notify()
+
+    def _notify_trophies_observers(self) -> None:
+        for observer in self._trophies_observers:
+            observer.update_on_notify()
+
+    def add_eggs_observer(self, observer: Observer) -> None:
+        self._eggs_observers.append(observer)
+        observer.update_on_notify()
+
+    def _notify_eggs_observers(self) -> None:
+        for observer in self._eggs_observers:
+            observer.update_on_notify()
+
+    def add_fish_observer(self, observer: Observer) -> None:
+        self._fish_observers.append(observer)
+        observer.update_on_notify()
+
+    def _notify_fish_observers(self) -> None:
+        for observer in self._fish_observers:
+            observer.update_on_notify()
+
+    def add_coins_observer(self, observer: Observer) -> None:
+        self._coins_observers.append(observer)
+        observer.update_on_notify()
+
+    def _notify_coins_observers(self) -> None:
+        for observer in self._coins_observers:
+            observer.update_on_notify()
+
     def add_dragons_observer(self, observer: type[ObserverClass]) -> None:
         self._dragons_observers.append(observer)
         observer.update_on_notify(self._dragons)
@@ -137,6 +180,57 @@ class User:
             observer.update_on_notify(dragon_index, dragon)
 
     @property
+    def trophies(self) -> int:
+        return self._trophies
+
+    @trophies.setter
+    def trophies(self, value: int) -> None:
+        self._trophies = value
+        if self._trophies < 0:
+            self._trophies = 0
+
+        self._notify_trophies_observers()
+
+    @property
+    def eggs(self) -> int:
+        return self._eggs
+
+    @eggs.setter
+    def eggs(self, value: int) -> None:
+        self._eggs = value
+        if self._eggs < 0:
+            self._eggs = 0
+            raise custom_exceptions.NotEnoughEggsError(self._eggs)
+
+        self._notify_eggs_observers()
+
+    @property
+    def fish(self) -> int:
+        return self._fish
+
+    @fish.setter
+    def fish(self, value: int) -> None:
+        self._fish = value
+        if self._fish < 0:
+            self._fish = 0
+            raise custom_exceptions.NotEnoughFishError(self._fish)
+
+        self._notify_fish_observers()
+
+    @property
+    def coins(self) -> int:
+        return self._coins
+
+    @coins.setter
+    def coins(self, value: int) -> None:
+        self._coins = value
+        if self._coins < 0:
+            self._coins = 0
+            raise custom_exceptions.NotEnoughCoinsError(self._coins)
+
+        self._notify_coins_observers()
+
+    @property
     def dragons(self) -> list[UserDragon]:
         return self._dragons
 
@@ -153,10 +247,10 @@ class User:
         return self._team_dragons
 
 
-user = User([user_dragons.toothless, user_dragons.skyflame, user_dragons.prismscale, user_dragons.frostreaver,
-             user_dragons.valentira, user_dragons.nyxar],
-            [user_dragons.toothless, user_dragons.skyflame, user_dragons.frostreaver])
+user = User(dragons=[user_dragons.toothless, user_dragons.skyflame, user_dragons.prismscale, user_dragons.frostreaver,
+                     user_dragons.valentira, user_dragons.nyxar],
+            team_dragons=[user_dragons.toothless, user_dragons.skyflame, user_dragons.frostreaver])
 
-# user = User([user_dragons.toothless, user_dragons.skyflame, user_dragons.prismscale, user_dragons.frostreaver,
-#              user_dragons.valentira, user_dragons.nyxar],
-#             [user_dragons.nyxar, user_dragons.valentira, user_dragons.prismscale])
+# user = User(dragons=[user_dragons.toothless, user_dragons.skyflame, user_dragons.prismscale, user_dragons.frostreaver,
+#                      user_dragons.valentira, user_dragons.nyxar],
+#             team_dragons=[user_dragons.nyxar, user_dragons.valentira, user_dragons.prismscale])
