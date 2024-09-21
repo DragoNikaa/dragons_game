@@ -1,5 +1,4 @@
 import random
-from enum import Enum
 
 from dragons_game.dragons.database import enemy_dragons
 from dragons_game.dragons.enemy_dragon import EnemyDragon
@@ -8,26 +7,24 @@ from dragons_game.elements.text import Text
 from dragons_game.elements.tooltip import Tooltip
 from dragons_game.game.configuration import GameConfig
 from dragons_game.game_states.common import universal_sizes
+from dragons_game.islands.level_type import LevelType
+from dragons_game.islands.rewards import LEVEL_TYPE_TO_REWARDS, Reward
 from dragons_game.utils import custom_types
 
 
-class LevelType(Enum):
-    EASY = 'easy'
-    MEDIUM = 'medium'
-    HARD = 'hard'
-    FIENDISH = 'fiendish'
-
-
 class Level:
-    def __init__(self, level_type: LevelType, button_factors: tuple[float, float], battle_image_path: str,
+    def __init__(self, island_number: int, level_type: LevelType, button_factors: tuple[float, float],
                  user_dragons_factors: custom_types.DragonsFactors, enemy_dragons_factors: custom_types.DragonsFactors):
+        self._island_number = island_number
         self._level_type = level_type
         self._button_factors = button_factors
-        self._battle_image_path = battle_image_path
         self._user_dragons_factors = user_dragons_factors
         self._enemy_dragons_factors = enemy_dragons_factors
 
         self._enemy_dragons = self._get_enemy_dragons()
+
+        self._rewards = {reward: round((0.9 + island_number / 10) * value) for reward, value in
+                         LEVEL_TYPE_TO_REWARDS[level_type].items()}
 
     def _get_enemy_dragons(self) -> list[EnemyDragon]:
         # match self._level_type:
@@ -57,12 +54,12 @@ class Level:
     def tooltip(self) -> Tooltip:
         tooltip = Tooltip('midbottom', (GameConfig.WINDOW_WIDTH / 10, GameConfig.WINDOW_HEIGHT / 10), 'chocolate')
         tooltip.add_element('level', Text('dragons_game/fonts/friz_quadrata.ttf', universal_sizes.MEDIUM / 1.5,
-                                          self._level_type.value.title(), 'white', 'center', (0, 0), 1, 'black'))
+                                          str(self._level_type).title(), 'white', 'center', (0, 0), 1, 'black'))
         return tooltip
 
     @property
     def button_image_path(self) -> str:
-        return f'dragons_game/graphics/buttons/levels/{self._level_type.value}.png'
+        return f'dragons_game/graphics/buttons/levels/{self._level_type}.png'
 
     @property
     def button_factors(self) -> tuple[float, float]:
@@ -70,7 +67,7 @@ class Level:
 
     @property
     def battle_image_path(self) -> str:
-        return self._battle_image_path
+        return f'dragons_game/graphics/backgrounds/battle/island_{self._island_number}/{self._level_type}.png'
 
     @property
     def user_dragons_factors(self) -> custom_types.DragonsFactors:
@@ -83,3 +80,7 @@ class Level:
     @property
     def enemy_dragons(self) -> list[EnemyDragon]:
         return self._enemy_dragons
+
+    @property
+    def rewards(self) -> dict[Reward, int]:
+        return self._rewards

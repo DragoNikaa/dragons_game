@@ -1,3 +1,25 @@
+class ResourceError(Exception):
+    def __init__(self, resource_name: str, current_value: int):
+        super().__init__(f'User has {current_value} {resource_name}')
+        self.resource_type = resource_name
+        self.current_value = current_value
+
+
+class NotEnoughEggsError(ResourceError):
+    def __init__(self, current_value: int):
+        super().__init__('eggs', current_value)
+
+
+class NotEnoughFishError(ResourceError):
+    def __init__(self, current_value: int):
+        super().__init__('fish', current_value)
+
+
+class NotEnoughCoinsError(ResourceError):
+    def __init__(self, current_value: int):
+        super().__init__('coins', current_value)
+
+
 class DragonError(Exception):
     def __init__(self, message: str, dragon_name: str):
         super().__init__(message)

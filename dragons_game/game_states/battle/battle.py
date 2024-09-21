@@ -8,6 +8,7 @@ from dragons_game.dragons.dragon import Dragon
 from dragons_game.dragons.enemy_dragon import EnemyDragon
 from dragons_game.dragons.user_dragon import UserDragon
 from dragons_game.game_states.game_state import GameState
+from dragons_game.islands.rewards import Reward
 from dragons_game.user import user
 from dragons_game.utils import custom_events, custom_exceptions
 from dragons_game.utils.observers import Observer
@@ -96,14 +97,27 @@ class _Battle:
                 pygame.event.Event(custom_events.BATTLE, {'action': 'call', 'callable': self.enemy_attack}))
 
     def _end(self, user_win: bool) -> None:
+        rewards = user.current_level.rewards
+
         if user_win:
             print('Victory!')
 
+            user.trophies += rewards[Reward.TROPHIES]
+            user.eggs += rewards[Reward.EGGS]
+            user.fish += rewards[Reward.FISH]
+            user.coins += rewards[Reward.COINS]
+
+            experiences = []
             for dragon in user.team_dragons:
-                dragon.add_experience(100)
+                experience = random.randint(rewards[Reward.MIN_EXPERIENCE], rewards[Reward.MAX_EXPERIENCE])
+                experiences.append(experience)
+                dragon.add_experience(experience)
 
         else:
             print('Defeat!')
+
+            for dragon in user.team_dragons:
+                dragon.add_experience(rewards[Reward.LOST_BATTLE_EXPERIENCE])
 
         pygame.event.post(
             pygame.event.Event(custom_events.BATTLE, {'action': 'change_state', 'next_state': GameState.MAIN_MENU}))
