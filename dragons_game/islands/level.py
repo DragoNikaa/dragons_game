@@ -53,6 +53,10 @@ class Level:
         return dragons
 
     @property
+    def type(self) -> LevelType:
+        return self._level_type
+
+    @property
     def button_image_path(self) -> str:
         return f'dragons_game/graphics/buttons/levels/{self._level_type}.png'
 

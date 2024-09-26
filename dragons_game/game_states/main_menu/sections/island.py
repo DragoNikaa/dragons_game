@@ -2,8 +2,8 @@ import pygame
 
 from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
+from dragons_game.elements.multiline_text import MultilineTextFixedTextSize
 from dragons_game.elements.section import Section
-from dragons_game.elements.text import Text
 from dragons_game.elements.tooltip import Tooltip
 from dragons_game.game.configuration import GameConfig
 from dragons_game.game_states.common import universal_sizes
@@ -11,7 +11,7 @@ from dragons_game.game_states.main_menu.sections.bottom_buttons import bottom_bu
 from dragons_game.game_states.main_menu.sections.top_buttons import top_buttons_section
 from dragons_game.islands.level import Level
 from dragons_game.user import user
-from dragons_game.utils import custom_events, custom_exceptions
+from dragons_game.utils import custom_events, custom_exceptions, custom_types
 
 
 class _IslandSection(Section):
@@ -24,13 +24,13 @@ class _IslandSection(Section):
 
         self.add_element('background', Image(island.image_path, self.size, 'topleft', (0, 0)))
 
-        self.add_element('easy', _LevelButton(island.easy_level, self.size))
-        self.add_element('medium', _LevelButton(island.medium_level, self.size))
-        self.add_element('hard', _LevelButton(island.hard_level, self.size))
-        self.add_element('fiendish', _LevelButton(island.fiendish_level, self.size))
+        self.add_element('easy', LevelButton(island.easy_level, self.size))
+        self.add_element('medium', LevelButton(island.medium_level, self.size))
+        self.add_element('hard', LevelButton(island.hard_level, self.size))
+        self.add_element('fiendish', LevelButton(island.fiendish_level, self.size))
 
 
-class _LevelButton(Button):
+class LevelButton(Button):
     def __init__(self, level: Level, island_size: tuple[float, float]):
         super().__init__(level.button_image_path, (island_size[1] / 5, island_size[1] / 5), 'center',
                          (island_size[0] / level.button_factors[0], island_size[1] / level.button_factors[1]),
@@ -49,22 +49,32 @@ class _LevelButton(Button):
             for dragon in user.team_dragons[:dragon_index]:
                 dragon.add_energy()
 
-            self.add_onetime_hover_action({'action': 'show_tooltip', 'tooltip': self._dragon_energy_tooltip()})
+            self.add_onetime_hover_action({'action': 'show_tooltip', 'tooltip': self._tooltip(
+                "Your dragons don't have enough energy to start this battle!", '#dc0000')})
             return
 
         pygame.event.post(pygame.event.Event(custom_events.BUTTON_CLICK, {'action': 'battle', 'level': self._level}))
 
+    def handle_completed_level(self) -> None:
+        new_image = pygame.image.load('dragons_game/graphics/buttons/levels/completed.png')
+        new_image = pygame.transform.scale(new_image, self.size)
+        self.set_image(new_image)
+
+        self.set_click_action(None)
+        self.set_hover_action({'action': 'show_tooltip', 'tooltip': self._tooltip('Level completed!', '#00da00')})
+
     @staticmethod
-    def _dragon_energy_tooltip() -> Tooltip:
-        text = Text('dragons_game/fonts/friz_quadrata.ttf', universal_sizes.MEDIUM / 1.5,
-                    "Your dragons don't have enough energy to start this battle!", 'white', 'center', (0, 0), 1,
-                    'black')
+    def _tooltip(text: str, color: custom_types.Color) -> Tooltip:
+        padding = 0.75 * universal_sizes.SMALL
 
-        tooltip = Tooltip('midbottom',
-                          (text.width + 1.5 * universal_sizes.SMALL, text.height + 1.5 * universal_sizes.SMALL),
-                          '#dc0000', 3, 'black', 200)
+        text_element = MultilineTextFixedTextSize(GameConfig.WINDOW_WIDTH / 3, 'center', (padding, padding),
+                                                  'dragons_game/fonts/friz_quadrata.ttf', universal_sizes.MEDIUM, text,
+                                                  'white', 1, 'black')
 
-        tooltip.add_element('text', text)
+        tooltip = Tooltip('midbottom', (text_element.width + 2 * padding, text_element.height + 2 * padding), color, 3,
+                          'black', 200)
+
+        tooltip.add_element('text', text_element)
         return tooltip
 
 

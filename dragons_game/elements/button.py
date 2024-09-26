@@ -26,7 +26,11 @@ class Button(Section):
 
         self._current_brightness = 0
 
-    def add_temporary_click_action(self, new_click_action: custom_types.CustomEventDict) -> None:
+    def set_click_action(self, new_click_action: custom_types.CustomEventDict | None) -> None:
+        self.add_temporary_click_action(new_click_action)
+        self._original_click_action = self._click_action
+
+    def add_temporary_click_action(self, new_click_action: custom_types.CustomEventDict | None) -> None:
         self._click_action = self._adjust_action(new_click_action)
 
     def remove_temporary_click_action(self) -> None:
