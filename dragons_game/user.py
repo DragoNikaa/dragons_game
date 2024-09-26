@@ -112,35 +112,35 @@ class User:
 
     def add_trophies_observer(self, observer: Observer) -> None:
         self._trophies_observers.append(observer)
-        observer.update_on_notify()
+        observer.update_on_notify(self._trophies)
 
     def _notify_trophies_observers(self) -> None:
         for observer in self._trophies_observers:
-            observer.update_on_notify()
+            observer.update_on_notify(self._trophies)
 
     def add_eggs_observer(self, observer: Observer) -> None:
         self._eggs_observers.append(observer)
-        observer.update_on_notify()
+        observer.update_on_notify(self._eggs)
 
     def _notify_eggs_observers(self) -> None:
         for observer in self._eggs_observers:
-            observer.update_on_notify()
+            observer.update_on_notify(self._eggs)
 
     def add_fish_observer(self, observer: Observer) -> None:
         self._fish_observers.append(observer)
-        observer.update_on_notify()
+        observer.update_on_notify(self._fish)
 
     def _notify_fish_observers(self) -> None:
         for observer in self._fish_observers:
-            observer.update_on_notify()
+            observer.update_on_notify(self._fish)
 
     def add_coins_observer(self, observer: Observer) -> None:
         self._coins_observers.append(observer)
-        observer.update_on_notify()
+        observer.update_on_notify(self._coins)
 
     def _notify_coins_observers(self) -> None:
         for observer in self._coins_observers:
-            observer.update_on_notify()
+            observer.update_on_notify(self._coins)
 
     def add_dragons_observer(self, observer: type[ObserverClass]) -> None:
         self._dragons_observers.append(observer)
@@ -247,7 +247,8 @@ class User:
         return self._team_dragons
 
 
-user = User(dragons=[user_dragons.toothless, user_dragons.skyflame, user_dragons.prismscale, user_dragons.frostreaver,
+user = User(100, 10, 250, 200,
+            dragons=[user_dragons.toothless, user_dragons.skyflame, user_dragons.prismscale, user_dragons.frostreaver,
                      user_dragons.valentira, user_dragons.nyxar],
             team_dragons=[user_dragons.toothless, user_dragons.skyflame, user_dragons.frostreaver])
 

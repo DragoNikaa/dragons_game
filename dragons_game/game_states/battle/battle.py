@@ -8,6 +8,7 @@ from dragons_game.dragons.dragon import Dragon
 from dragons_game.dragons.enemy_dragon import EnemyDragon
 from dragons_game.dragons.user_dragon import UserDragon
 from dragons_game.game_states.game_state import GameState
+from dragons_game.game_states.main_menu.sections.island import LevelButton, island_section
 from dragons_game.islands.rewards import Reward
 from dragons_game.user import user
 from dragons_game.utils import custom_events, custom_exceptions
@@ -112,6 +113,10 @@ class _Battle:
                 experience = random.randint(rewards[Reward.MIN_EXPERIENCE], rewards[Reward.MAX_EXPERIENCE])
                 experiences.append(experience)
                 dragon.add_experience(experience)
+
+            level_button = island_section.get_button(str(user.current_level.type))
+            if isinstance(level_button, LevelButton):
+                level_button.handle_completed_level()
 
         else:
             print('Defeat!')

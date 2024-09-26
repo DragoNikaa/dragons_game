@@ -3,10 +3,6 @@ import random
 from dragons_game.dragons.database import enemy_dragons
 from dragons_game.dragons.enemy_dragon import EnemyDragon
 from dragons_game.dragons.rarity import Rarity
-from dragons_game.elements.text import Text
-from dragons_game.elements.tooltip import Tooltip
-from dragons_game.game.configuration import GameConfig
-from dragons_game.game_states.common import universal_sizes
 from dragons_game.islands.level_type import LevelType
 from dragons_game.islands.rewards import LEVEL_TYPE_TO_REWARDS, Reward
 from dragons_game.utils import custom_types
@@ -51,11 +47,8 @@ class Level:
         return dragons
 
     @property
-    def tooltip(self) -> Tooltip:
-        tooltip = Tooltip('midbottom', (GameConfig.WINDOW_WIDTH / 10, GameConfig.WINDOW_HEIGHT / 10), 'chocolate')
-        tooltip.add_element('level', Text('dragons_game/fonts/friz_quadrata.ttf', universal_sizes.MEDIUM / 1.5,
-                                          str(self._level_type).title(), 'white', 'center', (0, 0), 1, 'black'))
-        return tooltip
+    def type(self) -> LevelType:
+        return self._level_type
 
     @property
     def button_image_path(self) -> str:

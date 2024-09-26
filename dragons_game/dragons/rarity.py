@@ -1,5 +1,7 @@
 from enum import IntEnum
 
+from dragons_game.utils import custom_types
+
 
 class Rarity(IntEnum):
     COMMON = 1
@@ -13,7 +15,7 @@ class Rarity(IntEnum):
         return self.name.lower()
 
     @property
-    def color(self) -> str:
+    def color(self) -> custom_types.Color:
         match self:
             case Rarity.COMMON:
                 return '#b67630'
