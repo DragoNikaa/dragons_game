@@ -7,7 +7,7 @@ from dragons_game.elements.image import Image
 from dragons_game.elements.text import Text
 from dragons_game.elements.tooltip import Tooltip
 from dragons_game.game_states.common import universal_sizes
-from dragons_game.game_states.dragons_menu.sections.dragon_details import DragonDetails
+from dragons_game.game_states.dragons_menu.sections.dragon_details.dragon_details import DragonDetails
 from dragons_game.utils import custom_types
 from dragons_game.utils.image_proportions import proportional_width
 from dragons_game.utils.observers import Observer, ObserverClass

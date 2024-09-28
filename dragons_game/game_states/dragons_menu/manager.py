@@ -5,7 +5,7 @@ import pygame
 from dragons_game.elements.section import Section
 from dragons_game.game_states.common.manager import GameStateManager
 from dragons_game.game_states.dragons_menu.sections.bottom_bar import bottom_bar_section
-from dragons_game.game_states.dragons_menu.sections.dragon_details import DragonDetails
+from dragons_game.game_states.dragons_menu.sections.dragon_details.dragon_details import DragonDetails
 from dragons_game.game_states.dragons_menu.sections.dragon_list import dragon_list_section
 from dragons_game.game_states.dragons_menu.sections.team import team_section
 from dragons_game.game_states.dragons_menu.sections.title_bar import title_bar_section
