@@ -9,7 +9,7 @@ from dragons_game.elements.text import Text
 from dragons_game.game.configuration import GameConfig
 from dragons_game.game_states.common import universal_sizes
 from dragons_game.game_states.dragons_menu.sections.common.rarity_stars import rarity_stars
-from dragons_game.game_states.dragons_menu.sections.dragon_details.bottom_bar import _TeamSection
+from dragons_game.game_states.dragons_menu.sections.dragon_details.buttons import ButtonSection
 from dragons_game.game_states.dragons_menu.sections.dragon_details.utils import _LevelText, _ProgressBar, _Text
 from dragons_game.game_states.dragons_menu.sections.title_bar import title_bar_section
 from dragons_game.game_states.game_state import GameState
@@ -27,12 +27,13 @@ class DragonDetails(Section):
                          Image('dragons_game/graphics/backgrounds/dragons_menu/dragon_details/dragon.png',
                                (self.width / 2, self.height), 'topleft', (0, 0)))
 
-        name = Text('dragons_game/fonts/rurik.ttf', self.height / 9, dragon.name, dragon.rarity.color, 'midtop',
-                    (-self.width / 4, 1.5 * universal_sizes.LARGE), 4, 'black')
+        name = Text('dragons_game/fonts/rurik.ttf', self.height / 10, dragon.name, dragon.rarity.color, 'midtop',
+                    (-self.width / 4, universal_sizes.LARGE), 4, 'black')
         self.add_element('name', name)
 
-        self._team_section = _TeamSection(dragon, self.width / 2.75, (name.x_destination, -universal_sizes.LARGE))
-        self.add_element('team', self._team_section)
+        self._button_section = ButtonSection(dragon, self.width / 2.5, (-self.width / 4, -universal_sizes.LARGE))
+        self.add_element('buttons', self._button_section)
+        self._team_section = self._button_section.get_section('team')
 
         self._add_dragon_image(name)
 
@@ -56,13 +57,13 @@ class DragonDetails(Section):
         dragon_image_height = proportional_height(self._dragon.image_path, dragon_image_width)
 
         max_height = (
-                self.height - name.height - name.y_destination - self._team_section.height + self._team_section.y_destination - universal_sizes.LARGE)
+                self.height - name.height - name.y_destination - self._button_section.height + self._button_section.y_destination - universal_sizes.LARGE)
         if dragon_image_height > max_height:
             dragon_image_height = max_height
             dragon_image_width = proportional_width(self._dragon.image_path, dragon_image_height)
 
         self.add_element('dragon', Image(self._dragon.image_path, (dragon_image_width, dragon_image_height), 'center',
-                                         (name.x_destination, self.height / 28)))
+                                         (name.x_destination, -self.height / 90)))
 
     def _add_rarity_section(self) -> None:
         rarity_section = self._section(0.1, 'Rarity')

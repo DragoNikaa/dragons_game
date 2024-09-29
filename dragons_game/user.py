@@ -197,11 +197,10 @@ class User:
 
     @eggs.setter
     def eggs(self, value: int) -> None:
-        self._eggs = value
-        if self._eggs < 0:
-            self._eggs = 0
+        if value < 0:
             raise custom_exceptions.NotEnoughEggsError(self._eggs)
 
+        self._eggs = value
         self._notify_eggs_observers()
 
     @property
@@ -210,11 +209,10 @@ class User:
 
     @fish.setter
     def fish(self, value: int) -> None:
-        self._fish = value
-        if self._fish < 0:
-            self._fish = 0
+        if value < 0:
             raise custom_exceptions.NotEnoughFishError(self._fish)
 
+        self._fish = value
         self._notify_fish_observers()
 
     @property
@@ -223,11 +221,10 @@ class User:
 
     @coins.setter
     def coins(self, value: int) -> None:
-        self._coins = value
-        if self._coins < 0:
-            self._coins = 0
+        if value < 0:
             raise custom_exceptions.NotEnoughCoinsError(self._coins)
 
+        self._coins = value
         self._notify_coins_observers()
 
     @property
