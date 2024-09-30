@@ -20,6 +20,13 @@ class Dragon:
 
         self._health_observers: list[Observer] = []
 
+    def add_health(self, value: int) -> None:
+        self._current_health += value
+        if self._current_health > self._max_health:
+            self._current_health = self._max_health
+
+        self._notify_health_observers()
+
     def remove_health(self, value: int) -> None:
         self._current_health -= value
 

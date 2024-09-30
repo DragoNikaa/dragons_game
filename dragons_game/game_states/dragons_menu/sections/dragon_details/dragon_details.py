@@ -1,6 +1,5 @@
 import pygame
 
-from dragons_game.dragons.dragon import Dragon
 from dragons_game.dragons.user_dragon import UserDragon
 from dragons_game.elements.button import Button
 from dragons_game.elements.image import Image
@@ -10,12 +9,11 @@ from dragons_game.elements.text import Text
 from dragons_game.game.configuration import GameConfig
 from dragons_game.game_states.common import universal_sizes
 from dragons_game.game_states.dragons_menu.sections.common.rarity_stars import rarity_stars
+from dragons_game.game_states.dragons_menu.sections.dragon_details.buttons import ButtonSection
+from dragons_game.game_states.dragons_menu.sections.dragon_details.utils import _LevelText, _ProgressBar, _Text
 from dragons_game.game_states.dragons_menu.sections.title_bar import title_bar_section
 from dragons_game.game_states.game_state import GameState
-from dragons_game.user import user
-from dragons_game.utils import custom_types
 from dragons_game.utils.image_proportions import proportional_height, proportional_width
-from dragons_game.utils.observers import Observer
 
 
 class DragonDetails(Section):
@@ -29,24 +27,15 @@ class DragonDetails(Section):
                          Image('dragons_game/graphics/backgrounds/dragons_menu/dragon_details/dragon.png',
                                (self.width / 2, self.height), 'topleft', (0, 0)))
 
-        name = Text('dragons_game/fonts/rurik.ttf', self.height / 9, dragon.name, dragon.rarity.color, 'midtop',
-                    (-self.width / 4, 1.5 * universal_sizes.LARGE), 4, 'black')
+        name = Text('dragons_game/fonts/rurik.ttf', self.height / 10, dragon.name, dragon.rarity.color, 'midtop',
+                    (-self.width / 4, universal_sizes.LARGE), 4, 'black')
         self.add_element('name', name)
 
-        self._team_section = _TeamSection(dragon, self.width / 2.75, (name.x_destination, -universal_sizes.LARGE))
-        self.add_element('team', self._team_section)
+        self._button_section = ButtonSection(dragon, self.width / 2.5, (-self.width / 4, -universal_sizes.LARGE))
+        self.add_element('buttons', self._button_section)
+        self._team_section = self._button_section.get_section('team')
 
-        dragon_image_width = self.width / 2.5
-        dragon_image_height = proportional_height(dragon.image_path, dragon_image_width)
-
-        max_height = (self.height - name.height - name.y_destination - self._team_section.height
-                      + self._team_section.y_destination - universal_sizes.LARGE)
-        if dragon_image_height > max_height:
-            dragon_image_height = max_height
-            dragon_image_width = proportional_width(dragon.image_path, dragon_image_height)
-
-        self.add_element('dragon', Image(dragon.image_path, (dragon_image_width, dragon_image_height), 'center',
-                                         (name.x_destination, self.height / 28)))
+        self._add_dragon_image(name)
 
         self.add_element('right_background',
                          Image('dragons_game/graphics/backgrounds/dragons_menu/dragon_details/right.png',
@@ -62,6 +51,19 @@ class DragonDetails(Section):
         self._add_description_section()
         self._add_stats_section()
         self._add_attacks_section()
+
+    def _add_dragon_image(self, name: Text) -> None:
+        dragon_image_width = self.width / 2.5
+        dragon_image_height = proportional_height(self._dragon.image_path, dragon_image_width)
+
+        max_height = (
+                self.height - name.height - name.y_destination - self._button_section.height + self._button_section.y_destination - universal_sizes.LARGE)
+        if dragon_image_height > max_height:
+            dragon_image_height = max_height
+            dragon_image_width = proportional_width(self._dragon.image_path, dragon_image_height)
+
+        self.add_element('dragon', Image(self._dragon.image_path, (dragon_image_width, dragon_image_height), 'center',
+                                         (name.x_destination, -self.height / 90)))
 
     def _add_rarity_section(self) -> None:
         rarity_section = self._section(0.1, 'Rarity')
@@ -180,98 +182,3 @@ class DragonDetails(Section):
         self._team_section.clean_up()
         self._team_section.update_on_notify()
         self.description_text.clean_up()
-
-
-class _TeamSection(Section, Observer):
-    def __init__(self, dragon: UserDragon, width: float, destination: tuple[float, float]):
-        super().__init__((width, universal_sizes.LARGE), 'midbottom', destination)
-
-        self._in_team_section = Section((self.width / 2.25, self.height), 'center', (0, 0))
-        self._in_team_section.add_element('background', Image('dragons_game/graphics/buttons/sort_key.png',
-                                                              self._in_team_section.size, 'center', (0, 0)))
-        self._in_team_section.add_element('label', self._text('In team'))
-
-        self._add_button = Button('dragons_game/graphics/buttons/sort_key.png', (self.width / 2.25, self.height),
-                                  'center', (0, 0), {'action': 'call', 'callable': self._add_choose_section})
-        self._add_button.add_element('label', self._text('Add to team'))
-
-        self._choose_section = Section(self.size, 'center', (0, 0))
-        self._choose_section.add_element('background',
-                                         Image('dragons_game/graphics/buttons/sort_key.png', self._choose_section.size,
-                                               'center', (0, 0)))
-        self._choose_section.add_element('label', self._text('Choose team dragon to replace'))
-
-        self._dragon = dragon
-        dragon.add_in_team_observer(self)
-
-    def _text(self, text: str) -> Text:
-        return Text('dragons_game/fonts/rurik.ttf', self.height / 1.5, text, 'white', 'center', (0, self.height / 10),
-                    2, 'black')
-
-    def _add_choose_section(self) -> None:
-        from dragons_game.game_states.dragons_menu.sections.team import team_section
-
-        self.upsert_element('team_status', self._choose_section)
-
-        for dragon_index in range(3):
-            team_section.get_button(f'team_dragon_{dragon_index}').add_temporary_click_action(
-                {'action': 'call', 'callable': user.add_team_dragon,
-                 'kwargs': {'dragon': self._dragon, 'dragon_index': dragon_index}})
-
-    def update_on_notify(self) -> None:
-        if self._dragon.in_team:
-            self.upsert_element('team_status', self._in_team_section)
-        else:
-            self.upsert_element('team_status', self._add_button)
-            self.clean_up()
-
-    @staticmethod
-    def clean_up() -> None:
-        from dragons_game.game_states.dragons_menu.sections.team import team_section
-
-        for dragon_index in range(3):
-            team_section.get_button(f'team_dragon_{dragon_index}').remove_temporary_click_action()
-
-
-class _Text(Text):
-    SIZE = GameConfig.WINDOW_HEIGHT / 38
-
-    def __init__(self, text: str, position: custom_types.Position, destination: tuple[float, float]):
-        super().__init__('dragons_game/fonts/friz_quadrata.ttf', self.SIZE, text, 'white', position, destination, 1,
-                         'black')
-
-
-class _LevelText(_Text, Observer):
-    def __init__(self, dragon: UserDragon, destination: tuple[float, float]):
-        super().__init__('', 'midtop', destination)
-
-        self._dragon = dragon
-        dragon.add_level_observer(self)
-
-    def update_on_notify(self) -> None:
-        self.text = f'Level {self._dragon.level}'
-
-
-class _ProgressBar(Section, Observer):
-    def __init__(self, name: str, dragon: Dragon, size: tuple[float, float], destination: tuple[float, float],
-                 label_x_destination: float):
-        super().__init__(size, 'bottomright', destination)
-
-        self._name = name
-        self._dragon = dragon
-
-        self.add_element('background',
-                         Image(f'dragons_game/graphics/progress_bars/background.png', size, 'topleft', (0, 0)))
-
-        self.add_element('label', _Text(name.title(), 'midleft', (label_x_destination, 0)))
-
-        getattr(dragon, f"add_{self._name}_observer")(self)
-
-    def update_on_notify(self) -> None:
-        current_value = getattr(self._dragon, f'current_{self._name}')
-        max_value = getattr(self._dragon, f'max_{self._name}')
-
-        self.upsert_element('current', Image(f'dragons_game/graphics/progress_bars/{self._name}.png',
-                                             (current_value / max_value * self.width, self.height), 'midleft', (0, 0)))
-
-        self.upsert_element('numbers', _Text(f'{current_value}/{max_value}', 'center', (0, 0)))
